@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    container_name: NewsLetterMySQLDB
+    image: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: newsletter
+      MYSQL_USER: NewsLetter
+      MYSQL_PASSWORD: NewsLetter123!
+      MYSQL_ROOT_PASSWORD: NewsLetterAdmin123!
