@@ -1,6 +1,5 @@
-package com.algolovers.newsletterconsole.data.entity;
+package com.algolovers.newsletterconsole.data.entity.user;
 
-import com.algolovers.newsletterconsole.data.enums.Authority;
 import com.algolovers.newsletterconsole.utils.RandomGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

@@ -1,6 +1,6 @@
 package com.algolovers.newsletterconsole.data.entity.team;
 
-import com.algolovers.newsletterconsole.data.entity.User;
+import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -31,7 +31,8 @@ public class Team {
     @OneToMany(mappedBy = "team")
     private List<TeamMember> teamMembers;
 
-    //TODO: Add questions
+    //TODO: Add questions. Questions -> List<Questions> it can be edited modified bla bla.
+    //Monthly responses should be maintained somewhere
     //private List<Questions> questions;
 
 }

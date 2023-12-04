@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole.data.enums;
+package com.algolovers.newsletterconsole.data.entity.user;
 
 import org.springframework.security.core.GrantedAuthority;
 

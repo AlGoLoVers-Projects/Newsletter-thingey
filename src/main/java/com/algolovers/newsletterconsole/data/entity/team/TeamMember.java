@@ -1,6 +1,6 @@
 package com.algolovers.newsletterconsole.data.entity.team;
 
-import com.algolovers.newsletterconsole.data.entity.User;
+import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
