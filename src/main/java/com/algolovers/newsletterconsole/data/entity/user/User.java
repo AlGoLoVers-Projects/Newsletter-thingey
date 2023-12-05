@@ -6,16 +6,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Table(name = "user")
 @Entity
 @Data
-public class User implements UserDetails {
+public class User implements UserDetails, OAuth2User {
 
     @Id
     @JsonIgnore
@@ -47,7 +47,7 @@ public class User implements UserDetails {
     @ElementCollection(targetClass = Authority.class)
     @JoinTable(name = "authority", joinColumns = @JoinColumn(name = "id"))
     @Enumerated(EnumType.STRING)
-    List<Authority> authorities;
+    Set<Authority> authorities;
 
     @Override
     public Collection<Authority> getAuthorities() {
@@ -145,5 +145,16 @@ public class User implements UserDetails {
      */
     public Long generateAccountValidityCode() {
         return this.accountValidityCode = RandomGenerator.generateRandomCode();
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return null;
     }
 }
