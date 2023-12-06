@@ -1,6 +1,6 @@
 package com.algolovers.newsletterconsole.config;
 
-import com.algolovers.newsletterconsole.service.UserServiceImpl;
+import com.algolovers.newsletterconsole.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,16 +20,15 @@ import java.util.List;
 public class SecurityConfig {
 
     final PasswordEncoder passwordEncoder;
-    final UserServiceImpl userDetailsService;
+    final UserService userDetailsService;
 
-    public SecurityConfig(PasswordEncoder passwordEncoder, UserServiceImpl userDetailsService) {
+    public SecurityConfig(PasswordEncoder passwordEncoder, UserService userDetailsService) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
     }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        userDetailsService.provisionNewUser();
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);

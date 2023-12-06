@@ -125,15 +125,13 @@ public class User implements UserDetails, OAuth2User {
         return this.accountVerificationCode = RandomGenerator.generateRandomCode();
     }
 
-    public void setVerified(Boolean verified) {
-        if (verified) {
-            this.accountVerificationCode = null;
-            this.verificationTokenExpirationDate = null;
-        }
+    public void setVerified() {
+        this.accountVerificationCode = null;
+        this.verificationTokenExpirationDate = null;
     }
 
     public Boolean isAccountVerified() {
-        return Objects.isNull(this.accountVerificationCode) && Objects.isNull(this.verificationTokenExpirationDate);
+        return Objects.isNull(this.accountVerificationCode);
     }
 
     public Boolean hasVerificationExpired() {
@@ -142,6 +140,10 @@ public class User implements UserDetails, OAuth2User {
         }
 
         return false;
+    }
+
+    public boolean validateUser() {
+        return Objects.nonNull(id) && Objects.nonNull(emailAddress) && Objects.nonNull(userName);
     }
 
     /**
