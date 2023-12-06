@@ -2,10 +2,11 @@ package com.algolovers.newsletterconsole.service;
 
 import com.algolovers.newsletterconsole.data.entity.user.Authority;
 import com.algolovers.newsletterconsole.data.entity.user.User;
+import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.UserCreationRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.VerificationRequest;
 import com.algolovers.newsletterconsole.repository.UserRepository;
-import org.springframework.data.util.Pair;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -43,74 +44,94 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmailAddress(email).orElse(null);
     }
 
-    @Transactional(rollbackFor = {RuntimeException.class})
-    public Pair<Boolean, String> provisionNewUser(UserCreationRequest userCreationRequest) throws RuntimeException {
+    @Transactional(rollbackFor = {Exception.class})
+    public Result<User> provisionNewUser(UserCreationRequest userCreationRequest) {
+        try {
+            if (userRepository.existsByEmailAddress(userCreationRequest.getEmailAddress())) {
+                return new Result<>(false, null, "Email is already in use");
+            }
 
-        if (userRepository.existsByEmailAddress(userCreationRequest.getEmailAddress())) {
-            return Pair.of(false, "Email is already in use");
+            User user = User.builder()
+                    .userName(userCreationRequest.getUserName())
+                    .emailAddress(userCreationRequest.getEmailAddress())
+                    .authorities(Set.of(Authority.USER))
+                    .password(passwordEncoder.encode(userCreationRequest.getPassword()))
+                    .build();
+
+            Result<User> saveResult = saveOrUpdateUser(user);
+            if (saveResult.isSuccess()) {
+                User savedUser = saveResult.getData();
+
+                Long verificationToken = savedUser.generateAccountVerificationCode();
+
+                boolean isMailSuccessful = emailService.sendVerificationEmail(savedUser, verificationToken);
+
+                if (!isMailSuccessful) {
+                    throw new RuntimeException("Email could not be sent");
+                }
+
+                return new Result<>(true, savedUser, "User registered successfully");
+            } else {
+                return new Result<>(false, null, saveResult.getMessage());
+            }
+        } catch (Exception e) {
+            return new Result<>(false, null, "An unexpected error occurred during user registration: " + e.getMessage());
         }
-
-        User user = User.builder()
-                .userName(userCreationRequest.getUserName())
-                .emailAddress(userCreationRequest.getEmailAddress())
-                .authorities(Set.of(Authority.USER))
-                .password(passwordEncoder.encode(userCreationRequest.getPassword()))
-                .build();
-
-        Long verificationToken = user.generateAccountVerificationCode();
-
-        user = userRepository.save(user);
-
-        if (user.getId() == null) {
-            return Pair.of(false, "User could not be saved");
-        }
-
-        boolean isMailSuccessful = emailService.sendVerificationEmail(user, verificationToken);
-
-        if (!isMailSuccessful) {
-            throw new RuntimeException("Email could not be sent");
-        }
-
-        return Pair.of(true, "User registered successfully");
     }
 
 
-    public Pair<Boolean, String> verifyUser(VerificationRequest verificationRequest) {
+    public Result<String> verifyUser(VerificationRequest verificationRequest) {
+        try {
+            if (Objects.isNull(verificationRequest.getVerificationCode())
+                    || Objects.isNull(verificationRequest.getEmail())) {
+                return new Result<>(false, null, "Required information is not attached");
+            }
 
-        if (Objects.isNull(verificationRequest.getVerificationCode())
-                || Objects.isNull(verificationRequest.getEmail())) {
-            return Pair.of(false, "Required information is not attached");
+            User user = loadUserByEmail(verificationRequest.getEmail());
+
+            if (Objects.isNull(user)) {
+                return new Result<>(false, null, "User not found");
+            }
+
+            if (!user.validateUser()) {
+                userRepository.delete(user);
+                return new Result<>(false, null, "Misconfigured user");
+            }
+
+            if (user.isAccountVerified()) {
+                return new Result<>(false, null, "User is already verified");
+            }
+
+            if (user.hasVerificationExpired()) {
+                userRepository.delete(user);
+                return new Result<>(false, null, "Verification token has expired");
+            }
+
+            if (user.getEmailAddress().equals(verificationRequest.getEmail())
+                    && user.getAccountVerificationCode().equals(verificationRequest.getVerificationCode())) {
+                user.setVerified();
+                userRepository.save(user);
+                return new Result<>(true, "User verified successfully", null);
+            }
+
+            //TODO: Send creation success email
+
+            return new Result<>(false, null, "Verification failed, please check your email and verification code");
+        } catch (Exception e) {
+            return new Result<>(false, null, "An unexpected error occurred during user verification: " + e.getMessage());
         }
-
-        User user = loadUserByEmail(verificationRequest.getEmail());
-
-        if (Objects.isNull(user)) {
-            return Pair.of(false, "User not found");
-        }
-
-        if (!user.validateUser()) {
-            userRepository.delete(user);
-            return Pair.of(false, "Misconfigured user");
-        }
-
-        if (user.isAccountVerified()) {
-            return Pair.of(false, "User is already verified");
-        }
-
-        if (user.hasVerificationExpired()) {
-            userRepository.delete(user);
-            return Pair.of(false, "Verification token has expired");
-        }
-
-        if (user.getEmailAddress().equals(verificationRequest.getEmail())
-                && user.getAccountVerificationCode().equals(verificationRequest.getVerificationCode())) {
-            user.setVerified();
-            userRepository.save(user);
-            return Pair.of(true, "User verified successfully");
-        }
-
-        //TODO: Send creation success email
-
-        return Pair.of(false, "Verification failed, please check your email and verification code");
     }
+
+
+    public Result<User> saveOrUpdateUser(User user) {
+        try {
+            user = userRepository.save(user);
+            return new Result<>(true, user, "User saved successfully");
+        } catch (DataIntegrityViolationException ex) {
+            return new Result<>(false, null, "User could not be saved due to a database constraint violation");
+        } catch (RuntimeException ex) {
+            return new Result<>(false, null, "User could not be saved");
+        }
+    }
+
 }
