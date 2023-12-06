@@ -16,10 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,6 +30,11 @@ public class AuthenticationController {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "hello";
     }
 
     @PostMapping("/signup")
@@ -71,7 +73,7 @@ public class AuthenticationController {
 
         String token = jwtService.generateToken(user, validityCode);
 
-        return ResponseEntity.ok(new Result<>(true, new LoginResponse(token, user.getUsername()), "Authentication successful"));
+        return ResponseEntity.ok(new Result<>(true, new LoginResponse(token, user.getUsername(), user.getAuthorities()), "Authentication successful"));
     }
 
 }

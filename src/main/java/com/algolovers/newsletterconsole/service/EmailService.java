@@ -25,7 +25,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String botEmail;
 
-    @Value("${ultimatechatapp.app.url}")
+    @Value("${newsletter.app.url}")
     private String baseUrl;
 
     public EmailService(JavaMailSender javaMailSender, SpringTemplateEngine templateEngine) {

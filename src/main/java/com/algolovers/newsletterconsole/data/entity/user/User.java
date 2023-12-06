@@ -21,7 +21,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User implements UserDetails, OAuth2User {
+public class User implements UserDetails {
 
     @Id
     @JsonIgnore
@@ -31,26 +31,31 @@ public class User implements UserDetails, OAuth2User {
     @Column(nullable = false)
     @Pattern(regexp = "^[a-zA-Z0-9_ ]*$", message = "Username can only contain alphanumeric characters and underscores")
     @Size(min = 3, message = "Username must have a minimum of three characters")
-    String userName;
+    String displayName;
 
     @Column
+    @JsonIgnore
     String password;
 
     @Column(unique = true)
     @Email
+    @JsonIgnore
     String emailAddress;
 
     @Column(name = "verification_token_expiration_date")
     @JsonIgnore
     private LocalDateTime verificationTokenExpirationDate;
 
+    @JsonIgnore
     Long accountVerificationCode;
 
+    @JsonIgnore
     String accountValidityCode;
 
+    @JsonIgnore
     Long passwordResetCode;
 
-    @ElementCollection(targetClass = Authority.class)
+    @ElementCollection(targetClass = Authority.class, fetch = FetchType.EAGER)
     @JoinTable(name = "authority", joinColumns = @JoinColumn(name = "id"))
     @Enumerated(EnumType.STRING)
     Set<Authority> authorities;
@@ -61,6 +66,7 @@ public class User implements UserDetails, OAuth2User {
     }
 
     @Override
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -120,6 +126,7 @@ public class User implements UserDetails, OAuth2User {
      *
      * @return New verification code for account registration.
      */
+    @JsonIgnore
     public Long generateAccountVerificationCode() {
         this.verificationTokenExpirationDate = LocalDateTime.now().plusMinutes(15);
         return this.accountVerificationCode = RandomGenerator.generateRandomCode();
@@ -130,10 +137,12 @@ public class User implements UserDetails, OAuth2User {
         this.verificationTokenExpirationDate = null;
     }
 
+    @JsonIgnore
     public Boolean isAccountVerified() {
         return Objects.isNull(this.accountVerificationCode);
     }
 
+    @JsonIgnore
     public Boolean hasVerificationExpired() {
         if (Objects.nonNull(this.verificationTokenExpirationDate)) {
             return LocalDateTime.now().isAfter(verificationTokenExpirationDate);
@@ -142,8 +151,9 @@ public class User implements UserDetails, OAuth2User {
         return false;
     }
 
+    @JsonIgnore
     public boolean validateUser() {
-        return Objects.nonNull(id) && Objects.nonNull(emailAddress) && Objects.nonNull(userName);
+        return Objects.nonNull(id) && Objects.nonNull(emailAddress) && Objects.nonNull(displayName);
     }
 
     /**
@@ -151,6 +161,7 @@ public class User implements UserDetails, OAuth2User {
      *
      * @return 8 digit JWT verification ID
      */
+    @JsonIgnore
     public String getExistingAccountValidityCode() {
         if(Objects.isNull(this.accountValidityCode)) {
             return generateNewAccountValidityCode();
@@ -159,18 +170,8 @@ public class User implements UserDetails, OAuth2User {
         return this.accountValidityCode;
     }
 
+    @JsonIgnore
     private String generateNewAccountValidityCode() {
         return this.accountValidityCode = RandomGenerator.generateRandomToken(16);
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return null;
     }
 }

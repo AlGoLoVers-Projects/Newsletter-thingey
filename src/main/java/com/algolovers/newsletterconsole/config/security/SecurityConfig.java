@@ -27,16 +27,13 @@ public class SecurityConfig {
     final PasswordEncoder passwordEncoder;
     final UserService userDetailsService;
     final AuthEntryPoint authEntryPoint;
+    final TokenAuthenticationFilter tokenAuthenticationFilter;
 
-    public SecurityConfig(PasswordEncoder passwordEncoder, UserService userDetailsService, AuthEntryPoint authEntryPoint) {
+    public SecurityConfig(PasswordEncoder passwordEncoder, UserService userDetailsService, AuthEntryPoint authEntryPoint, TokenAuthenticationFilter tokenAuthenticationFilter) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
         this.authEntryPoint = authEntryPoint;
-    }
-
-    @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        return new TokenAuthenticationFilter();
+        this.tokenAuthenticationFilter = tokenAuthenticationFilter;
     }
 
     @Bean
@@ -59,7 +56,7 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/auth/**")
                         .permitAll()

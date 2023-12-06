@@ -20,7 +20,7 @@ import java.util.function.Function;
 @Component
 public class JwtService {
 
-    @Value("${ultimatechatapp.jwt.secret}")
+    @Value("${newsletter.jwt.secret}")
     private String SECRET;
     public static final String VALIDITY_CODE_KEY = "validityCode";
     final UserService userService;

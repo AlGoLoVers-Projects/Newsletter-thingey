@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
+@Transactional(rollbackFor = {Exception.class})
 public class UserService implements UserDetailsService {
 
     final UserRepository userRepository;
@@ -50,7 +51,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(id).orElse(null);
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<User> provisionNewUser(UserCreationRequest userCreationRequest) {
         try {
             if (userRepository.existsByEmailAddress(userCreationRequest.getEmailAddress())) {
@@ -58,7 +58,7 @@ public class UserService implements UserDetailsService {
             }
 
             User user = User.builder()
-                    .userName(userCreationRequest.getUserName())
+                    .displayName(userCreationRequest.getUserName())
                     .emailAddress(userCreationRequest.getEmailAddress())
                     .authorities(Set.of(Authority.USER))
                     .password(passwordEncoder.encode(userCreationRequest.getPassword()))
@@ -84,7 +84,6 @@ public class UserService implements UserDetailsService {
             return new Result<>(false, null, "An unexpected error occurred during user registration: " + e.getMessage());
         }
     }
-
 
     public Result<User> verifyUser(VerificationRequest verificationRequest) {
         try {
@@ -127,7 +126,6 @@ public class UserService implements UserDetailsService {
             return new Result<>(false, null, "An unexpected error occurred during user verification: " + e.getMessage());
         }
     }
-
 
     public Result<User> saveOrUpdateUser(User user) {
         try {
