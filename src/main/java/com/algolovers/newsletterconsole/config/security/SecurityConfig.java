@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole.config;
+package com.algolovers.newsletterconsole.config.security;
 
 import com.algolovers.newsletterconsole.service.UserService;
 import org.springframework.context.annotation.Bean;
@@ -6,8 +6,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -21,10 +26,17 @@ public class SecurityConfig {
 
     final PasswordEncoder passwordEncoder;
     final UserService userDetailsService;
+    final AuthEntryPoint authEntryPoint;
 
-    public SecurityConfig(PasswordEncoder passwordEncoder, UserService userDetailsService) {
+    public SecurityConfig(PasswordEncoder passwordEncoder, UserService userDetailsService, AuthEntryPoint authEntryPoint) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
+        this.authEntryPoint = authEntryPoint;
+    }
+
+    @Bean
+    public TokenAuthenticationFilter tokenAuthenticationFilter() {
+        return new TokenAuthenticationFilter();
     }
 
     @Bean
@@ -41,18 +53,21 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        return http.csrf(AbstractHttpConfigurer::disable)
-//                .sessionManagement((sessionManagement) -> sessionManagement
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .formLogin().
-//                .authorizeHttpRequests((authorize) -> authorize
-//                        .anyRequest()
-//                        .authenticated())
-//                .authenticationProvider(authenticationProvider())
-//                .build();
-//    }
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
+                .sessionManagement((sessionManagement) -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/api/auth/**")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
+                .authenticationProvider(authenticationProvider());
+        return http.build();
+    }
 
     @Bean
     public CorsFilter corsFilter() {

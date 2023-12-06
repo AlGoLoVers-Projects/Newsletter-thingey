@@ -1,5 +1,6 @@
 package com.algolovers.newsletterconsole.service;
 
+import com.algolovers.newsletterconsole.data.entity.user.Authority;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +23,13 @@ public class JwtService {
     @Value("${ultimatechatapp.jwt.secret}")
     private String SECRET;
     public static final String VALIDITY_CODE_KEY = "validityCode";
+    final UserService userService;
 
-    public String extractUsername(String token) {
+    public JwtService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public String getUserIdFromToken(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -49,16 +56,23 @@ public class JwtService {
     }
 
     public Boolean validateToken(String token, User user) {
-        final String id = extractUsername(token);
+        final String id = getUserIdFromToken(token);
         final String validityCode = extractAllClaims(token).get(VALIDITY_CODE_KEY, String.class);
-        return (id.equals(user.getUsername()) && !isTokenExpired(token));
+        return (id.equals(user.getId()) && !isTokenExpired(token) && validityCode.equals(user.getAccountValidityCode()));
     }
 
-
-    public String generateToken(String username, String verificationCode) {
+    public String generateToken(User user, String validityCode) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(VALIDITY_CODE_KEY, verificationCode);
-        return createToken(claims, username);
+        Collection<Authority> authorities = user.getAuthorities();
+        if (authorities.contains(Authority.ADMIN)) {
+            claims.put(Authority.ADMIN.getAuthority(), true);
+        }
+        if (authorities.contains(Authority.USER)) {
+            claims.put(Authority.USER.getAuthority(), true);
+        }
+
+        claims.put(VALIDITY_CODE_KEY, validityCode);
+        return createToken(claims, user.getId());
     }
 
 

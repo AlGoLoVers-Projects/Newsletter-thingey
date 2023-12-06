@@ -1,6 +1,7 @@
 package com.algolovers.newsletterconsole.utils;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class RandomGenerator {
 
@@ -10,6 +11,12 @@ public class RandomGenerator {
         long upperBound = 99999999L;
 
         return lowerBound + random.nextInt((int) (upperBound - lowerBound + 1));
+    }
+
+    public static String generateRandomToken(Integer maxLength) {
+        String uuid = UUID.randomUUID().toString();
+        String token = uuid.replaceAll("-", "");
+        return token.substring(0, maxLength);
     }
 
 }

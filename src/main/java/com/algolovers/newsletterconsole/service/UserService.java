@@ -41,7 +41,13 @@ public class UserService implements UserDetailsService {
     }
 
     public User loadUserByEmail(String email) {
+        if (Objects.isNull(email)) return null;
         return userRepository.findByEmailAddress(email).orElse(null);
+    }
+
+    public User loadUserById(String id) {
+        if (Objects.isNull(id)) return null;
+        return userRepository.findById(id).orElse(null);
     }
 
     @Transactional(rollbackFor = {Exception.class})
@@ -80,7 +86,7 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public Result<String> verifyUser(VerificationRequest verificationRequest) {
+    public Result<User> verifyUser(VerificationRequest verificationRequest) {
         try {
             if (Objects.isNull(verificationRequest.getVerificationCode())
                     || Objects.isNull(verificationRequest.getEmail())) {
@@ -111,7 +117,7 @@ public class UserService implements UserDetailsService {
                     && user.getAccountVerificationCode().equals(verificationRequest.getVerificationCode())) {
                 user.setVerified();
                 userRepository.save(user);
-                return new Result<>(true, "User verified successfully", null);
+                return new Result<User>(true, user, "User verified successfully");
             }
 
             //TODO: Send creation success email

@@ -46,7 +46,7 @@ public class User implements UserDetails, OAuth2User {
 
     Long accountVerificationCode;
 
-    Long accountValidityCode;
+    String accountValidityCode;
 
     Long passwordResetCode;
 
@@ -102,14 +102,14 @@ public class User implements UserDetails, OAuth2User {
      * @return New validity code for JWT authentication, old tokens will be unusable
      */
 
-    public Long setNewPassword(String encodedPassword, Long passwordResetCode) {
+    public String setNewPassword(String encodedPassword, Long passwordResetCode) {
         if (Objects.nonNull(passwordResetCode)
                 && Objects.nonNull(this.passwordResetCode)
                 && Objects.nonNull(encodedPassword)
                 && this.passwordResetCode.equals(passwordResetCode)) {
             this.password = encodedPassword;
             this.passwordResetCode = null;
-            return generateAccountValidityCode();
+            return generateNewAccountValidityCode();
         }
 
         return null;
@@ -151,8 +151,16 @@ public class User implements UserDetails, OAuth2User {
      *
      * @return 8 digit JWT verification ID
      */
-    public Long generateAccountValidityCode() {
-        return this.accountValidityCode = RandomGenerator.generateRandomCode();
+    public String getExistingAccountValidityCode() {
+        if(Objects.isNull(this.accountValidityCode)) {
+            return generateNewAccountValidityCode();
+        }
+
+        return this.accountValidityCode;
+    }
+
+    private String generateNewAccountValidityCode() {
+        return this.accountValidityCode = RandomGenerator.generateRandomToken(16);
     }
 
     @Override
