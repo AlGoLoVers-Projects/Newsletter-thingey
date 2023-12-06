@@ -4,7 +4,10 @@ import com.algolovers.newsletterconsole.utils.RandomGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -15,6 +18,9 @@ import java.util.*;
 @Table(name = "user")
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class User implements UserDetails, OAuth2User {
 
     @Id
@@ -23,7 +29,7 @@ public class User implements UserDetails, OAuth2User {
     private String id;
 
     @Column(nullable = false)
-    @Pattern(regexp = "^[a-zA-Z0-9_]*$", message = "Username can only contain alphanumeric characters and underscores")
+    @Pattern(regexp = "^[a-zA-Z0-9_ ]*$", message = "Username can only contain alphanumeric characters and underscores")
     @Size(min = 3, message = "Username must have a minimum of three characters")
     String userName;
 
@@ -61,7 +67,7 @@ public class User implements UserDetails, OAuth2User {
 
     @Override
     public String getUsername() {
-        return userName;
+        return emailAddress;
     }
 
     @Override
