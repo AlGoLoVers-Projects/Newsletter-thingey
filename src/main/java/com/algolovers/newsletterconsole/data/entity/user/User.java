@@ -39,7 +39,6 @@ public class User implements UserDetails {
 
     @Column(unique = true)
     @Email
-    @JsonIgnore
     String emailAddress;
 
     @Column(name = "verification_token_expiration_date")
@@ -72,6 +71,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return emailAddress;
     }
