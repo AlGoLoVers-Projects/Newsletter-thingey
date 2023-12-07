@@ -85,7 +85,7 @@ public class EmailService {
     public boolean sendVerificationEmail(User user, Long verificationCode) {
         Context context = new Context();
 
-        context.setVariable("userFullName", user.getUsername());
+        context.setVariable("userFullName", user.getDisplayName());
         context.setVariable("verificationCode", verificationCode);
         context.setVariable("verificationLink", baseUrl + "/verify/" + verificationCode);
         context.setVariable("contactEmail", botEmail);
