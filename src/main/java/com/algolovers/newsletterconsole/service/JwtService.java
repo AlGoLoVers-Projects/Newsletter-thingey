@@ -11,6 +11,8 @@ import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Collection;
 import java.util.Date;
@@ -67,7 +69,7 @@ public class JwtService {
     public Cookie generateCookie(User user, String validityCode) {
         String token = generateToken(user, validityCode);
 
-        Cookie cookie = new Cookie(COOKIE_KEY, "Bearer " + token);
+        Cookie cookie = new Cookie(COOKIE_KEY, URLEncoder.encode("Bearer " + token, StandardCharsets.UTF_8));
         cookie.setHttpOnly(true);
         cookie.setMaxAge(12 * 60 * 60);
         cookie.setPath("/");

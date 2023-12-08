@@ -18,7 +18,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/hey")
+    @GetMapping("/authorizedUserDetails")
     public User getUser() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userService.loadUserByEmail(userDetails.getUsername());
