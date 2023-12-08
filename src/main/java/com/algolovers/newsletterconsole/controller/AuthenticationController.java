@@ -78,5 +78,9 @@ public class AuthenticationController {
         return ResponseEntity.ok(new Result<>(true, new LoginResponse(user.getDisplayName(), user.getAuthorities()), "Authentication successful"));
     }
 
+    @GetMapping("/logout")
+    public void logout(HttpServletResponse response) {
+        response.addCookie(jwtService.clearCookie());
+    }
 
 }

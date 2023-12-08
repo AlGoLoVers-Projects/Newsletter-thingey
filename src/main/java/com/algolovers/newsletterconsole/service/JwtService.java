@@ -77,6 +77,15 @@ public class JwtService {
         return cookie;
     }
 
+    public Cookie clearCookie() {
+        Cookie cookie = new Cookie(COOKIE_KEY, null);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+
+        return cookie;
+    }
+
     public String generateToken(User user, String validityCode) {
         Map<String, Object> claims = new HashMap<>();
         Collection<Authority> authorities = user.getAuthorities();
@@ -90,7 +99,6 @@ public class JwtService {
         claims.put(VALIDITY_CODE_KEY, validityCode);
         return createToken(claims, user.getId());
     }
-
 
     private String createToken(Map<String, Object> claims, String id) {
         return Jwts.builder()
