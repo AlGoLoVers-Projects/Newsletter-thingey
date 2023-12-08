@@ -1,5 +1,6 @@
 package com.algolovers.newsletterconsole.config.security;
 
+import com.algolovers.newsletterconsole.config.security.oauth.OAuth2StatelessAuthorizationRepository;
 import com.algolovers.newsletterconsole.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +21,6 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -30,12 +29,14 @@ public class SecurityConfig {
     final UserService userDetailsService;
     final AuthEntryPoint authEntryPoint;
     final TokenAuthenticationFilter tokenAuthenticationFilter;
+    final OAuth2StatelessAuthorizationRepository oAuth2StatelessAuthorizationRepository;
 
-    public SecurityConfig(PasswordEncoder passwordEncoder, UserService userDetailsService, AuthEntryPoint authEntryPoint, TokenAuthenticationFilter tokenAuthenticationFilter) {
+    public SecurityConfig(PasswordEncoder passwordEncoder, UserService userDetailsService, AuthEntryPoint authEntryPoint, TokenAuthenticationFilter tokenAuthenticationFilter, OAuth2StatelessAuthorizationRepository OAuth2StatelessAuthorizationRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
         this.authEntryPoint = authEntryPoint;
         this.tokenAuthenticationFilter = tokenAuthenticationFilter;
+        this.oAuth2StatelessAuthorizationRepository = OAuth2StatelessAuthorizationRepository;
     }
 
     @Bean
@@ -65,7 +66,11 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .authenticationProvider(authenticationProvider())
-                .oauth2Login(withDefaults());
+                .oauth2Login(config -> {
+                    config.authorizationEndpoint(subConfig -> {
+                        subConfig.authorizationRequestRepository(oAuth2StatelessAuthorizationRepository);
+                    });
+                });
         return http.build();
     }
 
