@@ -11,9 +11,6 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 public class LoginResponse {
-    @JsonProperty("token")
-    String token;
-
     @JsonProperty("displayName")
     String displayName;
 

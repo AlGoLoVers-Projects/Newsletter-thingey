@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import static com.algolovers.newsletterconsole.utils.Constants.COOKIE_KEY;
 
 @Component
 public class JwtService {
@@ -59,6 +62,17 @@ public class JwtService {
         final String id = getUserIdFromToken(token);
         final String validityCode = extractAllClaims(token).get(VALIDITY_CODE_KEY, String.class);
         return (id.equals(user.getId()) && !isTokenExpired(token) && validityCode.equals(user.getAccountValidityCode()));
+    }
+
+    public Cookie generateCookie(User user, String validityCode) {
+        String token = generateToken(user, validityCode);
+
+        Cookie cookie = new Cookie(COOKIE_KEY, "Bearer " + token);
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(12 * 60 * 60);
+        cookie.setPath("/");
+
+        return cookie;
     }
 
     public String generateToken(User user, String validityCode) {

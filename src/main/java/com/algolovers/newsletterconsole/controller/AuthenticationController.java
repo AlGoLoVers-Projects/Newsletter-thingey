@@ -9,6 +9,8 @@ import com.algolovers.newsletterconsole.data.model.api.response.LoginResponse;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
 import com.algolovers.newsletterconsole.utils.ControllerUtils;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -54,7 +56,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<Result<LoginResponse>> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Result<LoginResponse>> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
 
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -68,12 +70,13 @@ public class AuthenticationController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userService.loadUserByEmail(userDetails.getUsername());
 
-        String validityCode = user.getExistingAccountValidityCode();
-        userService.saveOrUpdateUser(user);
+        String validityCode = userService.getExistingAccountValidityCode(user);
 
-        String token = jwtService.generateToken(user, validityCode);
+        Cookie cookie = jwtService.generateCookie(user, validityCode);
+        response.addCookie(cookie);
 
-        return ResponseEntity.ok(new Result<>(true, new LoginResponse(token, user.getUsername(), user.getAuthorities()), "Authentication successful"));
+        return ResponseEntity.ok(new Result<>(true, new LoginResponse(user.getDisplayName(), user.getAuthorities()), "Authentication successful"));
     }
+
 
 }

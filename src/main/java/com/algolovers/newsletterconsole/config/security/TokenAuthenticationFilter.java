@@ -5,6 +5,7 @@ import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Objects;
 
+import static com.algolovers.newsletterconsole.utils.Constants.COOKIE_KEY;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Service
@@ -36,8 +38,19 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        // Get authorization header and validate
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        // Get authorization cookie and validate
+        Cookie[] cookies = request.getCookies();
+        String token = null;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(COOKIE_KEY)) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
         if (isEmpty(token) || !token.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;

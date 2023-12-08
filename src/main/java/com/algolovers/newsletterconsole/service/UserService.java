@@ -138,4 +138,10 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public String getExistingAccountValidityCode(User user) {
+       String code = user.getExistingAccountValidityCode();
+       saveOrUpdateUser(user);
+       return code;
+    }
+
 }
