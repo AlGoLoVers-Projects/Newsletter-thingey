@@ -3,6 +3,7 @@ package com.algolovers.newsletterconsole.config.security;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
+import com.algolovers.newsletterconsole.utils.CookieHelper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -19,8 +20,9 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.Optional;
 
-import static com.algolovers.newsletterconsole.utils.Constants.COOKIE_KEY;
+import static com.algolovers.newsletterconsole.utils.Constants.AUTH_COOKIE_KEY;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Service
@@ -41,16 +43,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         // Get authorization cookie and validate
         Cookie[] cookies = request.getCookies();
-        String token = null;
+        String token;
 
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(COOKIE_KEY)) {
-                    token =  URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
-                    break;
-                }
-            }
+        Optional<String> cookie = CookieHelper.retrieve(cookies, AUTH_COOKIE_KEY);
+
+        if (cookie.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        token = URLDecoder.decode(cookie.get(), StandardCharsets.UTF_8);
 
         if (isEmpty(token) || !token.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);

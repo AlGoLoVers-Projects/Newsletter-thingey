@@ -7,12 +7,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Collection;
 import java.util.Date;
@@ -20,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.algolovers.newsletterconsole.utils.Constants.COOKIE_KEY;
+import static com.algolovers.newsletterconsole.utils.Constants.AUTH_COOKIE_KEY;
 
 @Component
 public class JwtService {
@@ -64,26 +61,6 @@ public class JwtService {
         final String id = getUserIdFromToken(token);
         final String validityCode = extractAllClaims(token).get(VALIDITY_CODE_KEY, String.class);
         return (id.equals(user.getId()) && !isTokenExpired(token) && validityCode.equals(user.getAccountValidityCode()));
-    }
-
-    public Cookie generateCookie(User user, String validityCode) {
-        String token = generateToken(user, validityCode);
-
-        Cookie cookie = new Cookie(COOKIE_KEY, URLEncoder.encode("Bearer " + token, StandardCharsets.UTF_8));
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(12 * 60 * 60);
-        cookie.setPath("/");
-
-        return cookie;
-    }
-
-    public Cookie clearCookie() {
-        Cookie cookie = new Cookie(COOKIE_KEY, null);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-
-        return cookie;
     }
 
     public String generateToken(User user, String validityCode) {

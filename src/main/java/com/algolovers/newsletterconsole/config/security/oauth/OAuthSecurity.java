@@ -1,5 +1,6 @@
-package com.algolovers.newsletterconsole.config.security;
+package com.algolovers.newsletterconsole.config.security.oauth;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -11,6 +12,13 @@ import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 
 @Configuration
 public class OAuthSecurity {
+
+    @Value("${spring.oauth.google.client.id}")
+    private String googleClientId;
+
+    @Value("${spring.oauth.google.client.password}")
+    private String googleClientSecret;
+
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
         return new InMemoryClientRegistrationRepository(this.googleClientRegistration());
@@ -18,8 +26,8 @@ public class OAuthSecurity {
 
     private ClientRegistration googleClientRegistration() {
         return ClientRegistration.withRegistrationId("google")
-                .clientId("<google-client-id>")
-                .clientSecret("<google-client-secret>")
+                .clientId(googleClientId)
+                .clientSecret(googleClientSecret)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
