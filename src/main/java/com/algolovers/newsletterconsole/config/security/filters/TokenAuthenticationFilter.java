@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole.config.security;
+package com.algolovers.newsletterconsole.config.security.filters;
 
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.service.JwtService;
@@ -14,7 +14,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.util.Optional;
 import static com.algolovers.newsletterconsole.utils.Constants.AUTH_COOKIE_KEY;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
-@Service
+@Component
 @AllArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 

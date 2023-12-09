@@ -1,5 +1,6 @@
 package com.algolovers.newsletterconsole.config.security;
 
+import com.algolovers.newsletterconsole.config.security.filters.TokenAuthenticationFilter;
 import com.algolovers.newsletterconsole.config.security.oauth.OAuth2FailureHandler;
 import com.algolovers.newsletterconsole.config.security.oauth.OAuth2StatelessAuthorizationRepository;
 import com.algolovers.newsletterconsole.config.security.oauth.OAuth2SuccessHandler;
@@ -62,7 +63,6 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/",
-                                "/notFound",
                                 "/api/auth/**",
                                 "/oauth2/**",
                                 "/static/**")
