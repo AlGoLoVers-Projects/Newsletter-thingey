@@ -17,7 +17,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -77,8 +76,10 @@ public class AuthenticationController {
     }
 
     @GetMapping("/logout")
-    public void logout(HttpServletResponse response) {
+    public ResponseEntity<Result<String>> logout(HttpServletResponse response) {
         response.addCookie(CookieHelper.generateExpiredCookie(AUTH_COOKIE_KEY));
+
+        return ResponseEntity.ok(new Result<>(true, null, "Logged out successfully"));
     }
 
 }

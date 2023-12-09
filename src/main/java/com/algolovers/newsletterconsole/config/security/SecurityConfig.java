@@ -32,7 +32,6 @@ public class SecurityConfig {
 
     final PasswordEncoder passwordEncoder;
     final UserService userDetailsService;
-    final AuthEntryPoint authEntryPoint;
     final TokenAuthenticationFilter tokenAuthenticationFilter;
     final OAuth2StatelessAuthorizationRepository oAuth2StatelessAuthorizationRepository;
     final CustomOAuth2UserService customOAuth2UserService;
@@ -65,17 +64,9 @@ public class SecurityConfig {
                         .requestMatchers("/",
                                 "/error",
                                 "/notFound",
-                                "/favicon.ico",
                                 "/api/auth/**",
                                 "/oauth2/**",
-                                "/login/**",
-                                "/**/*.png",
-                                "/**/*.gif",
-                                "/**/*.svg",
-                                "/**/*.jpg",
-                                "/**/*.html",
-                                "/**/*.css",
-                                "/**/*.js")
+                                "/static/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
