@@ -2,8 +2,8 @@ package com.algolovers.newsletterconsole.utils;
 
 import jakarta.servlet.http.Cookie;
 import lombok.NonNull;
-import org.apache.tomcat.util.http.Rfc6265CookieProcessor;
 
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -22,7 +22,7 @@ public class CookieHelper {
         }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equalsIgnoreCase(name)) {
-                return Optional.ofNullable(cookie.getValue());
+                return Optional.ofNullable(URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8));
             }
         }
         return Optional.empty();

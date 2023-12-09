@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class NewsLetterConsoleApplication {
 
 	//OAuth2: http://localhost:8080/oauth2/authorization/google
+	//TODO: Use allArgsConstructor for injection
 	public static void main(String[] args) {
 		SpringApplication.run(NewsLetterConsoleApplication.class, args);
 	}

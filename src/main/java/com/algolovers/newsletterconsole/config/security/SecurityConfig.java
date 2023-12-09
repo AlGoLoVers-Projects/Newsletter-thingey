@@ -1,7 +1,11 @@
 package com.algolovers.newsletterconsole.config.security;
 
+import com.algolovers.newsletterconsole.config.security.oauth.OAuth2FailureHandler;
 import com.algolovers.newsletterconsole.config.security.oauth.OAuth2StatelessAuthorizationRepository;
+import com.algolovers.newsletterconsole.config.security.oauth.OAuth2SuccessHandler;
+import com.algolovers.newsletterconsole.service.CustomOAuth2UserService;
 import com.algolovers.newsletterconsole.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,11 +13,14 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.savedrequest.CookieRequestCache;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -23,6 +30,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
     final PasswordEncoder passwordEncoder;
@@ -30,14 +38,9 @@ public class SecurityConfig {
     final AuthEntryPoint authEntryPoint;
     final TokenAuthenticationFilter tokenAuthenticationFilter;
     final OAuth2StatelessAuthorizationRepository oAuth2StatelessAuthorizationRepository;
-
-    public SecurityConfig(PasswordEncoder passwordEncoder, UserService userDetailsService, AuthEntryPoint authEntryPoint, TokenAuthenticationFilter tokenAuthenticationFilter, OAuth2StatelessAuthorizationRepository OAuth2StatelessAuthorizationRepository) {
-        this.passwordEncoder = passwordEncoder;
-        this.userDetailsService = userDetailsService;
-        this.authEntryPoint = authEntryPoint;
-        this.tokenAuthenticationFilter = tokenAuthenticationFilter;
-        this.oAuth2StatelessAuthorizationRepository = OAuth2StatelessAuthorizationRepository;
-    }
+    final CustomOAuth2UserService customOAuth2UserService;
+    final OAuth2SuccessHandler oAuth2SuccessHandler;
+    final OAuth2FailureHandler oAuth2FailureHandler;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -55,21 +58,24 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.csrfTokenRepository(new CookieCsrfTokenRepository()))
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/auth/**")
+                        .requestMatchers("/api/auth/**", "/oauth2/**", "/login/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
-                .authenticationProvider(authenticationProvider())
                 .oauth2Login(config -> {
-                    config.authorizationEndpoint(subConfig -> {
-                        subConfig.authorizationRequestRepository(oAuth2StatelessAuthorizationRepository);
+                    config.authorizationEndpoint(authConfig -> {
+                        authConfig.authorizationRequestRepository(oAuth2StatelessAuthorizationRepository); //Required auth values are stored in cookie for stateless processing
                     });
+                    config.redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig.baseUri("/oauth2/callback/*")); //Redirects back to this URL, receive all
+                    config.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService)); //Reaches this point when user is authorized and user info is fetched, user saving is done her
+                    config.successHandler(oAuth2SuccessHandler); //handle success, set cookie, redirect.
+                    config.failureHandler(oAuth2FailureHandler); //handle failure, clear cookie, redirect to login
                 });
         return http.build();
     }

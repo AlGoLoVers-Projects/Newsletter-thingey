@@ -1,5 +1,6 @@
 package com.algolovers.newsletterconsole.data.entity.user;
 
+import com.algolovers.newsletterconsole.data.enums.AuthProvider;
 import com.algolovers.newsletterconsole.utils.RandomGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -19,7 +21,7 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User implements UserDetails {
+public class User implements UserDetails, OAuth2User {
 
     @Id
     @JsonIgnore
@@ -57,6 +59,19 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     Set<Authority> authorities;
 
+    @Enumerated(EnumType.STRING)
+    AuthProvider authProvider;
+
+    //Only for intermediate oauth login
+    @Transient
+    private Map<String, Object> attributes;
+
+    @Override
+    @JsonIgnore
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
     @Override
     public Collection<Authority> getAuthorities() {
         return authorities;
@@ -64,14 +79,20 @@ public class User implements UserDetails {
 
     @Override
     @JsonIgnore
-    public String getPassword() {
-        return password;
+    public String getName() {
+        return displayName;
     }
 
     @Override
     @JsonIgnore
     public String getUsername() {
         return emailAddress;
+    }
+
+    @Override
+    @JsonIgnore
+    public String getPassword() {
+        return password;
     }
 
     @Override

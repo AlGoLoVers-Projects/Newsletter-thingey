@@ -2,6 +2,8 @@ package com.algolovers.newsletterconsole.service;
 
 import com.algolovers.newsletterconsole.data.entity.user.Authority;
 import com.algolovers.newsletterconsole.data.entity.user.User;
+import com.algolovers.newsletterconsole.data.enums.AuthProvider;
+import com.algolovers.newsletterconsole.data.model.GoogleOAuthUserInfo;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.UserCreationRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.VerificationRequest;
@@ -11,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +64,7 @@ public class UserService implements UserDetailsService {
                     .displayName(userCreationRequest.getUserName())
                     .emailAddress(userCreationRequest.getEmailAddress())
                     .authorities(Set.of(Authority.USER))
+                    .authProvider(AuthProvider.local)
                     .password(passwordEncoder.encode(userCreationRequest.getPassword()))
                     .build();
 
@@ -142,6 +146,20 @@ public class UserService implements UserDetailsService {
        String code = user.getExistingAccountValidityCode();
        saveOrUpdateUser(user);
        return code;
+    }
+
+    public User registerNewOAuthUser(OAuth2UserRequest oAuth2UserRequest, GoogleOAuthUserInfo oAuth2UserInfo) {
+        User user = new User();
+
+        user.setAuthProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
+        user.setDisplayName(oAuth2UserInfo.getName());
+        user.setEmailAddress(oAuth2UserInfo.getEmail());
+        return userRepository.save(user);
+    }
+
+    public User updateExistingUser(User existingUser, GoogleOAuthUserInfo oAuth2UserInfo) {
+        existingUser.setDisplayName(oAuth2UserInfo.getName());
+        return userRepository.save(existingUser);
     }
 
 }
