@@ -19,7 +19,7 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         response.addCookie(oAuth2StatelessAuthorizationRepository.removeAuthorizationRequestCookies());
-        getRedirectStrategy().sendRedirect(request, response, "/oAuth2Error");
+        getRedirectStrategy().sendRedirect(request, response, "/oAuth2Error?exception=" + exception.getMessage());
     }
 
 }

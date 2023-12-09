@@ -58,11 +58,24 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(new RestAuthenticationEntryPoint()))
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/api/auth/**", "/oauth2/**", "/login/**")
+                        .requestMatchers("/",
+                                "/error",
+                                "/notFound",
+                                "/favicon.ico",
+                                "/api/auth/**",
+                                "/oauth2/**",
+                                "/login/**",
+                                "/**/*.png",
+                                "/**/*.gif",
+                                "/**/*.svg",
+                                "/**/*.jpg",
+                                "/**/*.html",
+                                "/**/*.css",
+                                "/**/*.js")
                         .permitAll()
                         .anyRequest()
                         .authenticated())

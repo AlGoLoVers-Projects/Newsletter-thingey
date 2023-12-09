@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole;
+package com.algolovers.newsletterconsole.exceptions;
 
 import javax.naming.AuthenticationException;
 

@@ -1,6 +1,6 @@
 package com.algolovers.newsletterconsole.service;
 
-import com.algolovers.newsletterconsole.OAuth2AuthenticationProcessingException;
+import com.algolovers.newsletterconsole.exceptions.OAuth2AuthenticationProcessingException;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.enums.AuthProvider;
 import com.algolovers.newsletterconsole.data.model.GoogleOAuthUserInfo;
