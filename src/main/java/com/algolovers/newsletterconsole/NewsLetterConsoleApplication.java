@@ -12,6 +12,7 @@ public class NewsLetterConsoleApplication {
 	//TODO: Use allArgsConstructor for injection
 	//TODO: Improve cookie handling
 	//TODO: Clear all cookies in case of login or failures
+	//TODO: Make user authorities a JSON string
 	public static void main(String[] args) {
 		SpringApplication.run(NewsLetterConsoleApplication.class, args);
 	}
