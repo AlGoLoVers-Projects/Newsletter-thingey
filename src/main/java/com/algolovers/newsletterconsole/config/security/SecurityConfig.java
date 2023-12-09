@@ -64,6 +64,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/",
+                                "/index.html",
                                 "/api/auth/**",
                                 "/oauth2/**",
                                 "/static/**")
