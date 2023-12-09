@@ -71,13 +71,7 @@ public class AuthenticationController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.loadUserByEmail(userDetails.getUsername());
-
-        String validityCode = userService.getExistingAccountValidityCode(user);
-
-        String token = jwtService.generateToken(user, validityCode);
-        response.addCookie(CookieHelper.generateCookie(AUTH_COOKIE_KEY, token, Duration.ofHours(24)));
+        User user = userService.generateCookieForAuthenticatedUser(authentication, response);
 
         return ResponseEntity.ok(new Result<>(true, new LoginResponse(user.getDisplayName(), user.getAuthorities()), "Authentication successful"));
     }

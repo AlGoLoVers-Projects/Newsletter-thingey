@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole.config.security;
+package com.algolovers.newsletterconsole.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;

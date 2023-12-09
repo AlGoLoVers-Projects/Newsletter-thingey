@@ -45,7 +45,7 @@ public class OAuth2StatelessAuthorizationRepository implements AuthorizationRequ
 
     @Override
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request, HttpServletResponse response) {
-        return this.retrieveCookie(request);
+        return loadAuthorizationRequest(request);
     }
 
     private OAuth2AuthorizationRequest retrieveCookie(HttpServletRequest request) {
@@ -74,5 +74,9 @@ public class OAuth2StatelessAuthorizationRepository implements AuthorizationRequ
         byte[] encryptedBytes = B64D.decode(encrypted);
         byte[] bytes = EncryptionHelper.decrypt(this.encryptionKey, encryptedBytes);
         return (OAuth2AuthorizationRequest) SerializationUtils.deserialize(bytes);
+    }
+
+    public Cookie removeAuthorizationRequestCookies() {
+        return CookieHelper.generateExpiredCookie(OAUTH_COOKIE_NAME);
     }
 }

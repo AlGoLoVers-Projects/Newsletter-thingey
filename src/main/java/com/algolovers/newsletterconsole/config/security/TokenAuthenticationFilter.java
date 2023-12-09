@@ -4,6 +4,7 @@ import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
 import com.algolovers.newsletterconsole.utils.CookieHelper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -54,18 +55,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         token = URLDecoder.decode(cookie.get(), StandardCharsets.UTF_8);
 
-        if (isEmpty(token) || !token.startsWith("Bearer ")) {
+        if (isEmpty(token)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Get jwt token and validate
-        token = token.split(" ")[1].trim();
         String userId = jwtService.getUserIdFromToken(token);
-
         User user = userService.loadUserById(userId);
 
         if (Objects.isNull(user)) {
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -85,7 +84,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
-
     }
 }
 

@@ -8,7 +8,11 @@ import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.UserCreationRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.VerificationRequest;
 import com.algolovers.newsletterconsole.repository.UserRepository;
+import com.algolovers.newsletterconsole.utils.CookieHelper;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,22 +21,21 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.algolovers.newsletterconsole.utils.Constants.AUTH_COOKIE_KEY;
+
 @Service
 @Transactional(rollbackFor = {Exception.class})
+@AllArgsConstructor
 public class UserService implements UserDetailsService {
 
     final UserRepository userRepository;
     final PasswordEncoder passwordEncoder;
     final EmailService emailService;
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.emailService = emailService;
-    }
+    final JwtService jwtService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -160,6 +163,17 @@ public class UserService implements UserDetailsService {
     public User updateExistingUser(User existingUser, GoogleOAuthUserInfo oAuth2UserInfo) {
         existingUser.setDisplayName(oAuth2UserInfo.getName());
         return userRepository.save(existingUser);
+    }
+
+    public User generateCookieForAuthenticatedUser(Authentication authentication, HttpServletResponse response) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = loadUserByEmail(userDetails.getUsername());
+
+        String validityCode = getExistingAccountValidityCode(user);
+        String token = jwtService.generateToken(user, validityCode);
+        response.addCookie(CookieHelper.generateCookie(AUTH_COOKIE_KEY, token, Duration.ofHours(24)));
+
+        return user;
     }
 
 }

@@ -17,19 +17,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.algolovers.newsletterconsole.utils.Constants.AUTH_COOKIE_KEY;
-
 @Component
 public class JwtService {
 
     @Value("${newsletter.jwt.secret}")
     private String SECRET;
     public static final String VALIDITY_CODE_KEY = "validityCode";
-    final UserService userService;
-
-    public JwtService(UserService userService) {
-        this.userService = userService;
-    }
 
     public String getUserIdFromToken(String token) {
         return extractClaim(token, Claims::getSubject);
