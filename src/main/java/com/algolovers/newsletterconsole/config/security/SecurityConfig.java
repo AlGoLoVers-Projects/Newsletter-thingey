@@ -38,6 +38,7 @@ public class SecurityConfig {
     final CustomOAuth2UserService customOAuth2UserService;
     final OAuth2SuccessHandler oAuth2SuccessHandler;
     final OAuth2FailureHandler oAuth2FailureHandler;
+    final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -58,7 +59,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(new RestAuthenticationEntryPoint()))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(restAuthenticationEntryPoint))
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize

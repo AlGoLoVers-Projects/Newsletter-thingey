@@ -12,14 +12,13 @@ import com.algolovers.newsletterconsole.utils.ControllerUtils;
 import com.algolovers.newsletterconsole.utils.CookieHelper;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Duration;
 
 import static com.algolovers.newsletterconsole.utils.Constants.AUTH_COOKIE_KEY;
 
@@ -80,6 +79,12 @@ public class AuthenticationController {
         response.addCookie(CookieHelper.generateExpiredCookie(AUTH_COOKIE_KEY));
 
         return ResponseEntity.ok(new Result<>(true, null, "Logged out successfully"));
+    }
+
+    @GetMapping("/{subPath}")
+    public ResponseEntity<Result<String>> handleInvalidSubPath(@PathVariable String subPath) {
+        String errorMessage = "Invalid sub-path: /api/auth/" + subPath;
+        return new ResponseEntity<>(new Result<>(false, null, errorMessage), HttpStatus.NOT_FOUND);
     }
 
 }
