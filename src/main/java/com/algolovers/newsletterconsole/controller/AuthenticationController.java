@@ -1,6 +1,7 @@
 package com.algolovers.newsletterconsole.controller;
 
 import com.algolovers.newsletterconsole.data.entity.user.User;
+import com.algolovers.newsletterconsole.data.model.AuthenticatedUserToken;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.LoginRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.UserCreationRequest;
@@ -19,6 +20,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 import static com.algolovers.newsletterconsole.utils.Constants.AUTH_COOKIE_KEY;
 
@@ -64,19 +67,22 @@ public class AuthenticationController {
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         if (!authentication.isAuthenticated()) {
-            return ResponseEntity.badRequest().body(new Result<>(false, null, "Error: Cannot authenticate user"));
+            return ResponseEntity.badRequest().body(new Result<>(false, null, "Cannot authenticate user, check credentials"));
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        User user = userService.generateCookieForAuthenticatedUser(authentication, response);
+        AuthenticatedUserToken authenticatedUserToken = userService.generateTokenForAuthenticatedUser(authentication, Optional.empty());
 
-        return ResponseEntity.ok(new Result<>(true, new LoginResponse(user.getDisplayName(), user.getAuthorities()), "Authentication successful"));
+        return ResponseEntity.ok(new Result<>(true,
+                new LoginResponse(
+                        authenticatedUserToken.getUser().getDisplayName(),
+                        authenticatedUserToken.getUser().getAuthorities(),
+                        authenticatedUserToken.getToken()), "Authentication successful"));
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<Result<String>> logout(HttpServletResponse response) {
-        CookieHelper.clearCookie(response, AUTH_COOKIE_KEY);
+    public ResponseEntity<Result<String>> logout() {
         return ResponseEntity.ok(new Result<>(true, null, "Logged out successfully"));
     }
 

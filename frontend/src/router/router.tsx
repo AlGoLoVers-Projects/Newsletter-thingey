@@ -12,6 +12,10 @@ export const router = createBrowserRouter([
         element: <div>Login</div>,
     },
     {
+        path: paths.oauthSuccess,
+        element: <div>OAuthSuccess</div>
+    },
+    {
         path: paths.signup,
         element: <div>Singup</div>,
     },

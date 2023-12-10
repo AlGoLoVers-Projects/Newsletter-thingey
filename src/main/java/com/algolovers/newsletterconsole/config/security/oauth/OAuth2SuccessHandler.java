@@ -1,5 +1,6 @@
 package com.algolovers.newsletterconsole.config.security.oauth;
 
+import com.algolovers.newsletterconsole.data.model.AuthenticatedUserToken;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -27,9 +29,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             return;
         }
 
-        super.clearAuthenticationAttributes(request); //TODO: Clear all cookies
-        userService.generateCookieForAuthenticatedUser(authentication, response);
+        super.clearAuthenticationAttributes(request);
+        AuthenticatedUserToken authenticatedUserToken = userService.generateTokenForAuthenticatedUser(authentication, Optional.empty());
 
-        getRedirectStrategy().sendRedirect(request, response, "/api/user/authorizedUserDetails");
+        getRedirectStrategy().sendRedirect(request, response, "/oauthSuccess?token=" + authenticatedUserToken);
     }
 }

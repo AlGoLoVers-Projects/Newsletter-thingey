@@ -4,13 +4,12 @@ import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
 import com.algolovers.newsletterconsole.utils.Constants;
-import com.algolovers.newsletterconsole.utils.CookieHelper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,12 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.Optional;
 
-import static com.algolovers.newsletterconsole.utils.Constants.AUTH_COOKIE_KEY;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Component
@@ -39,25 +34,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        if(processReactPages(request, response)) {
+        if (processReactPages(request, response)) {
             return;
         }
 
-        // Get authorization cookie and validate
-        Cookie[] cookies = request.getCookies();
-        String token;
+        // Get authorization token and validate
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        Optional<String> cookie = CookieHelper.retrieve(cookies, AUTH_COOKIE_KEY);
-
-        if (cookie.isEmpty()) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        token = URLDecoder.decode(cookie.get(), StandardCharsets.UTF_8);
-
-        if (isEmpty(token)) {
-            CookieHelper.clearCookie(response, AUTH_COOKIE_KEY);
+        if (Objects.isNull(token) || isEmpty(token)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -66,13 +50,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         User user = userService.loadUserById(userId);
 
         if (Objects.isNull(user)) {
-            CookieHelper.clearCookie(response, AUTH_COOKIE_KEY);
             filterChain.doFilter(request, response);
             return;
         }
 
         if (!jwtService.validateToken(token, user)) {
-            CookieHelper.clearCookie(response, AUTH_COOKIE_KEY);
             filterChain.doFilter(request, response);
             return;
         }

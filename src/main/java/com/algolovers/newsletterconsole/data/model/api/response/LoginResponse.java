@@ -16,4 +16,7 @@ public class LoginResponse {
 
     @JsonProperty("authorities")
     Collection<Authority> authorities;
+
+    @JsonProperty("token")
+    String token;
 }

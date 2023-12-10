@@ -20,7 +20,6 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        CookieHelper.clearCookie(response, OAUTH_COOKIE_NAME);
         getRedirectStrategy().sendRedirect(request, response, "/oAuth2Error?exception=" + exception.getMessage());
     }
 
