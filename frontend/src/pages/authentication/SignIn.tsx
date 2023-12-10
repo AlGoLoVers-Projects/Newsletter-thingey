@@ -14,8 +14,10 @@ import Container from '@mui/material/Container';
 import {paths} from "../../router/paths";
 import {DesignedBy} from "../../components/branding/DesignedBy";
 import {Card} from "@mui/material";
+import OrDivider from "../../components/elements/OrDivider";
+import GoogleAuthButton from "../../components/elements/GoogleAuthButton";
 
-export default function SignIn() {
+export default function SignIn(): React.ReactElement {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -96,6 +98,8 @@ export default function SignIn() {
                                 </Link>
                             </Grid>
                         </Grid>
+                        <OrDivider/>
+                        <GoogleAuthButton/>
                     </Box>
                 </Card>
                 <Grid container justifyContent="center">
@@ -106,8 +110,7 @@ export default function SignIn() {
                         </Link>
                     </Grid>
                 </Grid>
-
-                <DesignedBy sx={{mt: 8, mb: 4}}/>
+                <DesignedBy sx={{mt: 5}}/>
             </Box>
         </Container>
     );

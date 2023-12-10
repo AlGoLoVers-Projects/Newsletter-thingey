@@ -3,7 +3,6 @@ package com.algolovers.newsletterconsole.config.security.filters;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
-import com.algolovers.newsletterconsole.utils.Constants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,11 +33,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        if (processReactPages(request, response)) {
-            return;
-        }
-
-        // Get authorization token and validate
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (Objects.isNull(token) || isEmpty(token)) {
@@ -70,24 +64,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
-    }
-
-    private boolean processReactPages(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String requestURI = request.getRequestURI();
-
-        // Check if the request URI is in Constants.UNAUTHORIZED_NONSTATIC_API
-        boolean isAuthorizedNonStaticAPI = Constants.UNAUTHORIZED_NONSTATIC_API.stream().anyMatch(requestURI::startsWith);
-
-        // Check if the request URI starts with "/"
-        boolean isNonRootPath = !requestURI.equals("/");
-
-        // If none of these conditions are met, forward the request to "/"
-        if (!isAuthorizedNonStaticAPI && isNonRootPath) {
-            request.getRequestDispatcher("/").forward(request, response);
-            return true;
-        }
-
-        return false;
     }
 
 }

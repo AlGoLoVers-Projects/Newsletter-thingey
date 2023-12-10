@@ -2,8 +2,9 @@ export const paths = {
     home: '/',
     oauthSuccess: '/oauthSuccess',
     oauth2Failure: '/oauth2Failure',
-    signIn: '/singIn',
-    signUp: '/signUp',
+    signIn: '/signin',
+    signUp: '/singup',
+    oauth2Authentication: '/oauth2/authorization/google',
     notFound: '*'
 }
 

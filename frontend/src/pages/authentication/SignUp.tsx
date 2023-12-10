@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -13,7 +11,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {DesignedBy} from "../../components/branding/DesignedBy";
 import {paths} from "../../router/paths";
-import {Card} from "@mui/material";
+import {Alert, Card, Snackbar} from "@mui/material";
+import OrDivider from "../../components/elements/OrDivider";
+import GoogleAuthButton from "../../components/elements/GoogleAuthButton";
 
 export default function SignUp() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -92,10 +92,12 @@ export default function SignUp() {
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{mt: 3, mb: 2}}
+                            sx={{mt: 3, mb: 1}}
                         >
                             Sign Up
                         </Button>
+                        <OrDivider/>
+                        <GoogleAuthButton/>
                     </Box>
                 </Card>
                 <Grid container justifyContent="center">
@@ -106,6 +108,11 @@ export default function SignUp() {
                         </Link>
                     </Grid>
                 </Grid>
+                <Snackbar open={true} autoHideDuration={1000}>
+                    <Alert severity="success" sx={{ width: '100%' }}>
+                        This is a success message!
+                    </Alert>
+                </Snackbar>
                 <DesignedBy sx={{mt: 5}}/>
             </Box>
 

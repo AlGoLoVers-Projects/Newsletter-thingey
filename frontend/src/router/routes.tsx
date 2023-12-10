@@ -5,7 +5,6 @@ import SingIn from "../pages/authentication/SignIn";
 import OAuth2Success from "../pages/authentication/OAuth2Success";
 import OAuth2Failure from "../pages/authentication/OAuth2Failure";
 import Dashboard from "../pages/dashboard/Dashboard";
-import PageNotFound from "../pages/errors/NotFoundPage";
 import SignUp from "../pages/authentication/SignUp";
 
 export type Route = {
@@ -47,9 +46,4 @@ export const routes: Routes = [
         element: <Dashboard/>,
         authorised: true
     },
-    {
-        path: paths.notFound,
-        element: <PageNotFound/>,
-        authorised: false
-    }
 ];
