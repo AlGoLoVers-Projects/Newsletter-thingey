@@ -9,7 +9,6 @@ import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.UserCreationRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.VerificationRequest;
 import com.algolovers.newsletterconsole.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
@@ -57,13 +56,13 @@ public class UserService implements UserDetailsService {
 
     public Result<User> provisionNewUser(UserCreationRequest userCreationRequest) {
         try {
-            if (userRepository.existsByEmailAddress(userCreationRequest.getEmailAddress())) {
+            if (userRepository.existsByEmailAddress(userCreationRequest.getEmail())) {
                 return new Result<>(false, null, "Email is already in use");
             }
 
             User user = User.builder()
                     .displayName(userCreationRequest.getUserName())
-                    .emailAddress(userCreationRequest.getEmailAddress())
+                    .emailAddress(userCreationRequest.getEmail())
                     .authorities(Set.of(Authority.USER))
                     .authProvider(AuthProvider.local)
                     .password(passwordEncoder.encode(userCreationRequest.getPassword()))

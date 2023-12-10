@@ -3,15 +3,13 @@ package com.algolovers.newsletterconsole.controller;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.AuthenticatedUserToken;
 import com.algolovers.newsletterconsole.data.model.api.Result;
-import com.algolovers.newsletterconsole.data.model.api.request.LoginRequest;
+import com.algolovers.newsletterconsole.data.model.api.request.SignInRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.UserCreationRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.VerificationRequest;
 import com.algolovers.newsletterconsole.data.model.api.response.LoginResponse;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
 import com.algolovers.newsletterconsole.utils.ControllerUtils;
-import com.algolovers.newsletterconsole.utils.CookieHelper;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-
-import static com.algolovers.newsletterconsole.utils.Constants.AUTH_COOKIE_KEY;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -61,10 +57,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<Result<LoginResponse>> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Result<LoginResponse>> authenticateUser(@Valid @RequestBody SignInRequest signinRequest) {
 
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getEmail(), signinRequest.getPassword()));
 
         if (!authentication.isAuthenticated()) {
             return ResponseEntity.badRequest().body(new Result<>(false, null, "Cannot authenticate user, check credentials"));
