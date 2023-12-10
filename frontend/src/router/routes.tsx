@@ -1,18 +1,15 @@
 import {authorizedPaths, Path, paths} from "./paths";
 import React from "react";
-import ProtectedRoute from "./ProtectedRoute";
-import {RouteObject} from "react-router/dist/lib/context";
 
-
-type Route = {
+export type Route = {
     path: Path,
     element: React.ReactNode,
     authorised: boolean
 }
 
-type Routes = Route[]
+export type Routes = Route[]
 
-const routes: Routes = [
+export const routes: Routes = [
     {
         path: paths.home,
         element: <div>Home</div>,
@@ -49,12 +46,3 @@ const routes: Routes = [
         authorised: false
     }
 ];
-
-export const buildRoutes = (): RouteObject[] => {
-    return routes.map(({path, element, authorised}) => {
-        return {
-            path,
-            element: authorised ? <ProtectedRoute>{element}</ProtectedRoute> : element,
-        };
-    });
-}

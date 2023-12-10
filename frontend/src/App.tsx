@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import {useRoutes} from "react-router-dom";
-import {buildRoutes} from "./router/routes";
+import {buildRoutes} from "./router/route-builder";
 
 export default function App() {
   return useRoutes(buildRoutes());
