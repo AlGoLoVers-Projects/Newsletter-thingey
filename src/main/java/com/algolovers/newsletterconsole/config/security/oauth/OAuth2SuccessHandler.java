@@ -32,6 +32,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         super.clearAuthenticationAttributes(request);
         AuthenticatedUserToken authenticatedUserToken = userService.generateTokenForAuthenticatedUser(authentication, Optional.empty());
 
-        getRedirectStrategy().sendRedirect(request, response, "/oauthSuccess?token=" + authenticatedUserToken);
+        getRedirectStrategy().sendRedirect(request, response, "/oauthSuccess?token=" + authenticatedUserToken.getToken());
     }
 }

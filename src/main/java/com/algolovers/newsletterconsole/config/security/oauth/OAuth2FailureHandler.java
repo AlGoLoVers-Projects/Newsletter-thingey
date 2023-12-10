@@ -1,6 +1,5 @@
 package com.algolovers.newsletterconsole.config.security.oauth;
 
-import com.algolovers.newsletterconsole.utils.CookieHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -10,8 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static com.algolovers.newsletterconsole.utils.Constants.OAUTH_COOKIE_NAME;
-
 @Component
 @AllArgsConstructor
 public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler {
@@ -20,7 +17,7 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        getRedirectStrategy().sendRedirect(request, response, "/oAuth2Error?exception=" + exception.getMessage());
+        getRedirectStrategy().sendRedirect(request, response, "/oauth2Failure?exception=" + exception.getMessage());
     }
 
 }
