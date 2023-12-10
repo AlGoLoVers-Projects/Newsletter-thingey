@@ -11,19 +11,121 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {DesignedBy} from "../../components/branding/DesignedBy";
 import {paths} from "../../router/paths";
-import {Alert, Card, Snackbar} from "@mui/material";
+import {Card} from "@mui/material";
 import OrDivider from "../../components/elements/OrDivider";
 import GoogleAuthButton from "../../components/elements/GoogleAuthButton";
+import {SignupRequest, useSignUpMutation} from "./authentication.slice";
+import {isEmpty, isValidEmail, isValidName, isValidPassword} from "../../util/validation";
+import {useState} from "react";
+import {Result} from "../../types/result";
+import {ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function SignUp() {
+
+    const [signIn, {isLoading: isSigningIn}] = useSignUpMutation();
+
+    //TODO: Add loading spinner and block all buttons
+
+    const [displayNameError, setDisplayNameError] = useState<string>('');
+    const [emailError, setEmailError] = useState<string>('');
+    const [passwordError, setPasswordError] = useState<string>('');
+
+    const showSuccessToast = (message: string) => {
+        toast.success(message, {
+            position: toast.POSITION.TOP_RIGHT,
+        });
+    };
+
+    const showFailureToast = (message: string) => {
+        toast.error(message, {
+            position: toast.POSITION.TOP_RIGHT,
+        });
+    };
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-    };
+
+        const email = data.get('email')?.toString() ?? '';
+        const password = data.get('password')?.toString() ?? '';
+        const displayName = data.get('displayName')?.toString() ?? '';
+
+        let valid: boolean = true;
+
+        if (!email) {
+            setEmailError('Please enter an email address');
+            valid = false;  // Set to false if validation fails
+        } else if (!isValidEmail(email)) {
+            setEmailError('Please enter a valid email address');
+            valid = false;
+        } else {
+            setEmailError('');
+        }
+
+        if (!password) {
+            setPasswordError('Please enter a password');
+            valid = false;
+        } else if (password.length < 8) {
+            setPasswordError('Password must be at least 8 characters long');
+            valid = false;
+        } else if (!isValidPassword(password)) {
+            setPasswordError('Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character');
+            valid = false;
+        } else {
+            setPasswordError('');
+        }
+
+        if (!displayName) {
+            setDisplayNameError('Please enter a display name');
+            valid = false;
+        } else if (displayName.trim().length < 3) {
+            setDisplayNameError('Display name must have a minimum of 3 characters');
+            valid = false;
+        } else if (!isValidName(displayName)) {
+            setDisplayNameError('Display name can only contain letters, numbers, spaces, and underscores');
+            valid = false;
+        } else {
+            setDisplayNameError('');
+        }
+
+        if (valid) {
+            const signupRequest: SignupRequest = {
+                userName: displayName,
+                password: password,
+                email: email
+            };
+
+            signIn(signupRequest)
+                .then((response) => {
+                    if ('data' in response) {
+                        let responseData: Result<null> = response.data
+                        console.log(responseData)
+                        if (responseData.success) {
+                            showSuccessToast(responseData.message ?? 'Registration successfully')
+                            //TODO: Redirect
+                        } else {
+                            showFailureToast(responseData.message ?? 'Registration, please check credentials')
+                        }
+                    } else {
+                        console.log(response)
+                        let responseData: Result<null> = (response.error as any).data
+                        showFailureToast(responseData.message ?? 'Registration failed, please check credentials')
+                    }
+                })
+                .catch((error) => {
+                    let responseData: Result<null> = error.error;
+                    console.log(responseData)
+                    showFailureToast(responseData.message ?? 'Registration failed, please check credentials')
+                })
+
+            console.log({
+                email: email,
+                password: password,
+                displayName: displayName
+            });
+        }
+    }
 
     return (
         <Container
@@ -36,6 +138,7 @@ export default function SignUp() {
                 minHeight: "100vh"
             }}
         >
+            <ToastContainer/>
             <CssBaseline/>
             <Box>
                 <Card
@@ -57,7 +160,7 @@ export default function SignUp() {
                         Sign up to Newsletter
                     </Typography>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
-                        <Grid container spacing={2}>
+                        <Grid container spacing={3}>
                             <Grid item xs={12}>
                                 <TextField
                                     autoComplete="given-name"
@@ -67,6 +170,8 @@ export default function SignUp() {
                                     id="displayName"
                                     label="Display Name"
                                     autoFocus
+                                    error={!isEmpty(displayNameError)}
+                                    helperText={displayNameError}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -77,6 +182,8 @@ export default function SignUp() {
                                     label="Email Address"
                                     name="email"
                                     autoComplete="email"
+                                    error={!isEmpty(emailError)}
+                                    helperText={emailError}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -88,6 +195,8 @@ export default function SignUp() {
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
+                                    error={!isEmpty(passwordError)}
+                                    helperText={passwordError}
                                 />
                             </Grid>
                         </Grid>
@@ -107,15 +216,10 @@ export default function SignUp() {
                     <Grid item sx={{mt: 1, mb: 1}}>
                         Already have an account?
                         <Link href={paths.signIn} variant="body2" sx={{pl: 0.5}}>
-                             Sign in
+                            Sign in
                         </Link>
                     </Grid>
                 </Grid>
-                <Snackbar open={true} autoHideDuration={1000}>
-                    <Alert severity="success" sx={{ width: '100%' }}>
-                        This is a success message!
-                    </Alert>
-                </Snackbar>
                 <DesignedBy sx={{mt: 5}}/>
             </Box>
 

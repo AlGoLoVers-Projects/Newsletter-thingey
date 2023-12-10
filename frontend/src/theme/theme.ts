@@ -42,7 +42,7 @@ export const buildTheme = (): Theme => {
                 default: "#161718",
             },
             error: {
-                main: "#ff1919",
+                main: "#ff5656",
             },
             text: {
                 primary: "#fff",
