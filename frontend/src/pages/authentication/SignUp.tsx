@@ -18,30 +18,19 @@ import {SignupRequest, useSignUpMutation} from "./authentication.slice";
 import {isEmpty, isValidEmail, isValidName, isValidPassword} from "../../util/validation";
 import {useState} from "react";
 import {Result} from "../../types/result";
-import {ToastContainer, toast} from 'react-toastify';
+import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {showFailureToast, showSuccessToast} from "../../util/toasts";
 
 export default function SignUp() {
 
-    const [signIn, {isLoading: isSigningIn}] = useSignUpMutation();
+    const [signUp, {isLoading: isSigningUp}] = useSignUpMutation();
 
     //TODO: Add loading spinner and block all buttons
 
     const [displayNameError, setDisplayNameError] = useState<string>('');
     const [emailError, setEmailError] = useState<string>('');
     const [passwordError, setPasswordError] = useState<string>('');
-
-    const showSuccessToast = (message: string) => {
-        toast.success(message, {
-            position: toast.POSITION.TOP_RIGHT,
-        });
-    };
-
-    const showFailureToast = (message: string) => {
-        toast.error(message, {
-            position: toast.POSITION.TOP_RIGHT,
-        });
-    };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -55,7 +44,7 @@ export default function SignUp() {
 
         if (!email) {
             setEmailError('Please enter an email address');
-            valid = false;  // Set to false if validation fails
+            valid = false;
         } else if (!isValidEmail(email)) {
             setEmailError('Please enter a valid email address');
             valid = false;
@@ -96,34 +85,25 @@ export default function SignUp() {
                 email: email
             };
 
-            signIn(signupRequest)
+            signUp(signupRequest)
                 .then((response) => {
                     if ('data' in response) {
                         let responseData: Result<null> = response.data
-                        console.log(responseData)
                         if (responseData.success) {
                             showSuccessToast(responseData.message ?? 'Registration successfully')
                             //TODO: Redirect
                         } else {
-                            showFailureToast(responseData.message ?? 'Registration, please check credentials')
+                            showFailureToast(responseData.message ?? 'Registration failed, please check credentials')
                         }
                     } else {
-                        console.log(response)
                         let responseData: Result<null> = (response.error as any).data
                         showFailureToast(responseData.message ?? 'Registration failed, please check credentials')
                     }
                 })
                 .catch((error) => {
                     let responseData: Result<null> = error.error;
-                    console.log(responseData)
                     showFailureToast(responseData.message ?? 'Registration failed, please check credentials')
                 })
-
-            console.log({
-                email: email,
-                password: password,
-                displayName: displayName
-            });
         }
     }
 

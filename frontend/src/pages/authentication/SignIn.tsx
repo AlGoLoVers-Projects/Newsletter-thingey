@@ -11,20 +11,89 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import {paths} from "../../router/paths";
+import {authorizedPaths, paths} from "../../router/paths";
 import {DesignedBy} from "../../components/branding/DesignedBy";
 import {Card} from "@mui/material";
 import OrDivider from "../../components/elements/OrDivider";
 import GoogleAuthButton from "../../components/elements/GoogleAuthButton";
+import {SignInRequest, SignInResponse, useSignInMutation} from "./authentication.slice";
+import {useState} from "react";
+import {isEmpty, isValidEmail} from "../../util/validation";
+import {Result} from "../../types/result";
+import {showFailureToast, showSuccessToast} from "../../util/toasts";
+import {useDispatch} from "react-redux";
+import {setToken} from "../../redux/rootslices/auth-token-slice";
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {useNavigate} from "react-router-dom";
+
 
 export default function SignIn(): React.ReactElement {
+
+    const [signIn, {isLoading: isSigningIn}] = useSignInMutation();
+
+    const dispatch = useDispatch();
+    let navigate = useNavigate();
+
+    //TODO: Add loading spinner and block all buttons
+
+    const [emailError, setEmailError] = useState<string>('');
+    const [passwordError, setPasswordError] = useState<string>('');
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+
+        const email = data.get('email')?.toString() ?? '';
+        const password = data.get('password')?.toString() ?? '';
+
+        let valid: boolean = true;
+
+        if (!email) {
+            setEmailError('Please enter an email address');
+            valid = false;
+        } else if (!isValidEmail(email)) {
+            setEmailError('Please enter a valid email address');
+            valid = false;
+        } else {
+            setEmailError('');
+        }
+
+        if (!password) {
+            setPasswordError('Please enter a password');
+            valid = false;
+        } else {
+            setPasswordError('');
+        }
+
+        if (valid) {
+            const signInRequest: SignInRequest = {
+                password: password,
+                email: email
+            };
+
+            signIn(signInRequest)
+                .then((response) => {
+                    if ('data' in response) {
+                        let responseData: Result<SignInResponse> = response.data
+                        if (responseData.success) {
+                            showSuccessToast(responseData.message ?? 'Signed in successfully')
+                            dispatch(setToken(responseData.data.token));
+                            navigate(authorizedPaths.dashboard)
+                        } else {
+                            showFailureToast(responseData.message ?? 'Sign in failed, please check credentials')
+                        }
+                    } else {
+                        let responseData: Result<null> = (response.error as any).data
+                        showFailureToast(responseData.message ?? 'Sign in failed, please check credentials')
+                    }
+                })
+                .catch((error) => {
+                    let responseData: Result<null> = error.error;
+                    showFailureToast(responseData.message ?? 'Sign in failed, please check credentials')
+                })
+        }
+
     };
 
     return (
@@ -38,6 +107,7 @@ export default function SignIn(): React.ReactElement {
                 minHeight: "100vh"
             }}
         >
+            <ToastContainer/>
             <CssBaseline/>
             <Box>
                 <Card
@@ -68,6 +138,8 @@ export default function SignIn(): React.ReactElement {
                             name="email"
                             autoComplete="email"
                             autoFocus
+                            error={!isEmpty(emailError)}
+                            helperText={emailError}
                         />
                         <TextField
                             margin="normal"
@@ -78,6 +150,8 @@ export default function SignIn(): React.ReactElement {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            error={!isEmpty(passwordError)}
+                            helperText={passwordError}
                         />
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary"/>}

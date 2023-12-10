@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import {Result} from "../../types/result";
 
-type LoginRequest = {
+export type SignInRequest = {
     email: string;
     password: string;
 };
 
-export type LoginResponse = {
+export type SignInResponse = {
     displayName: string;
     authorities: string[];
     token: string;
@@ -22,7 +22,7 @@ export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery(),
     endpoints: (builder) => ({
-        signIn: builder.mutation<Result<LoginResponse>, LoginRequest>({
+        signIn: builder.mutation<Result<SignInResponse>, SignInRequest>({
             query: (credentials) => ({
                 url: '/api/auth/signin',
                 method: 'POST',
