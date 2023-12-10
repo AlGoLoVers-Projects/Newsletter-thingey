@@ -78,7 +78,7 @@ public class SecurityConfig {
                     config.redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig.baseUri("/oauth2/callback/*")); //Redirects back to this URL, receive all
                     config.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService)); //Reaches this point when user is authorized and user info is fetched, user saving is done her
                     config.successHandler(oAuth2SuccessHandler); //handle success, set cookie, redirect.
-                    config.failureHandler(oAuth2FailureHandler); //handle failure, clear cookie, redirect to login
+                    config.failureHandler(oAuth2FailureHandler); //handle failure, clear cookie, redirect to sign up
                 })
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

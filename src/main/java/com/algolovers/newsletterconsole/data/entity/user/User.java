@@ -60,7 +60,7 @@ public class User implements UserDetails, OAuth2User {
     @Enumerated(EnumType.STRING)
     AuthProvider authProvider;
 
-    //Only for intermediate oauth login
+    //Only for intermediate oauth signup
     @Transient
     private Map<String, Object> attributes;
 

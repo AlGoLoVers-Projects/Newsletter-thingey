@@ -2,8 +2,8 @@ export const paths = {
     home: '/',
     oauthSuccess: '/oauthSuccess',
     oauth2Failure: '/oauth2Failure',
-    login: '/login',
-    signup: '/signup',
+    signIn: '/singIn',
+    signUp: '/signUp',
     notFound: '*'
 }
 

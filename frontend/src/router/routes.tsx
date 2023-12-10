@@ -1,12 +1,12 @@
 import {authorizedPaths, Path, paths} from "./paths";
 import React from "react";
 import Home from "../pages/home/Home";
-import Login from "../pages/authentication/Login";
-import Signup from "../pages/authentication/Signup";
+import SingIn from "../pages/authentication/SignIn";
 import OAuth2Success from "../pages/authentication/OAuth2Success";
 import OAuth2Failure from "../pages/authentication/OAuth2Failure";
 import Dashboard from "../pages/dashboard/Dashboard";
 import PageNotFound from "../pages/errors/NotFoundPage";
+import SignUp from "../pages/authentication/SignUp";
 
 export type Route = {
     path: Path,
@@ -23,13 +23,13 @@ export const routes: Routes = [
         authorised: false
     },
     {
-        path: paths.login,
-        element: <Login/>,
+        path: paths.signIn,
+        element: <SingIn/>,
         authorised: false
     },
     {
-        path: paths.signup,
-        element: <Signup/>,
+        path: paths.signUp,
+        element: <SignUp/>,
         authorised: false
     },
     {

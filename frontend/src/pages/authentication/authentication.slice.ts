@@ -16,7 +16,7 @@ export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery(),
     endpoints: (builder) => ({
-        login: builder.mutation<Result<LoginResponse>, LoginRequest>({
+        signIn: builder.mutation<Result<LoginResponse>, LoginRequest>({
             query: (credentials) => ({
                 url: '/api/auth/signin',
                 method: 'POST',
@@ -26,6 +26,6 @@ export const apiSlice = createApi({
     }),
 });
 
-export const { useLoginMutation } = apiSlice;
+export const { useSignInMutation } = apiSlice;
 export const { endpoints } = apiSlice;
-export const { login } = endpoints;
+export const { signIn } = endpoints;

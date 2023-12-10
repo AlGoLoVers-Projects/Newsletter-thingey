@@ -11,7 +11,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
     if (!token) {
         alert("Not authorised")
-        return <Navigate to={paths.login} />;
+        return <Navigate to={paths.signIn} />;
     }
 
     return <>{children}</>;
