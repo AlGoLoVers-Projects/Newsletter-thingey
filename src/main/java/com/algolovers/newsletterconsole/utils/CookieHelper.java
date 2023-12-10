@@ -1,6 +1,8 @@
 package com.algolovers.newsletterconsole.utils;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 
 import java.net.URLDecoder;
@@ -38,8 +40,12 @@ public class CookieHelper {
         return cookie;
     }
 
-    public static Cookie generateExpiredCookie(@NonNull String name) {
+    private static Cookie generateExpiredCookie(@NonNull String name) {
         return generateCookie(name, "", Duration.ZERO);
+    }
+
+    public static void clearCookie( @NotNull HttpServletResponse response, @NonNull String name) {
+        response.addCookie(generateExpiredCookie(name));
     }
 
 }

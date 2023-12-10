@@ -152,11 +152,13 @@ public class UserService implements UserDetailsService {
     }
 
     public User registerNewOAuthUser(OAuth2UserRequest oAuth2UserRequest, GoogleOAuthUserInfo oAuth2UserInfo) {
-        User user = new User();
+        User user = User.builder()
+                .displayName(oAuth2UserInfo.getName())
+                .emailAddress(oAuth2UserInfo.getEmail())
+                .authorities(Set.of(Authority.USER))
+                .authProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))
+                .build();
 
-        user.setAuthProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
-        user.setDisplayName(oAuth2UserInfo.getName());
-        user.setEmailAddress(oAuth2UserInfo.getEmail());
         return userRepository.save(user);
     }
 

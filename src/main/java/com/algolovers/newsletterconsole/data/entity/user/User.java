@@ -54,10 +54,8 @@ public class User implements UserDetails, OAuth2User {
     @JsonIgnore
     Long passwordResetCode;
 
-    @ElementCollection(targetClass = Authority.class, fetch = FetchType.EAGER)
-    @JoinTable(name = "authority", joinColumns = @JoinColumn(name = "id"))
-    @Enumerated(EnumType.STRING)
-    Set<Authority> authorities;
+    @Convert(converter = AuthoritySetConverter.class)
+    private Set<Authority> authorities;
 
     @Enumerated(EnumType.STRING)
     AuthProvider authProvider;

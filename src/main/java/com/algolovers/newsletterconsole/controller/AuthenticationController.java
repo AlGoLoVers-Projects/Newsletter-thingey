@@ -76,8 +76,7 @@ public class AuthenticationController {
 
     @GetMapping("/logout")
     public ResponseEntity<Result<String>> logout(HttpServletResponse response) {
-        response.addCookie(CookieHelper.generateExpiredCookie(AUTH_COOKIE_KEY));
-
+        CookieHelper.clearCookie(response, AUTH_COOKIE_KEY);
         return ResponseEntity.ok(new Result<>(true, null, "Logged out successfully"));
     }
 

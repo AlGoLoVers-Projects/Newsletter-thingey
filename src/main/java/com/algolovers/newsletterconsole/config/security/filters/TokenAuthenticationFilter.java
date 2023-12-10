@@ -57,6 +57,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         token = URLDecoder.decode(cookie.get(), StandardCharsets.UTF_8);
 
         if (isEmpty(token)) {
+            CookieHelper.clearCookie(response, AUTH_COOKIE_KEY);
             filterChain.doFilter(request, response);
             return;
         }
@@ -65,11 +66,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         User user = userService.loadUserById(userId);
 
         if (Objects.isNull(user)) {
+            CookieHelper.clearCookie(response, AUTH_COOKIE_KEY);
             filterChain.doFilter(request, response);
             return;
         }
 
         if (!jwtService.validateToken(token, user)) {
+            CookieHelper.clearCookie(response, AUTH_COOKIE_KEY);
             filterChain.doFilter(request, response);
             return;
         }
