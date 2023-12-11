@@ -140,9 +140,8 @@ export default function SignUp() {
                         Sign up to Newsletter
                     </Typography>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
                                 <TextField
+                                    margin="normal"
                                     autoComplete="given-name"
                                     name="displayName"
                                     required
@@ -153,9 +152,8 @@ export default function SignUp() {
                                     error={!isEmpty(displayNameError)}
                                     helperText={displayNameError}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
                                 <TextField
+                                    margin="normal"
                                     required
                                     fullWidth
                                     id="email"
@@ -165,9 +163,8 @@ export default function SignUp() {
                                     error={!isEmpty(emailError)}
                                     helperText={emailError}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
                                 <TextField
+                                    margin="normal"
                                     required
                                     fullWidth
                                     name="password"
@@ -178,8 +175,6 @@ export default function SignUp() {
                                     error={!isEmpty(passwordError)}
                                     helperText={passwordError}
                                 />
-                            </Grid>
-                        </Grid>
                         <Button
                             type="submit"
                             fullWidth
@@ -202,7 +197,6 @@ export default function SignUp() {
                 </Grid>
                 <DesignedBy sx={{mt: 5}}/>
             </Box>
-
         </Container>
     );
 }

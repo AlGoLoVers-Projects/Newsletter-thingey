@@ -128,7 +128,7 @@ export default function SignIn(): React.ReactElement {
                     }}>
                         Sign in to Newsletter
                     </Typography>
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 3}}>
                         <TextField
                             margin="normal"
                             required
