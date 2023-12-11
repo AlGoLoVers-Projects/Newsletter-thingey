@@ -20,10 +20,14 @@ import {useState} from "react";
 import {Result} from "../../types/result";
 import 'react-toastify/dist/ReactToastify.css';
 import {showFailureToast, showSuccessToast} from "../../util/toasts";
+import {useNavigate} from "react-router-dom";
 
 export default function SignUp() {
 
     const [signUp, {isLoading: isSigningUp}] = useSignUpMutation();
+
+    const navigation = useNavigate()
+
 
     //TODO: Add loading spinner and block all buttons
 
@@ -90,7 +94,7 @@ export default function SignUp() {
                         let responseData: Result<null> = response.data
                         if (responseData.success) {
                             showSuccessToast(responseData.message ?? 'Registration successfully')
-                            //TODO: Redirect
+                            navigation(paths.verification + `?email=${email}`)
                         } else {
                             showFailureToast(responseData.message ?? 'Registration failed, please check credentials')
                         }
@@ -141,41 +145,41 @@ export default function SignUp() {
                         Sign up to Newsletter
                     </Typography>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
-                                <TextField
-                                    margin="normal"
-                                    autoComplete="given-name"
-                                    name="displayName"
-                                    required
-                                    fullWidth
-                                    id="displayName"
-                                    label="Display Name"
-                                    autoFocus
-                                    error={!isEmpty(displayNameError)}
-                                    helperText={displayNameError}
-                                />
-                                <TextField
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    id="email"
-                                    label="Email Address"
-                                    name="email"
-                                    autoComplete="email"
-                                    error={!isEmpty(emailError)}
-                                    helperText={emailError}
-                                />
-                                <TextField
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    id="password"
-                                    autoComplete="new-password"
-                                    error={!isEmpty(passwordError)}
-                                    helperText={passwordError}
-                                />
+                        <TextField
+                            margin="normal"
+                            autoComplete="given-name"
+                            name="displayName"
+                            required
+                            fullWidth
+                            id="displayName"
+                            label="Display Name"
+                            autoFocus
+                            error={!isEmpty(displayNameError)}
+                            helperText={displayNameError}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email Address"
+                            name="email"
+                            autoComplete="email"
+                            error={!isEmpty(emailError)}
+                            helperText={emailError}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="new-password"
+                            error={!isEmpty(passwordError)}
+                            helperText={passwordError}
+                        />
                         <Button
                             type="submit"
                             fullWidth

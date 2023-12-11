@@ -116,16 +116,20 @@ public class UserService implements UserDetailsService {
                 return new Result<>(false, null, "Verification token has expired");
             }
 
-            if (user.getEmailAddress().equals(verificationRequest.getEmail())
-                    && user.getAccountVerificationCode().equals(verificationRequest.getVerificationCode())) {
-                user.setVerified();
-                userRepository.save(user);
-                return new Result<User>(true, user, "User verified successfully");
+            if (!user.getEmailAddress().equals(verificationRequest.getEmail())) {
+                return new Result<>(false, null, "Incorrect email address attached");
+            }
+
+            if(!user.getAccountVerificationCode().equals(verificationRequest.getVerificationCode())) {
+                return new Result<>(false, null, "Incorrect verification code");
             }
 
             //TODO: Send creation success email
 
-            return new Result<>(false, null, "Verification failed, please check your email and verification code");
+            user.setVerified();
+            userRepository.save(user);
+            return new Result<>(true, user, "User verified successfully");
+
         } catch (Exception e) {
             return new Result<>(false, null, "An unexpected error occurred during user verification: " + e.getMessage());
         }

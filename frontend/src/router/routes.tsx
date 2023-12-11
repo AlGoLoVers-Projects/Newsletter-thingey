@@ -6,6 +6,7 @@ import OAuth2Success from "../pages/authentication/OAuth2Success";
 import OAuth2Failure from "../pages/authentication/OAuth2Failure";
 import Dashboard from "../pages/dashboard/Dashboard";
 import SignUp from "../pages/authentication/SignUp";
+import Verification from "../pages/authentication/Verification";
 
 export type Route = {
     path: Path,
@@ -29,6 +30,11 @@ export const routes: Routes = [
     {
         path: paths.signUp,
         element: <SignUp/>,
+        authorised: false
+    },
+    {
+        path: paths.verification,
+        element: <Verification/>,
         authorised: false
     },
     {

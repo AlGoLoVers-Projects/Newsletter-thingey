@@ -18,6 +18,11 @@ export type SignupRequest = {
     password: string;
 };
 
+export type VerificationRequest = {
+    email: string;
+    verificationCode: number;
+};
+
 export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery(),
@@ -36,9 +41,16 @@ export const apiSlice = createApi({
                 body: credentials,
             }),
         }),
+        verify: builder.mutation<Result<null>, VerificationRequest>({
+            query: (credentials) => ({
+                url: '/api/auth/verify',
+                method: 'POST',
+                body: credentials,
+            }),
+        }),
     }),
 });
 
-export const { useSignInMutation, useSignUpMutation } = apiSlice;
+export const { useSignInMutation, useSignUpMutation, useVerifyMutation } = apiSlice;
 export const { endpoints } = apiSlice;
-export const { signIn, signUp } = endpoints;
+export const { signIn, signUp, verify } = endpoints;
