@@ -3,6 +3,7 @@ export const paths = {
     oauthSuccess: '/oauthSuccess',
     oauth2Failure: '/oauth2Failure',
     signIn: '/signin',
+    contactUs: '/contactUs',
     signUp: '/signup',
     oauth2Authentication: '/oauth2/authorization/google',
     notFound: '*'

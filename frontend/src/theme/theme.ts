@@ -1,4 +1,4 @@
-import { createTheme, Theme } from "@mui/material";
+import {createTheme, Theme} from "@mui/material";
 
 export const buildTheme = (): Theme => {
     return createTheme({
@@ -6,11 +6,16 @@ export const buildTheme = (): Theme => {
             MuiButton: {
                 styleOverrides: {
                     root: {
-                        borderRadius: 12,
-                        padding: '12px 24px',
+                        padding: '8px 18px',
                     },
                     containedPrimary: {
                         color: '#fff',
+                    },
+                    outlined: {
+                        borderWidth: 2,
+                        "&:hover": {
+                            borderWidth: 2, // Adjust the thickness on hover
+                        },
                     },
                 },
             },
