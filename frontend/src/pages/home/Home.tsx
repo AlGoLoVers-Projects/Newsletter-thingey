@@ -7,7 +7,7 @@ import {Newspaper} from "@mui/icons-material";
 import bg from "../../assets/pictures/newsletter.jpg";
 import Typography from "@mui/material/Typography";
 import {useNavigate} from "react-router-dom";
-import {authorizedPaths, paths} from "../../router/paths";
+import {paths} from "../../router/paths";
 
 export default function Home(): React.ReactElement {
     let navigate = useNavigate();

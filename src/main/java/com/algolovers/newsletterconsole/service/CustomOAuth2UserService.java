@@ -46,8 +46,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             if (!user.getAuthProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
                 throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
-                        user.getAuthProvider() + " account. Please use your " + user.getAuthProvider() +
-                        " account to sign up.");
+                        user.getAuthProvider() + " account. Please use your google account to sign up.");
             }
 
             user = userService.updateExistingUser(user, oAuth2UserInfo);
