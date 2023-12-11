@@ -23,7 +23,6 @@ import {Result} from "../../types/result";
 import {showFailureToast, showSuccessToast} from "../../util/toasts";
 import {useDispatch} from "react-redux";
 import {setToken} from "../../redux/rootslices/auth-token-slice";
-import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate} from "react-router-dom";
 
@@ -107,7 +106,6 @@ export default function SignIn(): React.ReactElement {
                 minHeight: "100vh"
             }}
         >
-            <ToastContainer/>
             <CssBaseline/>
             <Box>
                 <Card
@@ -164,6 +162,7 @@ export default function SignIn(): React.ReactElement {
                             type="submit"
                             fullWidth
                             variant="contained"
+                            disabled={isSigningIn}
                             sx={{mt: 3, mb: 1}}
                         >
                             Sign In
@@ -176,7 +175,7 @@ export default function SignIn(): React.ReactElement {
                             </Grid>
                         </Grid>
                         <OrDivider/>
-                        <GoogleAuthButton/>
+                        <GoogleAuthButton disabled={isSigningIn}/>
                     </Box>
                 </Card>
                 <Grid container justifyContent="center">

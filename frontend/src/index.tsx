@@ -7,6 +7,7 @@ import {Provider} from "react-redux";
 import store from "./redux/store";
 import {ThemeProvider} from "@mui/material";
 import {buildTheme} from "./theme/theme";
+import {ToastContainer} from "react-toastify";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -16,6 +17,7 @@ root.render(
         <Provider store={store}>
             <BrowserRouter>
                 <ThemeProvider theme={buildTheme()}>
+                    <ToastContainer/>
                     <App/>
                 </ThemeProvider>
             </BrowserRouter>

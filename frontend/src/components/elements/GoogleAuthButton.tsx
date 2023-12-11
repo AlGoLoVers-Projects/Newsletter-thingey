@@ -3,12 +3,13 @@ import Button from "@mui/material/Button";
 import {GoogleLogo} from "./GoogleLogo";
 import {paths} from "../../router/paths";
 
-const GoogleAuthButton = () => {
+const GoogleAuthButton = (props: {disabled: boolean}) => {
 
     return (
         <Button
             variant="contained"
             fullWidth
+            disabled={props.disabled}
             sx={{
                 p: 0
             }}

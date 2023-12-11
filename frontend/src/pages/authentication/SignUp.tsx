@@ -18,7 +18,6 @@ import {SignupRequest, useSignUpMutation} from "./authentication.slice";
 import {isEmpty, isValidEmail, isValidName, isValidPassword} from "../../util/validation";
 import {useState} from "react";
 import {Result} from "../../types/result";
-import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {showFailureToast, showSuccessToast} from "../../util/toasts";
 
@@ -182,11 +181,12 @@ export default function SignUp() {
                             fullWidth
                             variant="contained"
                             sx={{mt: 3, mb: 1}}
+                            disabled={isSigningUp}
                         >
                             Sign Up
                         </Button>
                         <OrDivider/>
-                        <GoogleAuthButton/>
+                        <GoogleAuthButton disabled={isSigningUp}/>
                     </Box>
                 </Card>
                 <Grid container justifyContent="center">
