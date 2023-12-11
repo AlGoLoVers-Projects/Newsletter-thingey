@@ -112,7 +112,10 @@ export default function SignIn(): React.ReactElement {
             <Box>
                 <Card
                     sx={{
-                        padding: 6,
+                        paddingLeft: {xs: 1, sm: 6},
+                        paddingRight: {xs: 1, sm: 6},
+                        paddingTop: 6,
+                        paddingBottom: 6,
                         borderRadius: 4,
                         display: 'flex',
                         flexDirection: 'column',

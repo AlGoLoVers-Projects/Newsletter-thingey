@@ -95,7 +95,6 @@ export default function Home(): React.ReactElement {
                 zIndex: 100,
                 flex: 1,
                 display: "flex",
-                maxHeight: "min-content",
                 alignItems: "center",
                 justifyContent: "space-around"
             }}>
