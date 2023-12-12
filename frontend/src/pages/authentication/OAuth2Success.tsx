@@ -6,24 +6,32 @@ import {authorizedPaths, paths} from "../../router/paths";
 import {useNavigate} from "react-router-dom";
 import {useLocation} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {setToken} from "../../redux/rootslices/auth-token-slice";
+import {AuthData, setAuthData} from "../../redux/rootslices/auth-data-slice";
+import {validateAuthData} from "../../util/validation";
 
 export default function OAuth2Success(): React.ReactElement {
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
     const queryParams = new URLSearchParams(location.search);
-    const token = queryParams.get("token");
+    const data = queryParams.get("data");
     useEffect(() => {
-        if (!token) {
-            navigate(paths.oauth2Failure + "?exception=Could not authorize user, authentication token not found")
+        if (!data) {
+            navigate(paths.oauth2Failure + "?exception=Could not authorize user, authentication token not found.")
         } else {
-            dispatch(setToken(token));
-            setTimeout(() => {
-                navigate(authorizedPaths.dashboard)
-            }, 400)
+            const json = atob(data);
+            const authData: AuthData = JSON.parse(json);
+
+            if (validateAuthData(authData)) {
+                dispatch(setAuthData(authData));
+                setTimeout(() => {
+                    navigate(authorizedPaths.dashboard)
+                }, 400)
+            } else {
+                navigate(paths.oauth2Failure + "?exception=Could not decode user information, please try signing in again.")
+            }
         }
-    }, [token])
+    }, [data])
 
     return (
         <Container

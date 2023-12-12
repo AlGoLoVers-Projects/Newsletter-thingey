@@ -1,15 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import {Result} from "../../types/result";
+import {AuthData} from "../../redux/rootslices/auth-data-slice";
 
 export type SignInRequest = {
     email: string;
     password: string;
-};
-
-export type SignInResponse = {
-    displayName: string;
-    authorities: string[];
-    token: string;
 };
 
 export type SignupRequest = {
@@ -27,7 +22,7 @@ export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery(),
     endpoints: (builder) => ({
-        signIn: builder.mutation<Result<SignInResponse>, SignInRequest>({
+        signIn: builder.mutation<Result<AuthData>, SignInRequest>({
             query: (credentials) => ({
                 url: '/api/auth/signin',
                 method: 'POST',

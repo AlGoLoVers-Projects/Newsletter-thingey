@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import {paths} from "./paths";
 import {useSelector} from "react-redux";
-import {selectToken} from "../redux/rootslices/auth-token-slice";
+import {selectToken} from "../redux/rootslices/auth-data-slice";
 
 type ProtectedRouteProps = {
     children: ReactNode;

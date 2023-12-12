@@ -16,15 +16,15 @@ import {DesignedBy} from "../../components/branding/DesignedBy";
 import {Card} from "@mui/material";
 import OrDivider from "../../components/elements/OrDivider";
 import GoogleAuthButton from "../../components/elements/GoogleAuthButton";
-import {SignInRequest, SignInResponse, useSignInMutation} from "./authentication.slice";
+import {SignInRequest, useSignInMutation} from "./authentication.slice";
 import {useState} from "react";
-import {isEmpty, isValidEmail} from "../../util/validation";
+import {isEmpty, isValidEmail, validateAuthData} from "../../util/validation";
 import {Result} from "../../types/result";
 import {showFailureToast, showSuccessToast} from "../../util/toasts";
 import {useDispatch} from "react-redux";
-import {setToken} from "../../redux/rootslices/auth-token-slice";
 import 'react-toastify/dist/ReactToastify.css';
 import {useNavigate} from "react-router-dom";
+import {AuthData, setAuthData} from "../../redux/rootslices/auth-data-slice";
 
 
 export default function SignIn(): React.ReactElement {
@@ -74,11 +74,15 @@ export default function SignIn(): React.ReactElement {
             signIn(signInRequest)
                 .then((response) => {
                     if ('data' in response) {
-                        let responseData: Result<SignInResponse> = response.data
+                        let responseData: Result<AuthData> = response.data
                         if (responseData.success) {
-                            showSuccessToast(responseData.message ?? 'Signed in successfully')
-                            dispatch(setToken(responseData.data.token));
-                            navigate(authorizedPaths.dashboard)
+                            if(validateAuthData(responseData.data)) {
+                                showSuccessToast(responseData.message ?? 'Signed in successfully')
+                                dispatch(setAuthData(responseData.data));
+                                navigate(authorizedPaths.dashboard)
+                            } else {
+                                showFailureToast(responseData.message ?? 'Could not decode user information, please try signing in again')
+                            }
                         } else {
                             showFailureToast(responseData.message ?? 'Sign in failed, please check credentials')
                         }

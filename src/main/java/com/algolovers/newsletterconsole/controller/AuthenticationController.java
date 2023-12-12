@@ -74,6 +74,7 @@ public class AuthenticationController {
                 new LoginResponse(
                         authenticatedUserToken.getUser().getDisplayName(),
                         authenticatedUserToken.getUser().getAuthorities(),
+                        authenticatedUserToken.getUser().getProfilePicture(),
                         authenticatedUserToken.getToken()), "Authentication successful"));
     }
 
