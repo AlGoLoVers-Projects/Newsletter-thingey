@@ -161,10 +161,6 @@ export default function SignIn(): React.ReactElement {
                             error={!isEmpty(passwordError)}
                             helperText={passwordError}
                         />
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary"/>}
-                            label="Remember me"
-                        />
                         <Button
                             type="submit"
                             fullWidth
