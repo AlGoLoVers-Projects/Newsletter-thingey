@@ -14,17 +14,14 @@ export default function OAuth2Success(): React.ReactElement {
     const dispatch = useDispatch();
     const queryParams = new URLSearchParams(location.search);
     const token = queryParams.get("token");
-
-    //TODO: get all user information here. User name and role
-
     useEffect(() => {
         if (!token) {
             navigate(paths.oauth2Failure + "?exception=Could not authorize user, authentication token not found")
         } else {
             dispatch(setToken(token));
             setTimeout(() => {
-                // navigate(authorizedPaths.dashboard)
-            }, 1000)
+                navigate(authorizedPaths.dashboard)
+            }, 400)
         }
     }, [token])
 
@@ -72,7 +69,7 @@ export default function OAuth2Success(): React.ReactElement {
                     },
                 }}
             >
-                Fetching user details, please wait
+                Preparing dashboard...
             </Typography>
             <CircularProgress sx={{
                 mt: 2
