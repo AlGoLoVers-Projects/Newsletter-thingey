@@ -157,15 +157,11 @@ public class UserService implements UserDetailsService {
                 .displayName(oAuth2UserInfo.getName())
                 .emailAddress(oAuth2UserInfo.getEmail())
                 .authorities(Set.of(Authority.USER))
+                .profilePicture(oAuth2UserInfo.getImageUrl())
                 .authProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))
                 .build();
 
         return userRepository.save(user);
-    }
-
-    public User updateExistingUser(User existingUser, GoogleOAuthUserInfo oAuth2UserInfo) {
-        existingUser.setDisplayName(oAuth2UserInfo.getName());
-        return userRepository.save(existingUser);
     }
 
     public AuthenticatedUserToken generateTokenForAuthenticatedUser(Authentication authentication, Optional<User> optionalUser) {

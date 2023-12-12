@@ -45,6 +45,9 @@ public class User implements UserDetails, OAuth2User {
     @JsonIgnore
     private LocalDateTime verificationTokenExpirationDate;
 
+    @Column
+    private String profilePicture;
+
     @JsonIgnore
     Long accountVerificationCode;
 

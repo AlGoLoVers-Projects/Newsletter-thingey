@@ -49,7 +49,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                         user.getAuthProvider() + " account. Please use your google account to sign up.");
             }
 
-            user = userService.updateExistingUser(user, oAuth2UserInfo);
         } else {
             user = userService.registerNewOAuthUser(oAuth2UserRequest, oAuth2UserInfo);
         }
