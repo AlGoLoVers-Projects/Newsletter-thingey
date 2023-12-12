@@ -3,10 +3,7 @@ package com.algolovers.newsletterconsole.controller;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.AuthenticatedUserToken;
 import com.algolovers.newsletterconsole.data.model.api.Result;
-import com.algolovers.newsletterconsole.data.model.api.request.SignInRequest;
-import com.algolovers.newsletterconsole.data.model.api.request.TokenValidationRequest;
-import com.algolovers.newsletterconsole.data.model.api.request.UserCreationRequest;
-import com.algolovers.newsletterconsole.data.model.api.request.VerificationRequest;
+import com.algolovers.newsletterconsole.data.model.api.request.*;
 import com.algolovers.newsletterconsole.data.model.api.response.AuthData;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
@@ -117,6 +114,18 @@ public class AuthenticationController {
                 .build();
 
         return ResponseEntity.ok(new Result<>(true, authData, "Token successfully validated"));
+    }
+
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<Result<String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        Result<String> result = userService.forgotPassword(forgotPasswordRequest);
+        return ControllerUtils.processResultForResponse(result);
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<Result<String>> resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
+        Result<String> result = userService.resetPassword(resetPasswordRequest);
+        return ControllerUtils.processResultForResponse(result);
     }
 
     @GetMapping("/{subPath}")

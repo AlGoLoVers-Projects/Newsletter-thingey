@@ -1,6 +1,8 @@
 package com.algolovers.newsletterconsole.data.entity.user;
 
 import com.algolovers.newsletterconsole.data.enums.AuthProvider;
+import com.algolovers.newsletterconsole.data.model.api.Result;
+import com.algolovers.newsletterconsole.exceptions.PasswordResetException;
 import com.algolovers.newsletterconsole.utils.RandomGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -14,6 +16,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static com.algolovers.newsletterconsole.data.enums.AuthProvider.google;
 
 @Table(name = "user")
 @Entity
@@ -116,7 +120,11 @@ public class User implements UserDetails, OAuth2User {
         return Objects.isNull(this.accountVerificationCode) && Objects.isNull(verificationTokenExpirationDate);
     }
 
-    public Long generatePasswordResetCode() {
+    public Long generatePasswordResetCode() throws PasswordResetException {
+        if (google.equals(this.authProvider)) {
+            throw new PasswordResetException("Cannot generate reset code for google OAuth account password reset");
+        }
+
         return this.passwordResetCode = RandomGenerator.generateRandomCode();
     }
 
@@ -128,17 +136,27 @@ public class User implements UserDetails, OAuth2User {
      * @return New validity code for JWT authentication, old tokens will be unusable
      */
 
-    public String setNewPassword(String encodedPassword, Long passwordResetCode) {
-        if (Objects.nonNull(passwordResetCode)
-                && Objects.nonNull(this.passwordResetCode)
-                && Objects.nonNull(encodedPassword)
-                && this.passwordResetCode.equals(passwordResetCode)) {
-            this.password = encodedPassword;
-            this.passwordResetCode = null;
-            return generateNewAccountValidityCode();
+    public Result<String> setNewPassword(String encodedPassword, Long passwordResetCode) throws PasswordResetException {
+        if (google.equals(this.authProvider)) {
+            throw new PasswordResetException("Cannot reset password for google OAuth account");
         }
 
-        return null;
+        if (Objects.nonNull(passwordResetCode)
+                && Objects.nonNull(this.passwordResetCode)
+                && Objects.nonNull(encodedPassword)) {
+
+            if (this.passwordResetCode.equals(passwordResetCode)) {
+                this.password = encodedPassword;
+                this.passwordResetCode = null;
+                return new Result<>(true, generateNewAccountValidityCode(), "Password changed successfully");
+            } else {
+                return new Result<>(false, null, "Codes do not match");
+            }
+        } else if (Objects.isNull(this.passwordResetCode)) {
+            return new Result<>(false, null, "Invalid password reset request");
+        }
+
+        return new Result<>(false, null, "Password change failed, please check all fields");
     }
 
     /**
@@ -183,7 +201,7 @@ public class User implements UserDetails, OAuth2User {
      */
     @JsonIgnore
     public String getExistingAccountValidityCode() {
-        if(Objects.isNull(this.accountValidityCode)) {
+        if (Objects.isNull(this.accountValidityCode)) {
             return generateNewAccountValidityCode();
         }
 

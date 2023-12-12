@@ -6,9 +6,13 @@ import com.algolovers.newsletterconsole.data.enums.AuthProvider;
 import com.algolovers.newsletterconsole.data.model.AuthenticatedUserToken;
 import com.algolovers.newsletterconsole.data.model.GoogleOAuthUserInfo;
 import com.algolovers.newsletterconsole.data.model.api.Result;
+import com.algolovers.newsletterconsole.data.model.api.request.ForgotPasswordRequest;
+import com.algolovers.newsletterconsole.data.model.api.request.ResetPasswordRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.UserCreationRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.VerificationRequest;
+import com.algolovers.newsletterconsole.exceptions.PasswordResetException;
 import com.algolovers.newsletterconsole.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
@@ -23,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
+import static com.algolovers.newsletterconsole.data.enums.AuthProvider.local;
 
 @Service
 @Transactional(rollbackFor = {Exception.class})
@@ -64,7 +70,7 @@ public class UserService implements UserDetailsService {
                     .displayName(userCreationRequest.getUserName())
                     .emailAddress(userCreationRequest.getEmail())
                     .authorities(Set.of(Authority.USER))
-                    .authProvider(AuthProvider.local)
+                    .authProvider(local)
                     .password(passwordEncoder.encode(userCreationRequest.getPassword()))
                     .build();
 
@@ -120,7 +126,7 @@ public class UserService implements UserDetailsService {
                 return new Result<>(false, null, "Incorrect email address attached");
             }
 
-            if(!user.getAccountVerificationCode().equals(verificationRequest.getVerificationCode())) {
+            if (!user.getAccountVerificationCode().equals(verificationRequest.getVerificationCode())) {
                 return new Result<>(false, null, "Incorrect verification code");
             }
 
@@ -147,9 +153,9 @@ public class UserService implements UserDetailsService {
     }
 
     public String getExistingAccountValidityCode(User user) {
-       String code = user.getExistingAccountValidityCode();
-       saveOrUpdateUser(user);
-       return code;
+        String code = user.getExistingAccountValidityCode();
+        saveOrUpdateUser(user);
+        return code;
     }
 
     public User registerNewOAuthUser(OAuth2UserRequest oAuth2UserRequest, GoogleOAuthUserInfo oAuth2UserInfo) {
@@ -174,6 +180,62 @@ public class UserService implements UserDetailsService {
         String token = jwtService.generateToken(user, validityCode);
 
         return new AuthenticatedUserToken(user, token);
+    }
+
+    public Result<String> forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
+
+        if (Objects.isNull(forgotPasswordRequest)) {
+            return new Result<>(false, "", "Forgot password request invalid");
+        }
+
+        if (Objects.isNull(forgotPasswordRequest.getEmail())) {
+            return new Result<>(false, "", "Email address missing");
+        }
+
+        User user = loadUserByEmail(forgotPasswordRequest.getEmail());
+
+        if (Objects.isNull(user)) {
+            return new Result<>(false, "", "User does not exist");
+        }
+
+        if (!local.equals(user.getAuthProvider())) {
+            return new Result<>(false, "", "Cannot reset password for OAuth user");
+        }
+
+        try {
+            Long passwordResetCode = user.generatePasswordResetCode();
+            boolean isMailSuccessful = emailService.sendPasswordResetEmail(user, passwordResetCode);
+
+            if (!isMailSuccessful) {
+                return new Result<>(false, "", "Failed to send reset link to email address");
+            }
+
+            return new Result<>(true, "", "Reset link sent successfully");
+        } catch (PasswordResetException e) {
+            return new Result<>(false, "", e.getMessage());
+        }
+    }
+
+    public Result<String> resetPassword(@Valid ResetPasswordRequest resetPasswordRequest) {
+        User user = loadUserById(resetPasswordRequest.getId());
+
+        if (Objects.isNull(user)) {
+            return new Result<>(false, "", "User does not exist");
+        }
+
+        if (!local.equals(user.getAuthProvider())) {
+            return new Result<>(false, "", "Cannot reset password for OAuth user");
+        }
+
+        try {
+            if (passwordEncoder.matches(resetPasswordRequest.getPassword(), user.getPassword())) {
+                return new Result<>(false, "", "New password cannot be same as old password");
+            }
+
+            return user.setNewPassword(passwordEncoder.encode(resetPasswordRequest.getPassword()), resetPasswordRequest.getVerificationCode());
+        } catch (PasswordResetException e) {
+            return new Result<>(false, "", e.getMessage());
+        }
     }
 
 }
