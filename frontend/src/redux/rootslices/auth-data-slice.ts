@@ -25,8 +25,14 @@ const authSlice = createSlice({
             return { ...state, ...action.payload };
         },
         setUserData: (state, action: PayloadAction<UserData>) => {
-            return { ...state, ...action.payload };
+            return {
+                ...state,
+                displayName: action.payload.displayName,
+                authorities: action.payload.authorities,
+                profilePicture: action.payload.profilePicture,
+            };
         },
+
         setDisplayName: (state, action: PayloadAction<string | null>) => {
             state.displayName = action.payload;
         },
@@ -35,6 +41,9 @@ const authSlice = createSlice({
         },
         setProfilePicture: (state, action: PayloadAction<string | null>) => {
             state.profilePicture = action.payload;
+        },
+        clearAuthData: (_) => {
+            return initialState;
         },
     },
 });
@@ -45,6 +54,7 @@ export const {
     setDisplayName,
     setAuthorities,
     setProfilePicture,
+    clearAuthData
 } = authSlice.actions;
 export default authSlice.reducer;
 

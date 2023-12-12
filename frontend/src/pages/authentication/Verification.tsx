@@ -141,7 +141,7 @@ export default function Verification(): React.ReactElement {
                             fullWidth
                             variant="contained"
                             sx={{mt: 3, mb: 1}}
-                            disabled={false}
+                            disabled={isVerifying}
                         >
                             Sign Up
                         </Button>

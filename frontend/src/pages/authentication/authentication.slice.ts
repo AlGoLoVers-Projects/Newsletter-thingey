@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import {Result} from "../../types/result";
-import {AuthData} from "../../redux/rootslices/auth-data-slice";
+import {AuthData, UserData} from "../../redux/rootslices/auth-data-slice";
 
 export type SignInRequest = {
     email: string;
@@ -17,6 +17,10 @@ export type VerificationRequest = {
     email: string;
     verificationCode: number;
 };
+
+export type TokenValidationRequest = {
+    token: string
+}
 
 export const apiSlice = createApi({
     reducerPath: 'api',
@@ -43,9 +47,16 @@ export const apiSlice = createApi({
                 body: credentials,
             }),
         }),
+        validateToken: builder.mutation<Result<UserData>, TokenValidationRequest>({
+            query: (credentials) => ({
+                url: '/api/auth/validateToken',
+                method: 'POST',
+                body: credentials,
+            }),
+        }),
     }),
 });
 
-export const { useSignInMutation, useSignUpMutation, useVerifyMutation } = apiSlice;
+export const { useSignInMutation, useSignUpMutation, useVerifyMutation, useValidateTokenMutation } = apiSlice;
 export const { endpoints } = apiSlice;
 export const { signIn, signUp, verify } = endpoints;

@@ -21,20 +21,19 @@ import {useState} from "react";
 import {isEmpty, isValidEmail, validateAuthData} from "../../util/validation";
 import {Result} from "../../types/result";
 import {showFailureToast, showSuccessToast} from "../../util/toasts";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import 'react-toastify/dist/ReactToastify.css';
-import {useNavigate} from "react-router-dom";
-import {AuthData, setAuthData} from "../../redux/rootslices/auth-data-slice";
+import {Navigate, useNavigate} from "react-router-dom";
+import {AuthData, selectToken, setAuthData} from "../../redux/rootslices/auth-data-slice";
 
 
 export default function SignIn(): React.ReactElement {
 
-    const [signIn, {isLoading: isSigningIn}] = useSignInMutation();
-
+    const token = useSelector(selectToken)
     const dispatch = useDispatch();
-    let navigate = useNavigate();
+    let navigation = useNavigate();
 
-    //TODO: Add loading spinner and block all buttons
+    const [signIn, {isLoading: isSigningIn}] = useSignInMutation();
 
     const [emailError, setEmailError] = useState<string>('');
     const [passwordError, setPasswordError] = useState<string>('');
@@ -76,10 +75,10 @@ export default function SignIn(): React.ReactElement {
                     if ('data' in response) {
                         let responseData: Result<AuthData> = response.data
                         if (responseData.success) {
-                            if(validateAuthData(responseData.data)) {
+                            if (validateAuthData(responseData.data)) {
                                 showSuccessToast(responseData.message ?? 'Signed in successfully')
                                 dispatch(setAuthData(responseData.data));
-                                navigate(authorizedPaths.dashboard)
+                                navigation(authorizedPaths.dashboard)
                             } else {
                                 showFailureToast(responseData.message ?? 'Could not decode user information, please try signing in again')
                             }
@@ -98,6 +97,10 @@ export default function SignIn(): React.ReactElement {
         }
 
     };
+
+    if (token) {
+        return <Navigate to={authorizedPaths.dashboard}/>;
+    }
 
     return (
         <Container

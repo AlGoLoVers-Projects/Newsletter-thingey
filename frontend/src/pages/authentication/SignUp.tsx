@@ -10,7 +10,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {DesignedBy} from "../../components/branding/DesignedBy";
-import {paths} from "../../router/paths";
+import {authorizedPaths, paths} from "../../router/paths";
 import {Card} from "@mui/material";
 import OrDivider from "../../components/elements/OrDivider";
 import GoogleAuthButton from "../../components/elements/GoogleAuthButton";
@@ -20,16 +20,16 @@ import {useState} from "react";
 import {Result} from "../../types/result";
 import 'react-toastify/dist/ReactToastify.css';
 import {showFailureToast, showSuccessToast} from "../../util/toasts";
-import {useNavigate} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
+import {useSelector} from "react-redux";
+import {selectToken} from "../../redux/rootslices/auth-data-slice";
 
 export default function SignUp() {
 
-    const [signUp, {isLoading: isSigningUp}] = useSignUpMutation();
-
+    const token = useSelector(selectToken)
     const navigation = useNavigate()
 
-
-    //TODO: Add loading spinner and block all buttons
+    const [signUp, {isLoading: isSigningUp}] = useSignUpMutation();
 
     const [displayNameError, setDisplayNameError] = useState<string>('');
     const [emailError, setEmailError] = useState<string>('');
@@ -108,6 +108,10 @@ export default function SignUp() {
                     showFailureToast(responseData.message ?? 'Registration failed, please check credentials')
                 })
         }
+    }
+
+    if (token) {
+        return <Navigate to={authorizedPaths.dashboard} />;
     }
 
     return (

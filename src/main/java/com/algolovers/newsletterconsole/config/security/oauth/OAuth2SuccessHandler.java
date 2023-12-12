@@ -2,7 +2,7 @@ package com.algolovers.newsletterconsole.config.security.oauth;
 
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.AuthenticatedUserToken;
-import com.algolovers.newsletterconsole.data.model.api.response.LoginResponse;
+import com.algolovers.newsletterconsole.data.model.api.response.AuthData;
 import com.algolovers.newsletterconsole.exceptions.OAuth2AuthenticationProcessingException;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
@@ -41,7 +41,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         AuthenticatedUserToken authenticatedUserToken = userService.generateTokenForAuthenticatedUser(authentication, Optional.empty());
         User user = authenticatedUserToken.getUser();
 
-        LoginResponse loginResponse = LoginResponse
+        AuthData authData = AuthData
                 .builder()
                 .displayName(user.getDisplayName())
                 .authorities(user.getAuthorities())
@@ -49,10 +49,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .token(authenticatedUserToken.getToken())
                 .build();
 
-        objectMapper.writeValueAsString(loginResponse);
+        objectMapper.writeValueAsString(authData);
 
         try {
-            String json = objectMapper.writeValueAsString(loginResponse);
+            String json = objectMapper.writeValueAsString(authData);
             String base64Url = Base64.getUrlEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8));
             getRedirectStrategy().sendRedirect(request, response, "/oauthSuccess?data=" + base64Url);
         } catch (IOException e) {

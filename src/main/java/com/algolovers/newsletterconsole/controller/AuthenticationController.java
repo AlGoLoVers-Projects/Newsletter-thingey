@@ -4,9 +4,10 @@ import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.AuthenticatedUserToken;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.SignInRequest;
+import com.algolovers.newsletterconsole.data.model.api.request.TokenValidationRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.UserCreationRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.VerificationRequest;
-import com.algolovers.newsletterconsole.data.model.api.response.LoginResponse;
+import com.algolovers.newsletterconsole.data.model.api.response.AuthData;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
 import com.algolovers.newsletterconsole.utils.ControllerUtils;
@@ -19,7 +20,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.Optional;
+
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -57,7 +61,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<Result<LoginResponse>> authenticateUser(@Valid @RequestBody SignInRequest signinRequest) {
+    public ResponseEntity<Result<AuthData>> authenticateUser(@Valid @RequestBody SignInRequest signinRequest) {
 
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getEmail(), signinRequest.getPassword()));
@@ -70,17 +74,54 @@ public class AuthenticationController {
 
         AuthenticatedUserToken authenticatedUserToken = userService.generateTokenForAuthenticatedUser(authentication, Optional.empty());
 
-        return ResponseEntity.ok(new Result<>(true,
-                new LoginResponse(
-                        authenticatedUserToken.getUser().getDisplayName(),
-                        authenticatedUserToken.getUser().getAuthorities(),
-                        authenticatedUserToken.getUser().getProfilePicture(),
-                        authenticatedUserToken.getToken()), "Authentication successful"));
+        AuthData authData = AuthData
+                .builder()
+                .authorities(authenticatedUserToken.getUser().getAuthorities())
+                .displayName(authenticatedUserToken.getUser().getDisplayName())
+                .profilePicture(authenticatedUserToken.getUser().getProfilePicture())
+                .token(authenticatedUserToken.getToken())
+                .build();
+
+        return ResponseEntity.ok(new Result<>(true, authData, "Authentication successful"));
     }
 
     @GetMapping("/logout")
     public ResponseEntity<Result<String>> logout() {
         return ResponseEntity.ok(new Result<>(true, null, "Logged out successfully"));
+    }
+
+    @PostMapping("/validateToken")
+    public ResponseEntity<Result<AuthData>> validateToken(@Valid @RequestBody TokenValidationRequest tokenValidationRequest) {
+
+        if (Objects.isNull(tokenValidationRequest)) {
+            return new ResponseEntity<>(new Result<>(false, null, "Please attach authentication token"), HttpStatus.UNAUTHORIZED);
+        }
+
+        String token = tokenValidationRequest.getToken();
+
+        if (Objects.isNull(token) || isEmpty(token)) {
+            return new ResponseEntity<>(new Result<>(false, null, "Please attach authentication token"), HttpStatus.UNAUTHORIZED);
+        }
+
+        String userId = jwtService.getUserIdFromToken(token);
+        User user = userService.loadUserById(userId);
+
+        if (Objects.isNull(user)) {
+            return new ResponseEntity<>(new Result<>(false, null, "No active users were found for token"), HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!jwtService.validateToken(token, user)) {
+            return new ResponseEntity<>(new Result<>(false, null, "Token has expired"), HttpStatus.UNAUTHORIZED);
+        }
+
+        AuthData authData = AuthData
+                .builder()
+                .authorities(user.getAuthorities())
+                .displayName(user.getDisplayName())
+                .profilePicture(user.getProfilePicture())
+                .build();
+
+        return ResponseEntity.ok(new Result<>(true, authData, "Token successfully validated"));
     }
 
     @GetMapping("/{subPath}")
