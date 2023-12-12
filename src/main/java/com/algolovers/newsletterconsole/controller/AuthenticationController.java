@@ -85,11 +85,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(new Result<>(true, authData, "Authentication successful"));
     }
 
-    @GetMapping("/logout")
-    public ResponseEntity<Result<String>> logout() {
-        return ResponseEntity.ok(new Result<>(true, null, "Logged out successfully"));
-    }
-
     @PostMapping("/validateToken")
     public ResponseEntity<Result<AuthData>> validateToken(@Valid @RequestBody TokenValidationRequest tokenValidationRequest) {
 

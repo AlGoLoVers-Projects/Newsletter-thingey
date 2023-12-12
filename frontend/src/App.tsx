@@ -14,13 +14,14 @@ import {
 import {Result} from './types/result';
 import {showFailureToast} from './util/toasts';
 import {buildRoutes} from "./router/route-builder";
+import {CircularProgress, Container, CssBaseline} from "@mui/material";
+import Routes from "./router/routes";
 
 export default function App() {
     const token = useSelector(selectToken);
     const [isValidatingToken, setValidatingToken] = useState(true);
     const dispatch = useDispatch();
     const [validateToken] = useValidateTokenMutation();
-    const Routes = () => useRoutes(buildRoutes())
 
     useEffect(() => {
         if (token) {
@@ -57,7 +58,24 @@ export default function App() {
     }, [token, validateToken, dispatch]);
 
     if (isValidatingToken) {
-        return <div>Loading...</div>;
+        return (
+            <Container
+                component="main"
+                disableGutters
+                sx={{
+                    padding: 0,
+                    margin: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minHeight: "100vh",
+                    minWidth: "100vw",
+                }}
+            >
+                <CssBaseline/>
+                <CircularProgress/>
+            </Container>
+        );
     }
 
     return <Routes/>

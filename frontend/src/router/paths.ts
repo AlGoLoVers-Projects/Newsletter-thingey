@@ -3,15 +3,16 @@ export const paths = {
     oauthSuccess: '/oauthSuccess',
     oauth2Failure: '/oauth2Failure',
     signIn: '/signin',
-    contactUs: '/contactUs',
     signUp: '/signup',
+    contactUs: '/contactUs',
     oauth2Authentication: '/oauth2/authorization/google',
     verification: '/verification',
     notFound: '*'
 }
 
 export const authorizedPaths = {
-    dashboard: '/dashboard'
+    dashboard: '/dashboard',
+    signOut: '/signout',
 }
 
 const allPaths = { ...paths, ...authorizedPaths } as const;

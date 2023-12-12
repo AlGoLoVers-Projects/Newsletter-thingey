@@ -1,5 +1,5 @@
-import React, {ReactNode} from 'react';
-import {Navigate} from 'react-router-dom';
+import React, {ReactNode, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {paths} from "./paths";
 import {useDispatch, useSelector} from "react-redux";
 import {clearAuthData, selectAuthState} from "../redux/rootslices/auth-data-slice";
@@ -13,12 +13,16 @@ type ProtectedRouteProps = {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({children}) => {
     const authData = useSelector(selectAuthState)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
-    if (!validateAuthData(authData)) {
-        showFailureToast('Token not found, try signing in')
-        dispatch(clearAuthData())
-        return <Navigate to={paths.signIn}/>;
-    }
+    useEffect(() => {
+        if (navigate !== undefined && dispatch !== undefined) {
+            if (!validateAuthData(authData)) {
+                dispatch(clearAuthData())
+                navigate(paths.signIn)
+            }
+        }
+    }, [authData, dispatch, navigate])
 
     return <>{children}</>;
 };

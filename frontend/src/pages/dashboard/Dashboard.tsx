@@ -15,7 +15,9 @@ export default function Dashboard(): React.ReactElement {
                 minHeight: "100vh"
             }}
         >
-            {authData.toString()}
+            {authData.displayName}
+            {authData.authorities}
+            {authData.profilePicture}
         </Container>
     );
 }

@@ -7,6 +7,9 @@ import OAuth2Failure from "../pages/authentication/OAuth2Failure";
 import Dashboard from "../pages/dashboard/Dashboard";
 import SignUp from "../pages/authentication/SignUp";
 import Verification from "../pages/authentication/Verification";
+import SignOut from "../pages/authentication/SignOut";
+import {useRoutes} from "react-router-dom";
+import {buildRoutes} from "./route-builder";
 
 export type Route = {
     path: Path,
@@ -33,6 +36,11 @@ export const routes: Routes = [
         authorised: false
     },
     {
+        path: authorizedPaths.signOut,
+        element: <SignOut/>,
+        authorised: true
+    },
+    {
         path: paths.verification,
         element: <Verification/>,
         authorised: false
@@ -53,3 +61,7 @@ export const routes: Routes = [
         authorised: true
     },
 ];
+
+export default function Routes() {
+    return useRoutes(buildRoutes())
+}
