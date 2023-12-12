@@ -141,8 +141,11 @@ public class User implements UserDetails, OAuth2User {
             throw new PasswordResetException("Cannot reset password for google OAuth account");
         }
 
+        else if (Objects.isNull(this.passwordResetCode)) {
+            return new Result<>(false, null, "Invalid password reset request");
+        }
+
         if (Objects.nonNull(passwordResetCode)
-                && Objects.nonNull(this.passwordResetCode)
                 && Objects.nonNull(encodedPassword)) {
 
             if (this.passwordResetCode.equals(passwordResetCode)) {
@@ -152,8 +155,6 @@ public class User implements UserDetails, OAuth2User {
             } else {
                 return new Result<>(false, null, "Codes do not match");
             }
-        } else if (Objects.isNull(this.passwordResetCode)) {
-            return new Result<>(false, null, "Invalid password reset request");
         }
 
         return new Result<>(false, null, "Password change failed, please check all fields");
