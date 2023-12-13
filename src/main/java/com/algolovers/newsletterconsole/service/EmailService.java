@@ -23,7 +23,7 @@ import java.util.Base64;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor()
+@RequiredArgsConstructor
 public class EmailService {
 
     private final JavaMailSender javaMailSender;
