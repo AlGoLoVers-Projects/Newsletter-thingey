@@ -3,38 +3,35 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import {authorizedPaths, paths} from "../../router/paths";
-import {DesignedBy} from "../../components/branding/DesignedBy";
+import {DesignedBy} from "../../../components/branding/DesignedBy";
+import {authorizedPaths, paths} from "../../../router/paths";
 import {Card} from "@mui/material";
-import OrDivider from "../../components/elements/OrDivider";
-import GoogleAuthButton from "../../components/elements/GoogleAuthButton";
-import {SignInRequest, useSignInMutation} from "./authentication.slice";
+import OrDivider from "../../../components/elements/OrDivider";
+import GoogleAuthButton from "../../../components/elements/GoogleAuthButton";
+import {SignupRequest, useSignUpMutation} from "../authentication.slice";
+import {isEmpty, isValidEmail, isValidName, isValidPassword} from "../../../util/validation";
 import {useState} from "react";
-import {isEmpty, isValidEmail, validateAuthData} from "../../util/validation";
-import {Result} from "../../types/result";
-import {showFailureToast, showSuccessToast} from "../../util/toasts";
-import {useDispatch, useSelector} from "react-redux";
+import {Result} from "../../../types/result";
 import 'react-toastify/dist/ReactToastify.css';
+import {showFailureToast, showSuccessToast} from "../../../util/toasts";
 import {Navigate, useNavigate} from "react-router-dom";
-import {AuthData, selectToken, setAuthData} from "../../redux/rootslices/auth-data-slice";
+import {useSelector} from "react-redux";
+import {selectToken} from "../../../redux/rootslices/auth-data-slice";
 
-
-export default function SignIn(): React.ReactElement {
+export default function SignUp() {
 
     const token = useSelector(selectToken)
-    const dispatch = useDispatch();
-    let navigation = useNavigate();
+    const navigation = useNavigate()
 
-    const [signIn, {isLoading: isSigningIn}] = useSignInMutation();
+    const [signUp, {isLoading: isSigningUp}] = useSignUpMutation();
 
+    const [displayNameError, setDisplayNameError] = useState<string>('');
     const [emailError, setEmailError] = useState<string>('');
     const [passwordError, setPasswordError] = useState<string>('');
 
@@ -44,6 +41,7 @@ export default function SignIn(): React.ReactElement {
 
         const email = data.get('email')?.toString() ?? '';
         const password = data.get('password')?.toString() ?? '';
+        const displayName = data.get('displayName')?.toString() ?? '';
 
         let valid: boolean = true;
 
@@ -60,46 +58,60 @@ export default function SignIn(): React.ReactElement {
         if (!password) {
             setPasswordError('Please enter a password');
             valid = false;
+        } else if (password.length < 8) {
+            setPasswordError('Password must be at least 8 characters long');
+            valid = false;
+        } else if (!isValidPassword(password)) {
+            setPasswordError('Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character');
+            valid = false;
         } else {
             setPasswordError('');
         }
 
+        if (!displayName) {
+            setDisplayNameError('Please enter a display name');
+            valid = false;
+        } else if (displayName.trim().length < 3) {
+            setDisplayNameError('Display name must have a minimum of 3 characters');
+            valid = false;
+        } else if (!isValidName(displayName)) {
+            setDisplayNameError('Display name can only contain letters, numbers, spaces, and underscores');
+            valid = false;
+        } else {
+            setDisplayNameError('');
+        }
+
         if (valid) {
-            const signInRequest: SignInRequest = {
+            const signupRequest: SignupRequest = {
+                userName: displayName,
                 password: password,
                 email: email
             };
 
-            signIn(signInRequest)
+            signUp(signupRequest)
                 .then((response) => {
                     if ('data' in response) {
-                        let responseData: Result<AuthData> = response.data
+                        let responseData: Result<null> = response.data
                         if (responseData.success) {
-                            if (validateAuthData(responseData.data)) {
-                                showSuccessToast(responseData.message ?? 'Signed in successfully')
-                                dispatch(setAuthData(responseData.data));
-                                navigation(authorizedPaths.dashboard)
-                            } else {
-                                showFailureToast(responseData.message ?? 'Could not decode user information, please try signing in again')
-                            }
+                            showSuccessToast(responseData.message ?? 'Registration successfully')
+                            navigation(paths.verification + `?email=${email}`)
                         } else {
-                            showFailureToast(responseData.message ?? 'Sign in failed, please check credentials')
+                            showFailureToast(responseData.message ?? 'Registration failed, please check credentials')
                         }
                     } else {
                         let responseData: Result<null> = (response.error as any).data
-                        showFailureToast(responseData.message ?? 'Sign in failed, please check credentials')
+                        showFailureToast(responseData.message ?? 'Registration failed, please check credentials')
                     }
                 })
                 .catch((error) => {
                     let responseData: Result<null> = error.error;
-                    showFailureToast(responseData.message ?? 'Sign in failed, please check credentials')
+                    showFailureToast(responseData.message ?? 'Registration failed, please check credentials')
                 })
         }
-
-    };
+    }
 
     if (token) {
-        return <Navigate to={authorizedPaths.dashboard}/>;
+        return <Navigate to={authorizedPaths.dashboard} />;
     }
 
     return (
@@ -134,9 +146,21 @@ export default function SignIn(): React.ReactElement {
                         fontWeight: 'bold',
                         textAlign: 'center'
                     }}>
-                        Sign in to Newsletter
+                        Sign up to Newsletter
                     </Typography>
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 3}}>
+                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
+                        <TextField
+                            margin="normal"
+                            autoComplete="given-name"
+                            name="displayName"
+                            required
+                            fullWidth
+                            id="displayName"
+                            label="Display Name"
+                            autoFocus
+                            error={!isEmpty(displayNameError)}
+                            helperText={displayNameError}
+                        />
                         <TextField
                             margin="normal"
                             required
@@ -145,7 +169,6 @@ export default function SignIn(): React.ReactElement {
                             label="Email Address"
                             name="email"
                             autoComplete="email"
-                            autoFocus
                             error={!isEmpty(emailError)}
                             helperText={emailError}
                         />
@@ -157,7 +180,7 @@ export default function SignIn(): React.ReactElement {
                             label="Password"
                             type="password"
                             id="password"
-                            autoComplete="current-password"
+                            autoComplete="new-password"
                             error={!isEmpty(passwordError)}
                             helperText={passwordError}
                         />
@@ -165,27 +188,20 @@ export default function SignIn(): React.ReactElement {
                             type="submit"
                             fullWidth
                             variant="contained"
-                            disabled={isSigningIn}
                             sx={{mt: 3, mb: 1}}
+                            disabled={isSigningUp}
                         >
-                            Sign In
+                            Sign Up
                         </Button>
-                        <Grid container>
-                            <Grid item xs>
-                                <Link href="#" variant="body2">
-                                    Forgot password?
-                                </Link>
-                            </Grid>
-                        </Grid>
                         <OrDivider/>
-                        <GoogleAuthButton disabled={isSigningIn}/>
+                        <GoogleAuthButton disabled={isSigningUp}/>
                     </Box>
                 </Card>
                 <Grid container justifyContent="center">
                     <Grid item sx={{mt: 1, mb: 1}}>
-                        Dont' have an account?
-                        <Link href={paths.signUp} variant="body2" sx={{pl: 0.5}}>
-                            Sign up
+                        Already have an account?
+                        <Link href={paths.signIn} variant="body2" sx={{pl: 0.5}}>
+                            Sign in
                         </Link>
                     </Grid>
                 </Grid>

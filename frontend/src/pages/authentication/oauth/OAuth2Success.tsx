@@ -2,12 +2,12 @@ import React, {useEffect} from "react";
 import {CircularProgress, Container, CssBaseline} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import {authorizedPaths, paths} from "../../router/paths";
 import {useNavigate} from "react-router-dom";
 import {useLocation} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {AuthData, setAuthData} from "../../redux/rootslices/auth-data-slice";
-import {validateAuthData} from "../../util/validation";
+import {authorizedPaths, paths} from "../../../router/paths";
+import {AuthData, setAuthData} from "../../../redux/rootslices/auth-data-slice";
+import {validateAuthData} from "../../../util/validation";
 
 export default function OAuth2Success(): React.ReactElement {
     const navigate = useNavigate();

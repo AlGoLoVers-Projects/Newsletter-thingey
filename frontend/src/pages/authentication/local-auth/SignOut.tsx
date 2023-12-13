@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
 import {CircularProgress, Container, CssBaseline} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import {paths} from "../../router/paths";
+import {paths} from "../../../router/paths";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {clearAuthData, selectToken} from "../../redux/rootslices/auth-data-slice";
-import {showSuccessToast} from "../../util/toasts";
+import {clearAuthData, selectToken} from "../../../redux/rootslices/auth-data-slice";
+import {showSuccessToast} from "../../../util/toasts";
 
 export default function SignOut(): React.ReactElement {
     const navigate = useNavigate();

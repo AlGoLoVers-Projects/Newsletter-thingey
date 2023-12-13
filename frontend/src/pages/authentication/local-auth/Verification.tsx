@@ -7,14 +7,14 @@ import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import {isEmpty, isValidEmail} from "../../util/validation";
-import {DesignedBy} from "../../components/branding/DesignedBy";
-import CodeInput from "../../components/elements/CodeInput";
+import {isEmpty, isValidEmail} from "../../../util/validation";
+import {DesignedBy} from "../../../components/branding/DesignedBy";
+import CodeInput from "../../../components/elements/CodeInput";
 import {VerifiedOutlined} from "@mui/icons-material";
-import {showFailureToast, showSuccessToast} from "../../util/toasts";
-import {useVerifyMutation, VerificationRequest} from "./authentication.slice";
-import {Result} from "../../types/result";
-import {paths} from "../../router/paths";
+import {showFailureToast, showSuccessToast} from "../../../util/toasts";
+import {useVerifyMutation, VerificationRequest} from "../authentication.slice";
+import {Result} from "../../../types/result";
+import {paths} from "../../../router/paths";
 
 export default function Verification(): React.ReactElement {
 

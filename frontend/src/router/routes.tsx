@@ -1,15 +1,15 @@
 import {authorizedPaths, Path, paths} from "./paths";
 import React from "react";
 import Home from "../pages/home/Home";
-import SingIn from "../pages/authentication/SignIn";
-import OAuth2Success from "../pages/authentication/OAuth2Success";
-import OAuth2Failure from "../pages/authentication/OAuth2Failure";
+import SingIn from "../pages/authentication/local-auth/SignIn";
 import Dashboard from "../pages/dashboard/Dashboard";
-import SignUp from "../pages/authentication/SignUp";
-import Verification from "../pages/authentication/Verification";
-import SignOut from "../pages/authentication/SignOut";
+import SignUp from "../pages/authentication/local-auth/SignUp";
+import Verification from "../pages/authentication/local-auth/Verification";
+import SignOut from "../pages/authentication/local-auth/SignOut";
 import {useRoutes} from "react-router-dom";
 import {buildRoutes} from "./route-builder";
+import OAuth2Success from "../pages/authentication/oauth/OAuth2Success";
+import OAuth2Failure from "../pages/authentication/oauth/OAuth2Failure";
 
 export type Route = {
     path: Path,

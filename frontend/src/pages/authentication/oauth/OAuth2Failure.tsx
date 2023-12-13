@@ -2,10 +2,10 @@ import React from "react";
 import {Container, CssBaseline} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import {paths} from "../../router/paths";
 import {useNavigate} from "react-router-dom";
 import {useLocation} from "react-router-dom";
 import Alert from "@mui/material/Alert";
+import {paths} from "../../../router/paths";
 
 export default function OAuth2Failure(): React.ReactElement {
     const navigate = useNavigate();
