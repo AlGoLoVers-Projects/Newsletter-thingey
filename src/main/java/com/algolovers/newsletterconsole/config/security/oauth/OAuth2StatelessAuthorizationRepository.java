@@ -5,7 +5,6 @@ import com.algolovers.newsletterconsole.utils.EncryptionHelper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,6 @@ import java.util.Base64;
 import static com.algolovers.newsletterconsole.utils.Constants.OAUTH_COOKIE_NAME;
 
 @Component
-@RequiredArgsConstructor
 public class OAuth2StatelessAuthorizationRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
 
     private static final Duration OAUTH_COOKIE_EXPIRY = Duration.ofMinutes(5);
@@ -26,6 +24,10 @@ public class OAuth2StatelessAuthorizationRepository implements AuthorizationRequ
     private static final Base64.Decoder B64D = Base64.getDecoder();
 
     private final SecretKey encryptionKey;
+
+    public OAuth2StatelessAuthorizationRepository() {
+        this.encryptionKey = EncryptionHelper.generateKey();
+    }
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
