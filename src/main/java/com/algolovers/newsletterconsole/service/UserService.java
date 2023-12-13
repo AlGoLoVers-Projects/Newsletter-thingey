@@ -86,7 +86,7 @@ public class UserService implements UserDetailsService {
                     throw new RuntimeException("Email could not be sent");
                 }
 
-                return new Result<>(true, savedUser, "User registered successfully");
+                return new Result<>(true, savedUser, "User registered successfully, please verify your account");
             } else {
                 return new Result<>(false, null, saveResult.getMessage());
             }

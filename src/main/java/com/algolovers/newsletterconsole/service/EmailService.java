@@ -90,7 +90,7 @@ public class EmailService {
 
         context.setVariable("userFullName", user.getDisplayName());
         context.setVariable("verificationCode", verificationCode);
-        context.setVariable("verificationLink", baseUrl + "/verify/" + verificationCode);
+        context.setVariable("verificationLink", baseUrl + "/verification?email=" + user.getEmailAddress());
         context.setVariable("contactEmail", botEmail);
 
         String html = templateEngine.process("verification-email.html", context);
