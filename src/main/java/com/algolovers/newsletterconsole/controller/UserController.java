@@ -3,6 +3,7 @@ package com.algolovers.newsletterconsole.controller;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,13 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/user")
+@RequiredArgsConstructor
 public class UserController {
 
     final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping("/authorizedUserDetails")
     public User getUser() {

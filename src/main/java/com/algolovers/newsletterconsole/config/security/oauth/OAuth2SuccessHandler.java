@@ -24,10 +24,10 @@ import java.util.Optional;
 @AllArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    OAuth2StatelessAuthorizationRepository oAuth2StatelessAuthorizationRepository;
-    JwtService jwtService;
-    UserService userService;
-    ObjectMapper objectMapper;
+    final OAuth2StatelessAuthorizationRepository oAuth2StatelessAuthorizationRepository;
+    final JwtService jwtService;
+    final UserService userService;
+    final ObjectMapper objectMapper;
 
     @SneakyThrows
     @Override

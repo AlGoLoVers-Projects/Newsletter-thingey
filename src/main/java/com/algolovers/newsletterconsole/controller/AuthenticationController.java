@@ -9,6 +9,7 @@ import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
 import com.algolovers.newsletterconsole.utils.ControllerUtils;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,17 +25,12 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthenticationController {
 
     final UserService userService;
     final AuthenticationManager authenticationManager;
     final JwtService jwtService;
-
-    public AuthenticationController(UserService userService, AuthenticationManager authenticationManager, JwtService jwtService) {
-        this.userService = userService;
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
-    }
 
     @GetMapping("/test")
     public String test() {
