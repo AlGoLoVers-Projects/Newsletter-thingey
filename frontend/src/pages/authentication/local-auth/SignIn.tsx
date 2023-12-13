@@ -170,7 +170,7 @@ export default function SignIn(): React.ReactElement {
                         </Button>
                         <Grid container>
                             <Grid item xs>
-                                <Link href="#" variant="body2">
+                                <Link href={paths.forgotPassword} variant="body2">
                                     Forgot password?
                                 </Link>
                             </Grid>

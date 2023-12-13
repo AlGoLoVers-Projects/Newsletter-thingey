@@ -52,8 +52,8 @@ export default function ForgotPassword(): React.ReactElement {
                     if ('data' in response) {
                         let responseData: Result<null> = response.data
                         if (responseData.success) {
-                            showSuccessToast(responseData.message ?? 'Password reset email sent successfully')
-                            navigate(paths.resetPassword)
+                            showSuccessToast(responseData.message ?? 'Password reset email sent successfully, please check your email for further instructions')
+                            navigate(paths.signIn)
                         } else {
                             showFailureToast(responseData.message ?? 'Password reset process failed, please try again later')
                         }

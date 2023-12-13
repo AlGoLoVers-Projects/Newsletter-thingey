@@ -26,6 +26,10 @@ export type ForgotPasswordRequest = {
     email: string
 }
 
+export type ResetPasswordQueryRequest = {
+    id: string
+}
+
 export type ResetPasswordRequest = {
     id: string,
     password: string,

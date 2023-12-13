@@ -10,7 +10,6 @@ import {Box, Input, styled} from "@mui/material";
 import Typography from "@mui/material/Typography";
 
 const VerificationInput = styled(Input)(({theme}) => ({
-    width: "2.5rem",
     fontSize: "1.4rem",
     fontWeight: "600",
     color: theme.palette.secondary.main,
@@ -26,7 +25,7 @@ const VerificationInput = styled(Input)(({theme}) => ({
 
 type InputOrNull = HTMLInputElement | null;
 
-export default function CodeInput(props: { length: number, error?: boolean, onChange?: Function }): React.ReactElement {
+export default function CodeInput(props: { length: number, error?: boolean, onChange?: Function, title: string }): React.ReactElement {
 
     const buildEmptyArray = () => {
         return Array(props.length).fill("");
@@ -110,21 +109,26 @@ export default function CodeInput(props: { length: number, error?: boolean, onCh
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                paddingTop: 1
+                paddingTop: 1,
+                maxWidth: "100%"
             }}
         >
             <Typography
                 variant="subtitle1">
-                Enter verification Code
+                {props.title}
             </Typography>
             <Box
                 sx={{
                     display: "flex",
-                    gap: 1.5,
-                    paddingTop: 1
+                    gap: {xs: 0.1, sm: 1.5},
+                    paddingTop: 1,
+                    justifyContent: "space-between",
                 }}>
                 {code.map((value, i) => (
                     <VerificationInput
+                        sx={{
+                            width: {xs: "100%", sm: "2.8rem"},
+                        }}
                         key={i}
                         value={value}
                         error={props.error ?? false}

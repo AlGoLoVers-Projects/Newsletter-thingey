@@ -133,7 +133,7 @@ export default function Verification(): React.ReactElement {
                             error={!isEmpty(emailError)}
                             helperText={emailError}
                         />
-                        <CodeInput length={8} error={codeError} onChange={(code: any) => {
+                        <CodeInput length={8} error={codeError} title={"Enter verification Code"} onChange={(code: any) => {
                             setCode(code)
                         }}/>
                         <Button
