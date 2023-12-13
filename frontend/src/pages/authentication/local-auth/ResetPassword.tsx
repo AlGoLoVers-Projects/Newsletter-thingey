@@ -161,6 +161,7 @@ export default function ResetPassword(): React.ReactElement {
                         autoComplete="new-password"
                         error={!isEmpty(passwordError)}
                         helperText={passwordError}
+                        autoFocus
                     />
                     <CodeInput length={8} error={codeError} title={"Enter reset Code"} onChange={(code: any) => {
                         setCode(code)

@@ -123,6 +123,7 @@ export default function ForgotPassword(): React.ReactElement {
                         label="Email Address"
                         name="email"
                         autoComplete="email"
+                        autoFocus
                         error={!isEmpty(emailError)}
                         helperText={emailError}
                     />
