@@ -10,6 +10,8 @@ import {useRoutes} from "react-router-dom";
 import {buildRoutes} from "./route-builder";
 import OAuth2Success from "../pages/authentication/oauth/OAuth2Success";
 import OAuth2Failure from "../pages/authentication/oauth/OAuth2Failure";
+import ForgotPassword from "../pages/authentication/local-auth/ForgotPassword";
+import ResetPassword from "../pages/authentication/local-auth/ResetPassword";
 
 export type Route = {
     path: Path,
@@ -53,6 +55,16 @@ export const routes: Routes = [
     {
         path: paths.oauth2Failure,
         element: <OAuth2Failure/>,
+        authorised: false
+    },
+    {
+        path: paths.forgotPassword,
+        element: <ForgotPassword/>,
+        authorised: false
+    },
+    {
+        path: paths.resetPassword,
+        element: <ResetPassword/>,
         authorised: false
     },
     {

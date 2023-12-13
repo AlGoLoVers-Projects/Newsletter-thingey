@@ -7,6 +7,8 @@ export const paths = {
     contactUs: '/contactUs',
     oauth2Authentication: '/oauth2/authorization/google',
     verification: '/verification',
+    forgotPassword: '/forgotPassword',
+    resetPassword: '/resetPassword',
     notFound: '*'
 }
 

@@ -22,6 +22,16 @@ export type TokenValidationRequest = {
     token: string
 }
 
+export type ForgotPasswordRequest = {
+    email: string
+}
+
+export type ResetPasswordRequest = {
+    id: string,
+    password: string,
+    verificationCode: number
+}
+
 export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery(),
@@ -54,9 +64,23 @@ export const apiSlice = createApi({
                 body: credentials,
             }),
         }),
+        forgotPassword: builder.mutation<Result<null>, ForgotPasswordRequest>({
+            query: (credentials) => ({
+                url: '/api/auth/forgotPassword',
+                method: 'POST',
+                body: credentials,
+            }),
+        }),
+        resetPassword: builder.mutation<Result<null>, ResetPasswordRequest>({
+            query: (credentials) => ({
+                url: '/api/auth/resetPassword',
+                method: 'POST',
+                body: credentials,
+            }),
+        }),
     }),
 });
 
-export const { useSignInMutation, useSignUpMutation, useVerifyMutation, useValidateTokenMutation } = apiSlice;
-export const { endpoints } = apiSlice;
-export const { signIn, signUp, verify } = endpoints;
+//TODO: Change to query if needed
+
+export const { useSignInMutation, useSignUpMutation, useVerifyMutation, useValidateTokenMutation, useForgotPasswordMutation, useResetPasswordMutation  } = apiSlice;
