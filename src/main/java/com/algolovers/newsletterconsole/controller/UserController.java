@@ -22,7 +22,7 @@ public class UserController {
 
     @GetMapping("/authorizedUserDetails")
     public User getUser() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userService.loadUserByEmail(userDetails.getUsername());
     }
 

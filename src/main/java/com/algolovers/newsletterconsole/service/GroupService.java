@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -45,6 +46,32 @@ public class GroupService {
 
         try {
             return new Result<>(true, groupRepository.save(group), "New group provisioned successfully");
+        } catch (Exception e) {
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public Result<String> editGroupInformation(@Valid GroupDetailsEditRequest groupDetailsEditRequest, User authenticatedUser) {
+
+        try {
+            Optional<Group> optionalGroup = groupRepository.findById(groupDetailsEditRequest.getGroupId());
+
+            if (optionalGroup.isEmpty()) {
+                return new Result<>(false, null, "The provided group was not found, cannot generate invitation");
+            }
+
+            Group group = optionalGroup.get();
+
+            if (!group.getGroupOwner().getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
+                return new Result<>(false, null, "Only the group owner can edit group information");
+            }
+
+            group.setGroupName(groupDetailsEditRequest.getGroupName());
+            group.setGroupDescription(groupDetailsEditRequest.getGroupDescription());
+
+            groupRepository.save(group);
+            return new Result<>(true, null, "Group edited successfully");
         } catch (Exception e) {
             return new Result<>(false, null, e.getMessage());
         }
@@ -85,6 +112,15 @@ public class GroupService {
             User user = invitedUser.get();
             //TODO: Prepare email for invitation with invitation code embedded in URL
             return new Result<>(true, invitation, "Invitation has been sent to user");
+        }
+    }
+
+    public Result<List<Invitation>> listAllInvitations(User authorisedUser) {
+        try {
+            List<Invitation> invitations = invitationRepository.findInvitationByEmailAddress(authorisedUser.getEmailAddress());
+            return new Result<>(true, invitations, "Invitation fetched successfully");
+        } catch (Exception e) {
+            return new Result<>(true, null, e.getMessage());
         }
     }
 

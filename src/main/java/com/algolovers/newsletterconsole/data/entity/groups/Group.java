@@ -10,10 +10,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.Set;
 
-@Table(name = "group")
+@Table(name = "newsletter_group")
 @Entity
 @Data
 @AllArgsConstructor
