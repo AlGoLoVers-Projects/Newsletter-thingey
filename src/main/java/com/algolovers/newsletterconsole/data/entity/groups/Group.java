@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Table(name = "group")
 @Entity
@@ -38,7 +39,7 @@ public class Group {
     private User groupOwner;
 
     @OneToMany(mappedBy = "group")
-    private List<GroupMember> groupMembers;
+    private Set<GroupMember> groupMembers;
 
     //TODO: Add questions. Questions -> List<Questions> it can be edited modified bla bla.
     //Monthly responses should be maintained somewhere

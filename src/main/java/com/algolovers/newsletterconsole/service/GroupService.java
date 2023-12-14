@@ -2,29 +2,39 @@ package com.algolovers.newsletterconsole.service;
 
 import com.algolovers.newsletterconsole.data.entity.groups.Group;
 import com.algolovers.newsletterconsole.data.entity.groups.GroupMember;
+import com.algolovers.newsletterconsole.data.entity.groups.Invitation;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
-import com.algolovers.newsletterconsole.data.model.api.request.group.GroupCreationRequest;
+import com.algolovers.newsletterconsole.data.model.api.request.group.*;
+import com.algolovers.newsletterconsole.repository.GroupMemberRepository;
 import com.algolovers.newsletterconsole.repository.GroupRepository;
+import com.algolovers.newsletterconsole.repository.InvitationRepository;
+import com.algolovers.newsletterconsole.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class GroupService {
 
     private final GroupRepository groupRepository;
+    private final InvitationRepository invitationRepository;
+    private final UserRepository userRepository;
+    private final GroupMemberRepository groupMemberRepository;
 
-    //TODO: Add methods: Create new group (by authorised user), add user -> invitation. Send invitation, accept invitation.
-    public Result<Group> provisionNewGroup(GroupCreationRequest groupCreationRequest, User groupOwner) {
+    public Result<Group> provisionNewGroup(@Valid GroupCreationRequest groupCreationRequest, @Valid User groupOwner) {
 
         Group group = Group
                 .builder()
                 .groupName(groupCreationRequest.getGroupName())
                 .groupDescription(groupCreationRequest.getGroupDescription())
-                .groupMembers(new ArrayList<>())
+                .groupMembers(new HashSet<>())
                 .groupOwner(groupOwner)
                 .build();
 
@@ -40,8 +50,195 @@ public class GroupService {
         }
     }
 
-    public Result<Group> addNewUserToGroup() {
-        return null;
+    @Transactional(rollbackFor = {Exception.class})
+    public Result<Invitation> inviteUserToGroup(@Valid GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
+
+        Optional<Group> optionalGroup = groupRepository.findById(groupUserInvitationRequest.getGroupId());
+
+        if (optionalGroup.isEmpty()) {
+            return new Result<>(false, null, "The provided group was not found, cannot generate invitation");
+        }
+
+        Group group = optionalGroup.get();
+
+        if (!group.getGroupOwner().getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
+            return new Result<>(false, null, "Only the group owner can invite new users");
+        }
+
+        Set<GroupMember> groupMembers = group.getGroupMembers();
+        if (groupMembers.stream().anyMatch(groupMember -> groupMember.getUser().getEmailAddress().equals(groupUserInvitationRequest.getUserEmail()))) {
+            return new Result<>(false, null, "User already exists in group");
+        }
+
+        Invitation invitation = new Invitation();
+        invitation.setEmailAddress(groupUserInvitationRequest.getUserEmail());
+        invitation.setGroup(group);
+
+        invitationRepository.save(invitation);
+
+        Optional<User> invitedUser = userRepository.findByEmailAddress(groupUserInvitationRequest.getUserEmail());
+
+        if (invitedUser.isEmpty()) {
+            //TODO: Prepare email for invitation instead
+            return new Result<>(true, invitation, "Invitation created, user does not exist. An invitation to the app has been sent");
+        } else {
+            User user = invitedUser.get();
+            //TODO: Prepare email for invitation with invitation code embedded in URL
+            return new Result<>(true, invitation, "Invitation has been sent to user");
+        }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public Result<String> acceptInvitation(GroupUserInvitationAcceptRequest groupUserInvitationAcceptRequest, User authenticatedUser) {
+
+        try {
+            Optional<Invitation> optionalInvitation = invitationRepository.findById(groupUserInvitationAcceptRequest.getGroupId());
+
+            if (optionalInvitation.isEmpty()) {
+                return new Result<>(false, null, "The invitation was not found");
+            }
+
+            Invitation invitation = optionalInvitation.get();
+
+            if (!invitation.getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
+                return new Result<>(false, null, "Invalid invitation, invitation was created for a different email address");
+            }
+
+            if (invitation.hasExpired()) {
+                invitationRepository.delete(invitation);
+                return new Result<>(false, null, "The invitation has expired");
+            }
+
+            Group group = invitation.getGroup();
+            if (group == null) {
+                invitationRepository.delete(invitation);
+                return new Result<>(false, null, "Group not found");
+            }
+
+            Set<GroupMember> groupMembers = group.getGroupMembers();
+            if (groupMembers.stream().anyMatch(groupMember -> groupMember.getUser().getEmailAddress().equals(authenticatedUser.getEmailAddress()))) {
+                return new Result<>(false, null, "User already exists in group");
+            }
+
+            GroupMember groupMember = new GroupMember();
+            groupMember.setGroup(group);
+            groupMember.setUser(authenticatedUser);
+            groupMember.setHasEditAccess(false);
+
+            groupMembers.add(groupMember);
+
+            groupRepository.save(group);
+            invitationRepository.delete(invitation);
+
+            return new Result<>(false, null, "User has been added to group successfully");
+
+            //TODO: Send email?
+        } catch (Exception e) {
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public Result<String> removeUser(GroupUserRemovalRequest groupUserRemovalRequest, User authenticatedUser) {
+
+        try {
+            Optional<Group> optionalGroup = groupRepository.findById(groupUserRemovalRequest.getGroupId());
+
+            if (optionalGroup.isEmpty()) {
+                return new Result<>(false, null, "The provided group was not found, cannot remove user");
+            }
+
+            Group group = optionalGroup.get();
+
+            if (!group.getGroupOwner().getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
+                return new Result<>(false, null, "Only the group owner can remove users");
+            }
+
+            Set<GroupMember> groupMembers = group.getGroupMembers();
+            Optional<GroupMember> optionalGroupMemberToRemove = groupMembers.stream()
+                    .filter(groupMember -> groupMember.getUser().getEmailAddress().equals(groupUserRemovalRequest.getUserEmail()))
+                    .findFirst();
+
+            if (optionalGroupMemberToRemove.isPresent()) {
+                GroupMember groupMemberToRemove = optionalGroupMemberToRemove.get();
+                groupMembers.remove(groupMemberToRemove);
+
+                groupMemberRepository.delete(groupMemberToRemove);
+                groupRepository.save(group);
+
+                return new Result<>(true, null, "User removed from the group successfully");
+            } else {
+                return new Result<>(false, null, "User not found in the group");
+            }
+        } catch (Exception e) {
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public Result<String> leaveGroup(GroupUserLeaveRequest groupUserLeaveRequest, User authenticatedUser) {
+
+        try {
+            Optional<Group> optionalGroup = groupRepository.findById(groupUserLeaveRequest.getGroupId());
+
+            if (optionalGroup.isEmpty()) {
+                return new Result<>(false, null, "The provided group was not found, cannot remove user");
+            }
+
+            Group group = optionalGroup.get();
+
+            if (group.getGroupOwner().getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
+                return new Result<>(false, null, "Group owner cannot leave group, consider deleting group instead");
+            }
+
+            Set<GroupMember> groupMembers = group.getGroupMembers();
+            Optional<GroupMember> optionalGroupMemberToRemove = groupMembers.stream()
+                    .filter(groupMember -> groupMember.getUser().getEmailAddress().equals(authenticatedUser.getEmailAddress()))
+                    .findFirst();
+
+            if (optionalGroupMemberToRemove.isPresent()) {
+                GroupMember groupMemberToRemove = optionalGroupMemberToRemove.get();
+                groupMembers.remove(groupMemberToRemove);
+
+                groupMemberRepository.delete(groupMemberToRemove);
+                groupRepository.save(group);
+
+                return new Result<>(true, null, "User removed from the group successfully");
+            } else {
+                return new Result<>(false, null, "User not found in the group");
+            }
+        } catch (Exception e) {
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public Result<String> deleteGroup(GroupDeletionRequest groupDeletionRequest, User authenticatedUser) {
+
+        try {
+            Optional<Group> optionalGroup = groupRepository.findById(groupDeletionRequest.getGroupId());
+
+            if (optionalGroup.isEmpty()) {
+                return new Result<>(false, null, "The provided group was not found, cannot remove user");
+            }
+
+            Group group = optionalGroup.get();
+
+            if (!group.getGroupOwner().getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
+                return new Result<>(false, null, "Only group owner can delete group");
+            }
+
+            Set<GroupMember> groupMembers = group.getGroupMembers();
+            groupMemberRepository.deleteAll(group.getGroupMembers());
+            groupMembers.clear();
+
+            invitationRepository.deleteByGroup(group);
+            groupRepository.delete(group);
+
+            return new Result<>(true, null, "Group has been deleted successfully");
+        } catch (Exception e) {
+            return new Result<>(false, null, e.getMessage());
+        }
     }
 
 

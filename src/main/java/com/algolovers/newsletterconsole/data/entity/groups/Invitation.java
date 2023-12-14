@@ -2,6 +2,7 @@ package com.algolovers.newsletterconsole.data.entity.groups;
 
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -13,12 +14,11 @@ import java.time.LocalDateTime;
 public class Invitation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Email
+    String emailAddress;
 
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = false)
