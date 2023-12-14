@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole.data.model.api.request;
+package com.algolovers.newsletterconsole.data.model.api.request.auth;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;

@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole.data.model.api.response;
+package com.algolovers.newsletterconsole.data.model.api.response.auth;
 
 import com.algolovers.newsletterconsole.data.entity.user.Authority;
 import com.fasterxml.jackson.annotation.JsonProperty;

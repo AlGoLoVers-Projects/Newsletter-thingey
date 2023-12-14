@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole.data.entity.team;
+package com.algolovers.newsletterconsole.data.entity.groups;
 
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import jakarta.persistence.*;
@@ -21,8 +21,8 @@ public class Invitation {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "team_id", nullable = false)
-    private Team team;
+    @JoinColumn(name = "group_id", nullable = false)
+    private Group group;
 
     @CreationTimestamp
     @Column(name = "invitation_date", updatable = false)

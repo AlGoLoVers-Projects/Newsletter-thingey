@@ -2,7 +2,7 @@ package com.algolovers.newsletterconsole.config.security.oauth;
 
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.AuthenticatedUserToken;
-import com.algolovers.newsletterconsole.data.model.api.response.AuthData;
+import com.algolovers.newsletterconsole.data.model.api.response.auth.AuthData;
 import com.algolovers.newsletterconsole.exceptions.OAuth2AuthenticationProcessingException;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;

@@ -1,14 +1,14 @@
-package com.algolovers.newsletterconsole.data.entity.team;
+package com.algolovers.newsletterconsole.data.entity.groups;
 
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Table(name = "team_member")
+@Table(name = "group_member")
 @Entity
 @Data
-public class TeamMember {
+public class GroupMember {
 
     @Id
     @JsonIgnore
@@ -16,8 +16,8 @@ public class TeamMember {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "team_id", nullable = false)
-    private Team team;
+    @JoinColumn(name = "group_id", nullable = false)
+    private Group group;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
