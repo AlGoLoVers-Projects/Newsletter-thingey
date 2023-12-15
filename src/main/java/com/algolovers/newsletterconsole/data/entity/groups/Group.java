@@ -26,7 +26,7 @@ public class Group {
     private String id;
 
     @Column(nullable = false)
-    @Pattern(regexp = "^[a-zA-Z0-9_]*$", message = "Username can only contain alphanumeric characters and underscores")
+    @Pattern(regexp = "^[a-zA-Z0-9_ ]*$", message = "Username can only contain alphanumeric characters and underscores")
     @Size(min = 3, max = 30, message = "Username must have a minimum of three characters and maximum of 30 characters")
     String groupName;
 
@@ -37,11 +37,21 @@ public class Group {
     @JoinColumn(name = "group_owner_id", nullable = false)
     private User groupOwner;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany
     private Set<GroupMember> groupMembers;
 
     //TODO: Add questions. Questions -> List<Questions> it can be edited modified bla bla.
     //Monthly responses should be maintained somewhere
     //private List<Questions> questions;
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "id=" + id +
+                ", groupName='" + groupName + '\'' +
+                ", groupDescription='" + groupDescription + '\'' +
+                ", groupOwner='" + groupOwner + '\'' +
+                '}';
+    }
 
 }

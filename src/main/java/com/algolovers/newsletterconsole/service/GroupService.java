@@ -12,6 +12,7 @@ import com.algolovers.newsletterconsole.repository.InvitationRepository;
 import com.algolovers.newsletterconsole.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GroupService {
 
     private final GroupRepository groupRepository;
@@ -29,6 +31,7 @@ public class GroupService {
     private final UserRepository userRepository;
     private final GroupMemberRepository groupMemberRepository;
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> provisionNewGroup(@Valid GroupCreationRequest groupCreationRequest, @Valid User groupOwner) {
 
         Group group = Group
@@ -40,13 +43,19 @@ public class GroupService {
                 .build();
 
         GroupMember groupOwnerMember = new GroupMember();
-        groupOwnerMember.setGroup(group);
         groupOwnerMember.setUser(groupOwner);
         groupOwnerMember.setHasEditAccess(true);
 
+        groupMemberRepository.save(groupOwnerMember);
+
+        group.getGroupMembers().add(groupOwnerMember);
+
         try {
-            return new Result<>(true, groupRepository.save(group), "New group provisioned successfully");
+            Group savedGroup = groupRepository.save(group);
+
+            return new Result<>(true, savedGroup, "New group provisioned successfully");
         } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
         }
     }
@@ -73,6 +82,7 @@ public class GroupService {
             groupRepository.save(group);
             return new Result<>(true, null, "Group edited successfully");
         } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
         }
     }
@@ -124,6 +134,7 @@ public class GroupService {
             List<Invitation> invitations = invitationRepository.findInvitationByEmailAddress(authorisedUser.getEmailAddress());
             return new Result<>(true, invitations, "Invitation fetched successfully");
         } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(true, null, e.getMessage());
         }
     }
@@ -161,7 +172,6 @@ public class GroupService {
             }
 
             GroupMember groupMember = new GroupMember();
-            groupMember.setGroup(group);
             groupMember.setUser(authenticatedUser);
             groupMember.setHasEditAccess(false);
 
@@ -174,6 +184,7 @@ public class GroupService {
 
             //TODO: Send email?
         } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
         }
     }
@@ -211,6 +222,7 @@ public class GroupService {
                 return new Result<>(false, null, "User not found in the group");
             }
         } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
         }
     }
@@ -248,6 +260,7 @@ public class GroupService {
                 return new Result<>(false, null, "User not found in the group");
             }
         } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
         }
     }
@@ -277,6 +290,7 @@ public class GroupService {
 
             return new Result<>(true, null, "Group has been deleted successfully");
         } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
         }
     }
