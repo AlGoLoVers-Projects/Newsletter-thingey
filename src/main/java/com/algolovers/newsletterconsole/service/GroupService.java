@@ -92,6 +92,10 @@ public class GroupService {
             return new Result<>(false, null, "Only the group owner can invite new users");
         }
 
+        if(group.getGroupOwner().getEmailAddress().equals(groupUserInvitationRequest.getUserEmail())) {
+            return new Result<>(false, null, "You cannot invite yourself to the group");
+        }
+
         Set<GroupMember> groupMembers = group.getGroupMembers();
         if (groupMembers.stream().anyMatch(groupMember -> groupMember.getUser().getEmailAddress().equals(groupUserInvitationRequest.getUserEmail()))) {
             return new Result<>(false, null, "User already exists in group");

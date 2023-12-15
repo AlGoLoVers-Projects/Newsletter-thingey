@@ -23,7 +23,7 @@ public class GroupController {
     final GroupService groupService;
 
     @PostMapping("/provisionNewGroup")
-    public ResponseEntity<Result<String>> getUser(@Valid @RequestBody GroupCreationRequest groupCreationRequest) {
+    public ResponseEntity<Result<String>> provisionNewGroup(@Valid @RequestBody GroupCreationRequest groupCreationRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<Group> result = groupService.provisionNewGroup(groupCreationRequest, user);
         return ControllerUtils.processResultForResponse(result);
@@ -36,7 +36,7 @@ public class GroupController {
         return ControllerUtils.processResultForResponse(result);
     }
 
-    @PostMapping("/provisionNewGroup")
+    @PostMapping("/inviteUserToGroup")
     public ResponseEntity <Result<String>> inviteUserToGroup(@Valid @RequestBody GroupUserInvitationRequest groupUserInvitationRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<Invitation> result = groupService.inviteUserToGroup(groupUserInvitationRequest, user);
