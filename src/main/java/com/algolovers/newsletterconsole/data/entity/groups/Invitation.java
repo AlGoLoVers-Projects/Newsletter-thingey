@@ -1,8 +1,6 @@
 package com.algolovers.newsletterconsole.data.entity.groups;
 
-import com.algolovers.newsletterconsole.data.entity.user.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -13,16 +11,8 @@ import java.time.LocalDateTime;
 @Data
 public class Invitation {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-
-    @Email
-    String emailAddress;
-
-    @ManyToOne
-    @JoinColumn(name = "group_id", nullable = false)
-    private Group group;
+    @EmbeddedId
+    private InvitationId id;
 
     @CreationTimestamp
     @Column(name = "invitation_date", updatable = false)
@@ -36,6 +26,4 @@ public class Invitation {
 
         return currentDate.isAfter(expirationDate);
     }
-
-
 }

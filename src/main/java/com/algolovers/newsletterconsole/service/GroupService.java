@@ -3,6 +3,7 @@ package com.algolovers.newsletterconsole.service;
 import com.algolovers.newsletterconsole.data.entity.groups.Group;
 import com.algolovers.newsletterconsole.data.entity.groups.GroupMember;
 import com.algolovers.newsletterconsole.data.entity.groups.Invitation;
+import com.algolovers.newsletterconsole.data.entity.groups.InvitationId;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.group.*;
@@ -99,49 +100,58 @@ public class GroupService {
 
     @Transactional(rollbackFor = {Exception.class})
     public Result<Invitation> inviteUserToGroup(@Valid GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
+        try {
 
-        Optional<Group> optionalGroup = groupRepository.findById(groupUserInvitationRequest.getGroupId());
+            Optional<Group> optionalGroup = groupRepository.findById(groupUserInvitationRequest.getGroupId());
 
-        if (optionalGroup.isEmpty()) {
-            return new Result<>(false, null, "The provided group was not found, cannot generate invitation");
-        }
+            if (optionalGroup.isEmpty()) {
+                return new Result<>(false, null, "The provided group was not found, cannot generate invitation");
+            }
 
-        Group group = optionalGroup.get();
+            Group group = optionalGroup.get();
 
-        if (!group.getGroupOwner().getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
-            return new Result<>(false, null, "Only the group owner can invite new users");
-        }
+            if (!group.getGroupOwner().getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
+                return new Result<>(false, null, "Only the group owner can invite new users");
+            }
 
-        if(group.getGroupOwner().getEmailAddress().equals(groupUserInvitationRequest.getUserEmail())) {
-            return new Result<>(false, null, "You cannot invite yourself to the group");
-        }
+            if (group.getGroupOwner().getEmailAddress().equals(groupUserInvitationRequest.getUserEmail())) {
+                return new Result<>(false, null, "You cannot invite yourself to the group");
+            }
 
-        Set<GroupMember> groupMembers = group.getGroupMembers();
-        if (groupMembers.stream().anyMatch(groupMember -> groupMember.getUser().getEmailAddress().equals(groupUserInvitationRequest.getUserEmail()))) {
-            return new Result<>(false, null, "User already exists in group");
-        }
+            Set<GroupMember> groupMembers = group.getGroupMembers();
+            if (groupMembers.stream().anyMatch(groupMember -> groupMember.getUser().getEmailAddress().equals(groupUserInvitationRequest.getUserEmail()))) {
+                return new Result<>(false, null, "User already exists in group");
+            }
 
-        Invitation invitation = new Invitation();
-        invitation.setEmailAddress(groupUserInvitationRequest.getUserEmail());
-        invitation.setGroup(group);
+            Invitation invitation = new Invitation();
 
-        invitationRepository.save(invitation);
+            InvitationId invitationId = new InvitationId();
+            invitationId.setEmailAddress(groupUserInvitationRequest.getUserEmail());
+            invitationId.setGroup(group);
 
-        Optional<User> invitedUser = userRepository.findByEmailAddress(groupUserInvitationRequest.getUserEmail());
+            invitation.setId(invitationId);
 
-        if (invitedUser.isEmpty()) {
-            //TODO: Prepare email for invitation instead
-            return new Result<>(true, invitation, "Invitation created, user does not exist. An invitation to the app has been sent");
-        } else {
-            User user = invitedUser.get();
-            //TODO: Prepare email for invitation with invitation code embedded in URL
-            return new Result<>(true, invitation, "Invitation has been sent to user");
+            invitationRepository.save(invitation);
+
+            Optional<User> invitedUser = userRepository.findByEmailAddress(groupUserInvitationRequest.getUserEmail());
+
+            if (invitedUser.isEmpty()) {
+                //TODO: Prepare email for invitation instead
+                return new Result<>(true, invitation, "Invitation created, user does not exist. An invitation to the app has been sent");
+            } else {
+                User user = invitedUser.get();
+                //TODO: Prepare email for invitation with invitation code embedded in URL
+                return new Result<>(true, invitation, "Invitation has been sent to user");
+            }
+        } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
+            return new Result<>(true, null, e.getMessage());
         }
     }
 
     public Result<List<Invitation>> listAllInvitations(User authorisedUser) {
         try {
-            List<Invitation> invitations = invitationRepository.findInvitationByEmailAddress(authorisedUser.getEmailAddress());
+            List<Invitation> invitations = invitationRepository.findInvitationById_EmailAddress(authorisedUser.getEmailAddress());
             return new Result<>(true, invitations, "Invitation fetched successfully");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
@@ -153,7 +163,8 @@ public class GroupService {
     public Result<String> acceptInvitation(GroupUserInvitationAcceptRequest groupUserInvitationAcceptRequest, User authenticatedUser) {
 
         try {
-            Optional<Invitation> optionalInvitation = invitationRepository.findById(groupUserInvitationAcceptRequest.getGroupId());
+            Optional<Invitation> optionalInvitation = invitationRepository.findInvitationById_EmailAddressAndId_Group_Id(
+                    authenticatedUser.getEmailAddress(), groupUserInvitationAcceptRequest.getGroupId());
 
             if (optionalInvitation.isEmpty()) {
                 return new Result<>(false, null, "The invitation was not found");
@@ -161,16 +172,12 @@ public class GroupService {
 
             Invitation invitation = optionalInvitation.get();
 
-            if (!invitation.getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
-                return new Result<>(false, null, "Invalid invitation, invitation was created for a different email address");
-            }
-
             if (invitation.hasExpired()) {
                 invitationRepository.delete(invitation);
                 return new Result<>(false, null, "The invitation has expired");
             }
 
-            Group group = invitation.getGroup();
+            Group group = invitation.getId().getGroup();
             if (group == null) {
                 invitationRepository.delete(invitation);
                 return new Result<>(false, null, "Group not found");
@@ -184,6 +191,8 @@ public class GroupService {
             GroupMember groupMember = new GroupMember();
             groupMember.setUser(authenticatedUser);
             groupMember.setHasEditAccess(false);
+
+            groupMemberRepository.save(groupMember);
 
             groupMembers.add(groupMember);
 
@@ -295,7 +304,7 @@ public class GroupService {
             groupMemberRepository.deleteAll(group.getGroupMembers());
             groupMembers.clear();
 
-            invitationRepository.deleteByGroup(group);
+            invitationRepository.deleteById_Group(group);
             groupRepository.delete(group);
 
             return new Result<>(true, null, "Group has been deleted successfully");
