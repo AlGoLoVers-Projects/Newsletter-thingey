@@ -21,7 +21,6 @@ import java.util.Set;
 public class Group {
 
     @Id
-    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 

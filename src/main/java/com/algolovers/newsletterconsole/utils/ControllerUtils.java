@@ -11,4 +11,12 @@ public class ControllerUtils {
             return ResponseEntity.badRequest().body(new Result<>(false, null, result.getMessage()));
         }
     }
+
+    public static <T> ResponseEntity<Result<T>> processResultForResponseWithData(Result<T> result) {
+        if (result.isSuccess()) {
+            return ResponseEntity.ok(new Result<>(true, result.getData(), result.getMessage()));
+        } else {
+            return ResponseEntity.badRequest().body(new Result<>(false, result.getData(), result.getMessage()));
+        }
+    }
 }

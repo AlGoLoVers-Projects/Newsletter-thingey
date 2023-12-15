@@ -65,6 +65,7 @@ public class User implements UserDetails, OAuth2User {
     private Set<Authority> authorities;
 
     @Enumerated(EnumType.STRING)
+    @JsonIgnore
     AuthProvider authProvider;
 
     //Only for intermediate oauth signup
@@ -101,21 +102,25 @@ public class User implements UserDetails, OAuth2User {
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return Objects.isNull(this.passwordResetCode);
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return Objects.isNull(this.accountVerificationCode) && Objects.isNull(verificationTokenExpirationDate);
     }

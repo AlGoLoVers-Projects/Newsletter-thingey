@@ -88,6 +88,16 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
+    public Result<List<Group>> listAllGroups(User authenticatedUser) {
+        try {
+            return new Result<>(true, groupRepository.findByGroupMembersUser(authenticatedUser), "Fetched all groups successfully");
+        } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Invitation> inviteUserToGroup(@Valid GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
 
         Optional<Group> optionalGroup = groupRepository.findById(groupUserInvitationRequest.getGroupId());

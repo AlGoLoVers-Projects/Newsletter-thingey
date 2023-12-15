@@ -36,43 +36,50 @@ public class GroupController {
         return ControllerUtils.processResultForResponse(result);
     }
 
+    @GetMapping("/listAllGroups")
+    public ResponseEntity<Result<List<Group>>> listAllGroups() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Result<List<Group>> result = groupService.listAllGroups(user);
+        return ControllerUtils.processResultForResponseWithData(result);
+    }
+
     @PostMapping("/inviteUserToGroup")
-    public ResponseEntity <Result<String>> inviteUserToGroup(@Valid @RequestBody GroupUserInvitationRequest groupUserInvitationRequest) {
+    public ResponseEntity<Result<String>> inviteUserToGroup(@Valid @RequestBody GroupUserInvitationRequest groupUserInvitationRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<Invitation> result = groupService.inviteUserToGroup(groupUserInvitationRequest, user);
         return ControllerUtils.processResultForResponse(result);
     }
 
     @GetMapping("/listAllInvitations")
-    public ResponseEntity <Result<String>> listAllInvitations() {
+    public ResponseEntity<Result<List<Invitation>>> listAllInvitations() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<List<Invitation>> result = groupService.listAllInvitations(user);
-        return ControllerUtils.processResultForResponse(result);
+        return ControllerUtils.processResultForResponseWithData(result);
     }
 
     @PostMapping("/acceptInvitation")
-    public ResponseEntity <Result<String>> acceptInvitation(@Valid @RequestBody GroupUserInvitationAcceptRequest groupUserInvitationAcceptRequest) {
+    public ResponseEntity<Result<String>> acceptInvitation(@Valid @RequestBody GroupUserInvitationAcceptRequest groupUserInvitationAcceptRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<String> result = groupService.acceptInvitation(groupUserInvitationAcceptRequest, user);
         return ControllerUtils.processResultForResponse(result);
     }
 
     @DeleteMapping("/removeUser")
-    public ResponseEntity <Result<String>> removeUser(@Valid @RequestBody GroupUserRemovalRequest groupUserRemovalRequest) {
+    public ResponseEntity<Result<String>> removeUser(@Valid @RequestBody GroupUserRemovalRequest groupUserRemovalRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<String> result = groupService.removeUser(groupUserRemovalRequest, user);
         return ControllerUtils.processResultForResponse(result);
     }
 
     @DeleteMapping("/leaveGroup")
-    public ResponseEntity <Result<String>> leaveGroup(@Valid @RequestBody GroupUserLeaveRequest groupUserLeaveRequest) {
+    public ResponseEntity<Result<String>> leaveGroup(@Valid @RequestBody GroupUserLeaveRequest groupUserLeaveRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<String> result = groupService.leaveGroup(groupUserLeaveRequest, user);
         return ControllerUtils.processResultForResponse(result);
     }
 
     @DeleteMapping("/deleteGroup")
-    public ResponseEntity <Result<String>> deleteGroup(@Valid @RequestBody GroupDeletionRequest groupDeletionRequest) {
+    public ResponseEntity<Result<String>> deleteGroup(@Valid @RequestBody GroupDeletionRequest groupDeletionRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<String> result = groupService.deleteGroup(groupDeletionRequest, user);
         return ControllerUtils.processResultForResponse(result);
