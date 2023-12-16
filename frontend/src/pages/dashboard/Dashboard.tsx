@@ -16,14 +16,21 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import {Link, Route, Routes} from 'react-router-dom';
+import {Link, Route, Routes, useLocation, useNavigate, Navigate} from 'react-router-dom';
 import {alpha, Card, InputBase} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import {useDispatch, useSelector} from "react-redux";
 import {selectSearchValue, setSearchValue} from "../../redux/rootslices/search.slice";
 import Groups from "./sub-pages/Groups";
+import {
+    ContactPage, ExitToApp,
+    Group,
+    InfoRounded, Person2Rounded, QuestionAnswer, SvgIconComponent,
+} from "@mui/icons-material";
+import {authorizedPaths, dashboardPaths, Path} from "../../router/paths";
+import BreadCrumb from "../../components/elements/BreadCrumb";
+import {ReactElement} from "react";
+
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -77,7 +84,7 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-const Search = styled('div')(({ theme }) => ({
+const Search = styled('div')(({theme}) => ({
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
     backgroundColor: alpha(theme.palette.common.white, 0.15),
@@ -92,7 +99,7 @@ const Search = styled('div')(({ theme }) => ({
     },
 }));
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
+const SearchIconWrapper = styled('div')(({theme}) => ({
     padding: theme.spacing(0, 2),
     height: '100%',
     position: 'absolute',
@@ -102,7 +109,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
     justifyContent: 'center',
 }));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
+const StyledInputBase = styled(InputBase)(({theme}) => ({
     color: 'inherit',
     width: '100%',
     '& .MuiInputBase-input': {
@@ -139,6 +146,8 @@ const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})
 
 export default function Dashboard(): React.ReactElement {
     const theme = useTheme();
+    const navigate = useNavigate()
+    const location = useLocation()
     const [open, setOpen] = React.useState(false);
 
     const handleDrawerOpen = () => {
@@ -155,6 +164,79 @@ export default function Dashboard(): React.ReactElement {
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(setSearchValue(e.target.value ?? ''));
     };
+
+    type NavData = {
+        title: string,
+        icon: ReactElement
+        path: Path,
+    }
+
+    const primaryNavigation: NavData[] = [
+        {
+            title: 'Groups',
+            icon: <Group/>,
+            path: authorizedPaths.groups
+        },
+        {
+            title: 'Questions',
+            icon: <QuestionAnswer/>,
+            path: authorizedPaths.questions
+        },
+    ]
+
+    const secondaryNavigation: NavData[] = [
+        {
+            title: 'Profile',
+            icon: <Person2Rounded/>,
+            path: authorizedPaths.profile
+        },
+        {
+            title: 'About Us',
+            icon: <InfoRounded/>,
+            path: authorizedPaths.aboutUs
+        },
+        {
+            title: 'Contact Us',
+            icon: <ContactPage/>,
+            path: authorizedPaths.contactUs
+        },
+    ]
+
+    const buildNavigation = (nav: NavData[]) => {
+        return nav.map((data, index) => (
+            <ListItem key={data.title} disablePadding sx={{
+                display: 'block',
+                backgroundColor: data.path === location.pathname ? theme.palette.primary.main : 'initial'
+            }}
+            >
+                {buildNavButton(data)}
+            </ListItem>
+        ))
+    }
+
+    const buildNavButton = (data: NavData) => {
+        return <ListItemButton
+            sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+            }}
+            onClick={() => {
+                navigate(data.path)
+            }}
+        >
+            <ListItemIcon
+                sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                }}
+            >
+                {data.icon}
+            </ListItemIcon>
+            <ListItemText primary={data.title} sx={{opacity: open ? 1 : 0}}/>
+        </ListItemButton>
+    }
 
 
     return (
@@ -177,19 +259,19 @@ export default function Dashboard(): React.ReactElement {
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+                        sx={{flexGrow: 1, display: {xs: 'none', sm: 'block'}}}
                     >
                         Newsletter
                     </Typography>
                     <Search>
                         <SearchIconWrapper>
-                            <SearchIcon />
+                            <SearchIcon/>
                         </SearchIconWrapper>
                         <StyledInputBase
                             onChange={handleSearchChange}
                             value={searchValue}
                             placeholder="Search…"
-                            inputProps={{ 'aria-label': 'search' }}
+                            inputProps={{'aria-label': 'search'}}
                         />
                     </Search>
                 </Toolbar>
@@ -202,62 +284,22 @@ export default function Dashboard(): React.ReactElement {
                 </DrawerHeader>
                 <Divider/>
                 <List>
-                    {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{display: 'block'}}>
-                            <ListItemButton
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5,
-                                }}
-                            >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : 'auto',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{opacity: open ? 1 : 0}}/>
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                    {buildNavigation(primaryNavigation)}
                 </List>
                 <Divider/>
                 <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{display: 'block'}}>
-                            <ListItemButton
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5,
-                                }}
-                            >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : 'auto',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{opacity: open ? 1 : 0}}/>
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                    {buildNavigation(secondaryNavigation)}
+                </List>
+                <List sx={{marginTop: 'auto'}}>
+                    {buildNavButton({title: 'Sign Out', icon: <ExitToApp/>, path: authorizedPaths.signOut})}
                 </List>
             </Drawer>
             <Box component="main" sx={{flexGrow: 1, p: 3}}>
                 <DrawerHeader/>
-                <Link to="/dashboard/a">My Profile</Link>
+                <BreadCrumb/>
                 <Routes>
-                    <Route path="/" element={<Groups/>}/>
-                    <Route path="a" element={<Card>a</Card>}/>
-                    <Route path="b" element={<Card>b</Card>}/>
+                    <Route path={'/'} element={<Navigate to={authorizedPaths.groups}/>}/>
+                    <Route path={dashboardPaths.groups} element={<Groups/>}/>
                 </Routes>
             </Box>
         </Box>

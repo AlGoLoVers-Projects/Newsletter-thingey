@@ -50,11 +50,11 @@ export const buildTheme = (): Theme => {
                 main: "#ff5656",
             },
             text: {
-                primary: "#fff",
+                primary: "#fff2ea",
                 secondary: "#757575",
             },
             action: {
-                hover: "#ff6e23",
+                hover: "rgba(255,87,0,0.8)",
                 selected: "#ff6e23",
             },
         },
