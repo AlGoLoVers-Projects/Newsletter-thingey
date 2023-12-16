@@ -64,6 +64,13 @@ public class GroupController {
         return ControllerUtils.processResultForResponse(result);
     }
 
+    @PutMapping("/updateEditAccessToUser")
+    public ResponseEntity<Result<String>> updateEditAccessToUser(@Valid @RequestBody GroupUserEditAccessRequest groupUserEditAccessRequest) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Result<String> result = groupService.updateEditAccessToUser(groupUserEditAccessRequest, user);
+        return ControllerUtils.processResultForResponse(result);
+    }
+
     @DeleteMapping("/removeUser")
     public ResponseEntity<Result<String>> removeUser(@Valid @RequestBody GroupUserRemovalRequest groupUserRemovalRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -84,5 +91,7 @@ public class GroupController {
         Result<String> result = groupService.deleteGroup(groupDeletionRequest, user);
         return ControllerUtils.processResultForResponse(result);
     }
+
+    //TODO: Add controller to let group owner give edit access.
 
 }

@@ -209,6 +209,43 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
+    public Result<String> updateEditAccessToUser(GroupUserEditAccessRequest groupUserEditAccessRequest, User authenticatedUser) {
+        try {
+            Optional<Group> optionalGroup = groupRepository.findById(groupUserEditAccessRequest.getGroupId());
+
+            if (optionalGroup.isEmpty()) {
+                return new Result<>(false, null, "The provided group was not found, cannot change user edit access");
+            }
+
+            Group group = optionalGroup.get();
+
+            if (!group.getGroupOwner().getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
+                return new Result<>(false, null, "Only the group owner can modify user permissions");
+            }
+
+            Set<GroupMember> groupMembers = group.getGroupMembers();
+            Optional<GroupMember> optionalGroupMemberToEdit = groupMembers.stream()
+                    .filter(groupMember -> groupMember.getUser().getEmailAddress().equals(groupUserEditAccessRequest.getUserEmail()))
+                    .findFirst();
+
+            if (optionalGroupMemberToEdit.isPresent()) {
+                GroupMember groupMember = optionalGroupMemberToEdit.get();
+                groupMember.setHasEditAccess(groupUserEditAccessRequest.getCanEdit());
+
+                groupMemberRepository.save(groupMember);
+                groupRepository.save(group);
+
+                return new Result<>(true, null, "User removed from the group successfully");
+            } else {
+                return new Result<>(false, null, "User not found in the group");
+            }
+        } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
     public Result<String> removeUser(GroupUserRemovalRequest groupUserRemovalRequest, User authenticatedUser) {
 
         try {
