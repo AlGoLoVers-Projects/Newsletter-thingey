@@ -1,5 +1,5 @@
 import {combineReducers} from "redux";
-import authSlice from "./rootslices/auth-data-slice";
+import authSlice from "./rootslices/auth-data.slice";
 import { apiSlice } from './rootslices/authentication.slice';
 import searchSlice from "./rootslices/search.slice";
 

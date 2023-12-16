@@ -22,7 +22,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {showFailureToast, showSuccessToast} from "../../../util/toasts";
 import {Navigate, useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {selectToken} from "../../../redux/rootslices/auth-data-slice";
+import {selectToken} from "../../../redux/rootslices/auth-data.slice";
 
 export default function SignUp() {
 

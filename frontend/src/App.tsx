@@ -6,7 +6,7 @@ import {
     selectToken,
     setUserData,
     UserData,
-} from './redux/rootslices/auth-data-slice';
+} from './redux/rootslices/auth-data.slice';
 import {
     TokenValidationRequest,
     useValidateTokenMutation,

@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import {Navigate, useNavigate} from "react-router-dom";
 import {authorizedPaths, paths} from "../../router/paths";
 import {useSelector} from "react-redux";
-import {selectToken} from "../../redux/rootslices/auth-data-slice";
+import {selectToken} from "../../redux/rootslices/auth-data.slice";
 
 export default function Home(): React.ReactElement {
     let navigate = useNavigate();

@@ -22,7 +22,7 @@ import {showFailureToast, showSuccessToast} from "../../../util/toasts";
 import {useDispatch, useSelector} from "react-redux";
 import 'react-toastify/dist/ReactToastify.css';
 import {Navigate, useNavigate} from "react-router-dom";
-import {AuthData, selectToken, setAuthData} from "../../../redux/rootslices/auth-data-slice";
+import {AuthData, selectToken, setAuthData} from "../../../redux/rootslices/auth-data.slice";
 
 
 export default function SignIn(): React.ReactElement {

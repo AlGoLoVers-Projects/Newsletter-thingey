@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import {Result} from "../../types/result";
-import {AuthData, UserData} from "./auth-data-slice";
+import {AuthData, UserData} from "./auth-data.slice";
 
 export type SignInRequest = {
     email: string;
