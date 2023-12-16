@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {
     ForgotPasswordRequest,
     useForgotPasswordMutation,
-} from "../authentication.slice";
+} from "../../../redux/rootslices/authentication.slice";
 import {useNavigate} from "react-router-dom";
 import {isEmpty, isValidEmail} from "../../../util/validation";
 import {showFailureToast, showSuccessToast} from "../../../util/toasts";

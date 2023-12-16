@@ -10,10 +10,9 @@ import {
 import {
     TokenValidationRequest,
     useValidateTokenMutation,
-} from './pages/authentication/authentication.slice';
+} from './redux/rootslices/authentication.slice';
 import {Result} from './types/result';
 import {showFailureToast} from './util/toasts';
-import {buildRoutes} from "./router/route-builder";
 import {CircularProgress, Container, CssBaseline} from "@mui/material";
 import Routes from "./router/routes";
 

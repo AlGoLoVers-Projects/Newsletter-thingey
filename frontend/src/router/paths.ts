@@ -13,7 +13,7 @@ export const paths = {
 }
 
 export const authorizedPaths = {
-    dashboard: '/dashboard',
+    dashboard: '/dashboard/*',
     signOut: '/signout',
 }
 

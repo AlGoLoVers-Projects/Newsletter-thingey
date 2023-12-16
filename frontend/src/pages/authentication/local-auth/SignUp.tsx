@@ -14,7 +14,7 @@ import {authorizedPaths, paths} from "../../../router/paths";
 import {Card} from "@mui/material";
 import OrDivider from "../../../components/elements/OrDivider";
 import GoogleAuthButton from "../../../components/elements/GoogleAuthButton";
-import {SignupRequest, useSignUpMutation} from "../authentication.slice";
+import {SignupRequest, useSignUpMutation} from "../../../redux/rootslices/authentication.slice";
 import {isEmpty, isValidEmail, isValidName, isValidPassword} from "../../../util/validation";
 import {useState} from "react";
 import {Result} from "../../../types/result";

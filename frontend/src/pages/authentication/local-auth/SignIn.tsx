@@ -14,7 +14,7 @@ import {DesignedBy} from "../../../components/branding/DesignedBy";
 import {Card} from "@mui/material";
 import OrDivider from "../../../components/elements/OrDivider";
 import GoogleAuthButton from "../../../components/elements/GoogleAuthButton";
-import {SignInRequest, useSignInMutation} from "../authentication.slice";
+import {SignInRequest, useSignInMutation} from "../../../redux/rootslices/authentication.slice";
 import {useState} from "react";
 import {isEmpty, isValidEmail, validateAuthData} from "../../../util/validation";
 import {Result} from "../../../types/result";

@@ -70,7 +70,7 @@ export const routes: Routes = [
     {
         path: authorizedPaths.dashboard,
         element: <Dashboard/>,
-        authorised: true
+        authorised: false
     },
 ];
 

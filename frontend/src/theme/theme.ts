@@ -54,8 +54,8 @@ export const buildTheme = (): Theme => {
                 secondary: "#757575",
             },
             action: {
-                hover: "#ffee58",
-                selected: "#ff9800",
+                hover: "#ff6e23",
+                selected: "#ff6e23",
             },
         },
     });
