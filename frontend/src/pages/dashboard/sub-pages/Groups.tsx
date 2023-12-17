@@ -22,8 +22,15 @@ const Groups = (): React.ReactElement => {
                 if ('data' in response) {
                     let responseData: Result<GroupResponse> = response.data!
                     if (responseData.success) {
-                        console.log(responseData)
-                        setGroups(responseData.data)
+                        const sortedData = responseData.data
+                            .slice()
+                            .sort((a, b) => {
+                                const dateA = a.updatedAt || '';
+                                const dateB = b.updatedAt || '';
+
+                                return dateB.localeCompare(dateA);
+                            }) ?? 0;
+                        setGroups(sortedData)
                     } else {
                         showFailureToast(responseData.message ?? 'Token validation failed, signing out')
                     }
@@ -70,8 +77,7 @@ const Groups = (): React.ReactElement => {
             <Box>
                 {
                     isLoading ?
-                        <CircularProgress/>
-                        : groups.length !== 0
+                        <CircularProgress/> : groups.length !== 0
                             ? <GroupList rows={groups}/>
                             : <Typography variant="body2" color="text.secondary" align="center">
                                 No data found

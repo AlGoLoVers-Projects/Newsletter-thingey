@@ -16,6 +16,8 @@ import { styled } from "@mui/material/styles";
 import {Card, tableCellClasses, useTheme} from "@mui/material";
 import { DeleteForeverRounded } from "@mui/icons-material";
 import {GroupData} from "../../../redux/rootslices/groups.slice";
+import {useSelector} from "react-redux";
+import {selectSearchValue} from "../../../redux/rootslices/search.slice";
 
 function Row(props: { row: GroupData }) {
     const { row } = props;
@@ -85,6 +87,8 @@ function Row(props: { row: GroupData }) {
 
 export default function GroupList(props: {rows: GroupData[]}): React.ReactElement {
 
+    const search = useSelector(selectSearchValue)
+
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: theme.palette.common.black,
@@ -94,6 +98,13 @@ export default function GroupList(props: {rows: GroupData[]}): React.ReactElemen
             fontSize: 14,
         },
     }));
+
+    const filteredRows = props.rows.filter((data) => {
+        const searchTerm = search.toLowerCase();
+        return Object.values(data).some((value) =>
+            String(value).toLowerCase().includes(searchTerm)
+        );
+    });
 
     return (
         <Card sx={{ borderRadius: 2, mt: 2 }}>
@@ -109,7 +120,7 @@ export default function GroupList(props: {rows: GroupData[]}): React.ReactElemen
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {props.rows.map((row) => (
+                        {filteredRows.map((row) => (
                             <Row key={row.id} row={row} />
                         ))}
                     </TableBody>
