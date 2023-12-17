@@ -12,15 +12,15 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { styled } from "@mui/material/styles";
+import {styled} from "@mui/material/styles";
 import {Card, tableCellClasses, useTheme} from "@mui/material";
-import { DeleteForeverRounded } from "@mui/icons-material";
+import {DeleteForeverRounded} from "@mui/icons-material";
 import {GroupData} from "../../../redux/rootslices/groups.slice";
 import {useSelector} from "react-redux";
 import {selectSearchValue} from "../../../redux/rootslices/search.slice";
 
 function Row(props: { row: GroupData }) {
-    const { row } = props;
+    const {row} = props;
     let theme = useTheme()
     const [open, setOpen] = React.useState(false);
 
@@ -32,7 +32,7 @@ function Row(props: { row: GroupData }) {
         <React.Fragment>
             <TableRow
                 sx={{
-                    "& > *": { borderBottom: "unset" },
+                    "& > *": {borderBottom: "unset"},
                     cursor: "pointer",
                     "&:hover": {
                         background: theme.palette.action.hover
@@ -46,7 +46,7 @@ function Row(props: { row: GroupData }) {
                         size="small"
                         onClick={() => setOpen(!open)}
                     >
-                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                        {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row">
@@ -63,14 +63,14 @@ function Row(props: { row: GroupData }) {
                             console.log("Delete button clicked:", row.groupName);
                         }}
                     >
-                        <DeleteForeverRounded />
+                        <DeleteForeverRounded/>
                     </IconButton>
                 </TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
+                        <Box sx={{margin: 1}}>
                             <Typography variant="h6" gutterBottom component="div">
                                 Description
                             </Typography>
@@ -85,11 +85,11 @@ function Row(props: { row: GroupData }) {
     );
 }
 
-export default function GroupList(props: {rows: GroupData[]}): React.ReactElement {
+export default function GroupList(props: { rows: GroupData[] }): React.ReactElement {
 
     const search = useSelector(selectSearchValue)
 
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    const StyledTableCell = styled(TableCell)(({theme}) => ({
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: theme.palette.common.black,
             color: theme.palette.common.white,
@@ -107,25 +107,30 @@ export default function GroupList(props: {rows: GroupData[]}): React.ReactElemen
     });
 
     return (
-        <Card sx={{ borderRadius: 2, mt: 2 }}>
-            <TableContainer component={Paper}>
-                <Table aria-label="collapsible table">
-                    <TableHead>
-                        <TableRow>
-                            <StyledTableCell />
-                            <StyledTableCell>Group Name</StyledTableCell>
-                            <StyledTableCell align="right">Owner ID</StyledTableCell>
-                            <StyledTableCell align="right">Last Modified</StyledTableCell>
-                            <StyledTableCell align="right">Delete Group</StyledTableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredRows.map((row) => (
-                            <Row key={row.id} row={row} />
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+        <Card sx={{borderRadius: 2, mt: 2}}>
+            {filteredRows.length !== 0 ?
+                <TableContainer component={Paper}>
+                    <Table aria-label="collapsible table">
+                        <TableHead>
+                            <TableRow>
+                                <StyledTableCell/>
+                                <StyledTableCell>Group Name</StyledTableCell>
+                                <StyledTableCell align="right">Owner ID</StyledTableCell>
+                                <StyledTableCell align="right">Last Modified</StyledTableCell>
+                                <StyledTableCell align="right">Delete Group</StyledTableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {filteredRows.map((row) => (
+                                <Row key={row.id} row={row}/>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                : <Typography variant="body2" color="text.secondary" align="center">
+                    No results found
+                </Typography>
+            }
         </Card>
     );
 }
