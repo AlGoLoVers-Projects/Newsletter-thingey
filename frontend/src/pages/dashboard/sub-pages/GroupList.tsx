@@ -12,61 +12,68 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import {styled} from "@mui/material/styles";
-import {Card, tableCellClasses} from "@mui/material";
-import {DeleteForeverRounded} from "@mui/icons-material";
-
-type GroupData = {
-    name: string,
-    description: string
-    ownerId: string,
-    lastModified: string,
-    modifiedBy: string,
-    groupId: string
-}
+import { styled } from "@mui/material/styles";
+import {Card, tableCellClasses, useTheme} from "@mui/material";
+import { DeleteForeverRounded } from "@mui/icons-material";
+import {GroupData} from "../../../redux/rootslices/groups.slice";
 
 function Row(props: { row: GroupData }) {
-    const {row} = props;
+    const { row } = props;
+    let theme = useTheme()
     const [open, setOpen] = React.useState(false);
+
+    const handleRowClick = () => {
+        console.log("Row clicked:", row.groupName);
+    };
 
     return (
         <React.Fragment>
-            <TableRow sx={{'& > *': {borderBottom: 'unset'}}}>
+            <TableRow
+                sx={{
+                    "& > *": { borderBottom: "unset" },
+                    cursor: "pointer",
+                    "&:hover": {
+                        background: theme.palette.action.hover
+                    },
+                }}
+                onClick={handleRowClick}
+            >
                 <TableCell>
                     <IconButton
                         aria-label="expand row"
                         size="small"
                         onClick={() => setOpen(!open)}
                     >
-                        {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
+                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row">
-                    {row.name}
+                    {row.groupName}
                 </TableCell>
-                <TableCell align="right">{row.ownerId}</TableCell>
-                <TableCell align="right">{row.modifiedBy}</TableCell>
-                <TableCell align="right">{row.lastModified}</TableCell>
+                <TableCell align="right">{row.groupOwner.emailAddress}</TableCell>
+                <TableCell align="right">{row.updatedAt}</TableCell>
                 <TableCell align="right">
                     <IconButton
                         aria-label="expand row"
                         size="small"
                         onClick={() => {
+                            // Handle delete button click logic here
+                            console.log("Delete button clicked:", row.groupName);
                         }}
                     >
-                        <DeleteForeverRounded/>
+                        <DeleteForeverRounded />
                     </IconButton>
                 </TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{margin: 1}}>
+                        <Box sx={{ margin: 1 }}>
                             <Typography variant="h6" gutterBottom component="div">
                                 Description
                             </Typography>
                             <Typography variant="body2" gutterBottom>
-                                {row.description}
+                                {row.groupDescription}
                             </Typography>
                         </Box>
                     </Collapse>
@@ -76,20 +83,9 @@ function Row(props: { row: GroupData }) {
     );
 }
 
-export default function CollapsibleTable(): React.ReactElement {
+export default function GroupList(props: {rows: GroupData[]}): React.ReactElement {
 
-    const rows: GroupData[] = [
-        {
-            name: "Group A",
-            ownerId: "soorya.s27@gmail.com",
-            lastModified: "07-01-2023",
-            groupId: "21321-123213-123123",
-            modifiedBy: "soorya.s27@gmail.com",
-            description: "This is a group"
-        },
-    ];
-
-    const StyledTableCell = styled(TableCell)(({theme}) => ({
+    const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: theme.palette.common.black,
             color: theme.palette.common.white,
@@ -100,25 +96,21 @@ export default function CollapsibleTable(): React.ReactElement {
     }));
 
     return (
-        <Card sx={{
-            borderRadius: 2,
-            mt: 2
-        }}>
+        <Card sx={{ borderRadius: 2, mt: 2 }}>
             <TableContainer component={Paper}>
                 <Table aria-label="collapsible table">
                     <TableHead>
                         <TableRow>
-                            <StyledTableCell/>
+                            <StyledTableCell />
                             <StyledTableCell>Group Name</StyledTableCell>
                             <StyledTableCell align="right">Owner ID</StyledTableCell>
-                            <StyledTableCell align="right">Modified By</StyledTableCell>
                             <StyledTableCell align="right">Last Modified</StyledTableCell>
                             <StyledTableCell align="right">Delete Group</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row) => (
-                            <Row key={row.name} row={row}/>
+                        {props.rows.map((row) => (
+                            <Row key={row.id} row={row} />
                         ))}
                     </TableBody>
                 </Table>

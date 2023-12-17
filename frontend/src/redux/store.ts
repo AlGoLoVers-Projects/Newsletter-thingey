@@ -18,7 +18,7 @@ const store = configureStore({
         {
             serializableCheck: false,
         }
-    ),
+    ).concat(),
 });
 
 export const persist = persistStore(store);

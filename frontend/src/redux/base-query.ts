@@ -4,7 +4,6 @@ export const baseAuthenticatedQuery = fetchBaseQuery({
     baseUrl: '/',
     prepareHeaders: (headers, {getState}) => {
         const token = (getState() as any).auth.token
-        console.log(token)
 
         if (token) {
             headers.set('Authorization', `${token}`)

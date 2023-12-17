@@ -9,7 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Table(name = "newsletter_group")
@@ -38,6 +40,10 @@ public class Group {
 
     @OneToMany
     private Set<GroupMember> groupMembers;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     //TODO: Add questions. Questions -> List<Questions> it can be edited modified bla bla.
     //Monthly responses should be maintained somewhere
