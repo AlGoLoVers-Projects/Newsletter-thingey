@@ -25,7 +25,7 @@ export default function OAuth2Success(): React.ReactElement {
             if (validateAuthData(authData)) {
                 dispatch(setAuthData(authData));
                 setTimeout(() => {
-                    navigate(authorizedPaths.dashboard)
+                    navigate(authorizedPaths.dashboardRoot)
                 }, 400)
             } else {
                 navigate(paths.oauth2Failure + "?exception=Could not decode user information, please try signing in again.")

@@ -111,7 +111,7 @@ export default function SignUp() {
     }
 
     if (token) {
-        return <Navigate to={authorizedPaths.dashboard} />;
+        return <Navigate to={authorizedPaths.dashboardRoot} />;
     }
 
     return (

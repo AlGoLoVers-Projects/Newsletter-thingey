@@ -76,7 +76,7 @@ export default function SignIn(): React.ReactElement {
                             if (validateAuthData(responseData.data)) {
                                 showSuccessToast(responseData.message ?? 'Signed in successfully')
                                 dispatch(setAuthData(responseData.data));
-                                navigation(authorizedPaths.dashboard)
+                                navigation(authorizedPaths.dashboardRoot)
                             } else {
                                 showFailureToast(responseData.message ?? 'Could not decode user information, please try signing in again')
                             }
@@ -97,7 +97,7 @@ export default function SignIn(): React.ReactElement {
     };
 
     if (token) {
-        return <Navigate to={authorizedPaths.dashboard}/>;
+        return <Navigate to={authorizedPaths.dashboardRoot}/>;
     }
 
     return (

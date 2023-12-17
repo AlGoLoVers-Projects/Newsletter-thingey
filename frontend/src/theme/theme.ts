@@ -54,7 +54,7 @@ export const buildTheme = (): Theme => {
                 secondary: "#757575",
             },
             action: {
-                hover: "rgba(255,87,0,0.8)",
+                hover: "rgba(236,130,81,0.98)",
                 selected: "#ff6e23",
             },
         },

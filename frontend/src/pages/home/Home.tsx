@@ -16,7 +16,7 @@ export default function Home(): React.ReactElement {
     const token = useSelector(selectToken)
 
     if (token) {
-        return <Navigate to={authorizedPaths.dashboard} />;
+        return <Navigate to={authorizedPaths.dashboardRoot} />;
     }
 
     return (
