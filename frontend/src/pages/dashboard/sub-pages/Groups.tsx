@@ -9,11 +9,15 @@ import {GroupResponse, useGetGroupsMutation} from "../../../redux/rootslices/gro
 import {Result} from "../../../types/result";
 import {showFailureToast} from "../../../util/toasts";
 import {CircularProgress} from "@mui/material";
+import {useNavigate} from "react-router-dom";
+import {authorizedPaths} from "../../../router/paths";
 
 const Groups = (): React.ReactElement => {
 
     const [groupList, {isLoading: isLoading}] = useGetGroupsMutation();
     const [groups, setGroups] = useState<GroupResponse>([])
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         groupList(null)
@@ -91,6 +95,9 @@ const Groups = (): React.ReactElement => {
                     position: 'fixed',
                     bottom: 25,
                     right: 25,
+                }}
+                onClick={() => {
+                    navigate(authorizedPaths.newGroup)
                 }}
             >
                 <AddIcon/>

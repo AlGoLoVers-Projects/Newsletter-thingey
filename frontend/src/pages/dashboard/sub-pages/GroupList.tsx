@@ -107,7 +107,7 @@ export default function GroupList(props: { rows: GroupData[] }): React.ReactElem
     });
 
     return (
-        <Card sx={{borderRadius: 2, mt: 2}}>
+        <Card sx={{borderRadius: 2, mt: 2, mb: 5}}>
             {filteredRows.length !== 0 ?
                 <TableContainer component={Paper}>
                     <Table aria-label="collapsible table">
