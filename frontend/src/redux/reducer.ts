@@ -8,9 +8,5 @@ export const rootReducer = combineReducers({
     auth: authSlice,
     search: searchSlice,
     [authenticationSlice.reducerPath]: authenticationSlice.reducer,
-    [groupSlice.reducerPath]: groupSlice.reducer,
+    [groupSlice.reducerPath]: groupSlice.reducer
 });
-
-
-//TODO: Use for future API calls
-//middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
