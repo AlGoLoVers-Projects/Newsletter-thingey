@@ -1,5 +1,6 @@
 export const paths = {
     home: '/',
+    test: '/test',
     oauthSuccess: '/oauthSuccess',
     oauth2Failure: '/oauth2Failure',
     signIn: '/signin',

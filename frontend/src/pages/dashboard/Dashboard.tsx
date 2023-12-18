@@ -241,7 +241,7 @@ export default function Dashboard(): React.ReactElement {
 
 
     return (
-        <Box sx={{display: 'flex'}}>
+        <Box sx={{display: 'flex', height: "100vh"}}>
             <CssBaseline/>
             <AppBar position="fixed" open={open} sx={{backgroundColor: theme.palette.primary.main}}>
                 <Toolbar>
@@ -295,7 +295,7 @@ export default function Dashboard(): React.ReactElement {
                     {buildNavButton({title: 'Sign Out', icon: <ExitToApp/>, path: authorizedPaths.signOut})}
                 </List>
             </Drawer>
-            <Box component="main" sx={{flexGrow: 1, p: 3}}>
+            <Box component="main" sx={{flexGrow: 1, p: 3, height: "maxContent", display: "flex", flexDirection: "column"}}>
                 <DrawerHeader/>
                 <BreadCrumb/>
                 <Routes>

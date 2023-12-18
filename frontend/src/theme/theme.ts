@@ -19,14 +19,6 @@ export const buildTheme = (): Theme => {
                     },
                 },
             },
-            MuiInputBase: {
-                styleOverrides: {
-                    input: {
-                        borderRadius: 20,
-                        padding: '10px',
-                    },
-                },
-            },
         },
         palette: {
             common: {

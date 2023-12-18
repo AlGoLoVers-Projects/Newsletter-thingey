@@ -12,6 +12,7 @@ import OAuth2Success from "../pages/authentication/oauth/OAuth2Success";
 import OAuth2Failure from "../pages/authentication/oauth/OAuth2Failure";
 import ForgotPassword from "../pages/authentication/local-auth/ForgotPassword";
 import ResetPassword from "../pages/authentication/local-auth/ResetPassword";
+import NewGroup from "../pages/dashboard/sub-pages/group/NewGroup";
 
 export type Route = {
     path: Path,
@@ -25,6 +26,11 @@ export const routes: Routes = [
     {
         path: paths.home,
         element: <Home/>,
+        authorised: false
+    },
+    {
+        path: paths.test,
+        element: <NewGroup/>,
         authorised: false
     },
     {
