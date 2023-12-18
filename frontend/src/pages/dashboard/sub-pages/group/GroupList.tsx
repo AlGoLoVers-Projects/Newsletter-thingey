@@ -15,9 +15,9 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {styled} from "@mui/material/styles";
 import {Card, tableCellClasses, useTheme} from "@mui/material";
 import {DeleteForeverRounded} from "@mui/icons-material";
-import {GroupData} from "../../../redux/rootslices/groups.slice";
+import {GroupData} from "../../../../redux/rootslices/groups.slice";
 import {useSelector} from "react-redux";
-import {selectSearchValue} from "../../../redux/rootslices/search.slice";
+import {selectSearchValue} from "../../../../redux/rootslices/search.slice";
 
 function Row(props: { row: GroupData }) {
     const {row} = props;

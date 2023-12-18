@@ -21,7 +21,7 @@ import {alpha, Card, InputBase} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import {useDispatch, useSelector} from "react-redux";
 import {selectSearchValue, setSearchValue} from "../../redux/rootslices/search.slice";
-import Groups from "./sub-pages/Groups";
+import Groups from "./sub-pages/group/Groups";
 import {
     ContactPage, ExitToApp,
     Group,
@@ -30,6 +30,7 @@ import {
 import {authorizedPaths, dashboardPaths, Path} from "../../router/paths";
 import BreadCrumb from "../../components/elements/BreadCrumb";
 import {ReactElement} from "react";
+import NewGroup from "./sub-pages/group/NewGroup";
 
 const drawerWidth = 240;
 
@@ -300,6 +301,7 @@ export default function Dashboard(): React.ReactElement {
                 <Routes>
                     <Route path={'/'} element={<Navigate to={authorizedPaths.groups}/>}/>
                     <Route path={dashboardPaths.groups} element={<Groups/>}/>
+                    <Route path={dashboardPaths.newGroup} element={<NewGroup/>}/>
                 </Routes>
             </Box>
         </Box>
