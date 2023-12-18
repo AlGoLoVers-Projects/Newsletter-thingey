@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useRoutes} from 'react-router-dom';
+import {useLocation, useNavigate, useRoutes} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {
     clearAuthData,
@@ -15,11 +15,13 @@ import {Result} from './types/result';
 import {showFailureToast} from './util/toasts';
 import {CircularProgress, Container, CssBaseline} from "@mui/material";
 import Routes from "./router/routes";
+import {paths} from "./router/paths";
 
 export default function App() {
     const token = useSelector(selectToken);
     const [isValidatingToken, setValidatingToken] = useState(true);
     const dispatch = useDispatch();
+    const navigate  = useNavigate();
     const [validateToken] = useValidateTokenMutation();
 
     useEffect(() => {
@@ -37,17 +39,20 @@ export default function App() {
                         } else {
                             showFailureToast(responseData.message ?? 'Token validation failed, signing out')
                             dispatch(clearAuthData())
+                            navigate(paths.signIn)
                         }
                     } else {
                         let responseData: Result<null> = (response.error as any).data
                         showFailureToast(responseData.message ?? 'Token validation failed, signing out')
                         dispatch(clearAuthData())
+                        navigate(paths.signIn)
                     }
                 })
                 .catch((error) => {
                     let responseData: Result<null> = error.error;
-                    showFailureToast(responseData.message ?? 'Token validation failed, signing out')
+                    showFailureToast(responseData.message ?? 'Token validation failed, cannot authenticate')
                     dispatch(clearAuthData())
+                    navigate(paths.signIn)
                 }).finally(() => {
                 setValidatingToken(false)
             })

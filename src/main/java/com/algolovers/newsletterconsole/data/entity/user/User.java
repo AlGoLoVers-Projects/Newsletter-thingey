@@ -196,8 +196,13 @@ public class User implements UserDetails, OAuth2User {
     }
 
     @JsonIgnore
-    public boolean validateUser() {
+    public boolean validateUserDetails() {
         return Objects.nonNull(id) && Objects.nonNull(emailAddress) && Objects.nonNull(displayName);
+    }
+
+    @JsonIgnore
+    public boolean isValidUser() {
+        return validateUserDetails() && isCredentialsNonExpired() && isEnabled();
     }
 
     /**

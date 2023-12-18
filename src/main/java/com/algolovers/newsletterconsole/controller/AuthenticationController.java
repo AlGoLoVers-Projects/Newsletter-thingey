@@ -102,6 +102,10 @@ public class AuthenticationController {
             return new ResponseEntity<>(new Result<>(false, null, "Token has expired"), HttpStatus.UNAUTHORIZED);
         }
 
+        if (!user.isValidUser()) {
+            return new ResponseEntity<>(new Result<>(false, null, "Invalid user state, signing out"), HttpStatus.UNAUTHORIZED);
+        }
+
         AuthData authData = AuthData
                 .builder()
                 .authorities(user.getAuthorities())

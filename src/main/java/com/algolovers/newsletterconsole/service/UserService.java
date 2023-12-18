@@ -108,7 +108,7 @@ public class UserService implements UserDetailsService {
                 return new Result<>(false, null, "User not found");
             }
 
-            if (!user.validateUser()) {
+            if (!user.validateUserDetails()) {
                 userRepository.delete(user);
                 return new Result<>(false, null, "Misconfigured user");
             }
