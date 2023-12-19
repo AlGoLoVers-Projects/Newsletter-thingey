@@ -5,13 +5,13 @@ import Box from "@mui/material/Box";
 import {isEmpty} from "../../../../util/validation";
 import {useLocation, useNavigate} from "react-router-dom";
 import {
-    GroupData, GroupEditRequest,
+    GroupData, GroupEditRequest, GroupIdRequest, useDeleteGroupMutation,
     useEditGroupMutation,
 } from "../../../../redux/rootslices/api/groups.slice";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
-import {authorizedPaths, paths} from "../../../../router/paths";
+import {authorizedPaths} from "../../../../router/paths";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -19,6 +19,7 @@ export default function ManageGroup(): React.ReactElement {
     const groupData = state as GroupData;
 
     const [editGroup, {isLoading}] = useEditGroupMutation()
+    const [deleteGroup, {isLoading: isDeleting}] = useDeleteGroupMutation()
 
     const [groupNameError, setGroupNameError] = useState<string>('')
     const [groupDescError, setGroupDescError] = useState<string>('')
@@ -73,9 +74,28 @@ export default function ManageGroup(): React.ReactElement {
                 .catch((result) => {
                     showFailureToast(result.data.message ?? "Could not update group information")
                 })
+        }
+    }
 
+    const handleDeletion = () => {
+        //TODO: Ask confirmation
+        const data: GroupIdRequest = {
+            groupId: groupData.id
         }
 
+        deleteGroup(data)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    showSuccessToast("Group deleted successfully")
+                    navigate(authorizedPaths.groups)
+                } else {
+                    showFailureToast(response.message ?? 'Group deletion failed, try again later')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.data.message ?? "Could delete group")
+            })
     }
 
     return (
@@ -184,7 +204,7 @@ export default function ManageGroup(): React.ReactElement {
                             <Button
                                 type="button"
                                 variant="outlined"
-                                disabled={isLoading}
+                                disabled={isDeleting || isLoading}
                                 onClick={() => {
                                     setGroupName(groupData.groupName)
                                     setGroupDesc(groupData.groupDescription)
@@ -196,15 +216,85 @@ export default function ManageGroup(): React.ReactElement {
                             <Button
                                 type="submit"
                                 variant="contained"
-                                disabled={isLoading}
+                                disabled={isDeleting || isLoading}
                                 sx={{mt: 3, mb: 1}}
                             >
                                 Update Group Information
                             </Button>
                         </Box>
                     </Box>
-
-
+                </Card>
+                <Card
+                    sx={{
+                        mt: 3,
+                        p: 3,
+                        maxWidth: "100%",
+                        borderRadius: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Typography component="h1" variant="h6" sx={{
+                        fontWeight: 'bold',
+                    }}>
+                        Manage Users
+                    </Typography>
+                    <Typography variant="body2">
+                        Invite, remove and edit permissions to users
+                    </Typography>
+                    <Box sx={{
+                        display: "flex",
+                        alignSelf: "end",
+                        flexDirection: "row",
+                        gap: 2,
+                    }}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            disabled={isLoading}
+                            sx={{mt: 3, mb: 1}}
+                        >
+                            Update Users
+                        </Button>
+                    </Box>
+                </Card>
+                <Card
+                    sx={{
+                        mt: 3,
+                        p: 3,
+                        maxWidth: "100%",
+                        borderRadius: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Typography component="h1" variant="h6" sx={{
+                        fontWeight: 'bold',
+                    }}>
+                        Delete Group
+                    </Typography>
+                    <Typography variant="body2">
+                        Deleting the group will remove all information including group specific questions, users
+                        associated with the groups and all responses. Proceed with caution
+                    </Typography>
+                    <Box sx={{
+                        display: "flex",
+                        alignSelf: "end",
+                        flexDirection: "row",
+                        gap: 2,
+                    }}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            disabled={isDeleting || isLoading}
+                            sx={{mt: 3, mb: 1}}
+                            onClick={() => {
+                                handleDeletion()
+                            }}
+                        >
+                            Delete Group
+                        </Button>
+                    </Box>
                 </Card>
             </Box>
         </Container>

@@ -252,7 +252,7 @@ public class GroupService {
             Optional<Group> optionalGroup = groupRepository.findById(groupUserRemovalRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
-                return new Result<>(false, null, "The provided group was not found, cannot remove user");
+                return new Result<>(false, null, "The provided group was not found, cannot remove group");
             }
 
             Group group = optionalGroup.get();
@@ -290,7 +290,7 @@ public class GroupService {
             Optional<Group> optionalGroup = groupRepository.findById(groupUserLeaveRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
-                return new Result<>(false, null, "The provided group was not found, cannot remove user");
+                return new Result<>(false, null, "The provided group was not found, cannot leave group");
             }
 
             Group group = optionalGroup.get();
@@ -328,7 +328,7 @@ public class GroupService {
             Optional<Group> optionalGroup = groupRepository.findById(groupDeletionRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
-                return new Result<>(false, null, "The provided group was not found, cannot remove user");
+                return new Result<>(false, null, "The provided group was not found, cannot delete group");
             }
 
             Group group = optionalGroup.get();
