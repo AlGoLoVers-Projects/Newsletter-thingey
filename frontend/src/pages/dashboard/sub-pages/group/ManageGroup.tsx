@@ -2,12 +2,10 @@ import Typography from "@mui/material/Typography";
 import React, {useState} from "react";
 import {Card, Container} from "@mui/material";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import {isEmpty} from "../../../../util/validation";
-import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
 import {authorizedPaths} from "../../../../router/paths";
-import {GroupDataRequest, useNewGroupMutation} from "../../../../redux/rootslices/groups.slice";
+import {GroupDataRequest, useNewGroupMutation} from "../../../../redux/rootslices/api/groups.slice";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
 
 export default function ManageGroup(): React.ReactElement {

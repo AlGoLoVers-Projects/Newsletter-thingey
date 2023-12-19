@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {
     ResetPasswordQueryRequest,
     ResetPasswordRequest, useResetPasswordMutation,
-} from "../../../redux/rootslices/authentication.slice";
+} from "../../../redux/rootslices/api/authentication.slice";
 import {useLocation, useNavigate} from "react-router-dom";
 import {isEmpty, isValidPassword} from "../../../util/validation";
 import {showFailureToast, showSuccessToast} from "../../../util/toasts";

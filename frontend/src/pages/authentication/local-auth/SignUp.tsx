@@ -14,7 +14,7 @@ import {authorizedPaths, paths} from "../../../router/paths";
 import {Card} from "@mui/material";
 import OrDivider from "../../../components/elements/OrDivider";
 import GoogleAuthButton from "../../../components/elements/GoogleAuthButton";
-import {SignupRequest, useSignUpMutation} from "../../../redux/rootslices/authentication.slice";
+import {SignupRequest, useSignUpMutation} from "../../../redux/rootslices/api/authentication.slice";
 import {isEmpty, isValidEmail, isValidName, isValidPassword} from "../../../util/validation";
 import {useState} from "react";
 import {Result} from "../../../types/result";
@@ -22,7 +22,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {showFailureToast, showSuccessToast} from "../../../util/toasts";
 import {Navigate, useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {selectToken} from "../../../redux/rootslices/auth-data.slice";
+import {selectToken} from "../../../redux/rootslices/data/auth-data.slice";
 
 export default function SignUp() {
 

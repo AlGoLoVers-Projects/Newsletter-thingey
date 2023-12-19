@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import {paths} from "../../../router/paths";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {clearAuthData, selectToken} from "../../../redux/rootslices/auth-data.slice";
+import {clearAuthData, selectToken} from "../../../redux/rootslices/data/auth-data.slice";
 import {showSuccessToast} from "../../../util/toasts";
 
 export default function SignOut(): React.ReactElement {

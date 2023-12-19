@@ -1,6 +1,5 @@
-import {createApi} from '@reduxjs/toolkit/query/react';
-import {Result} from "../../types/result";
-import {baseAuthenticatedQuery} from "../base-query";
+import {Result} from "../../../types/result";
+import {baseApiSlice} from "./base.slice";
 
 export type User = {
     displayName: string;
@@ -38,9 +37,7 @@ export type GroupEditRequest = GroupDataRequest & GroupIdRequest;
 
 export type GroupResponse = GroupData[];
 
-export const apiSlice = createApi({
-    reducerPath: 'api',
-    baseQuery: baseAuthenticatedQuery,
+export const groupsSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getGroups: builder.mutation<Result<GroupResponse>, null>({
             query: () => ({
@@ -72,4 +69,4 @@ export const apiSlice = createApi({
     }),
 });
 
-export const {useGetGroupsMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation} = apiSlice;
+export const {useGetGroupsMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation} = groupsSlice;

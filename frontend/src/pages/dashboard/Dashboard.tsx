@@ -16,11 +16,11 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import {Link, Route, Routes, useLocation, useNavigate, Navigate} from 'react-router-dom';
-import {alpha, Card, InputBase} from "@mui/material";
+import {Route, Routes, useLocation, useNavigate, Navigate} from 'react-router-dom';
+import {alpha, InputBase} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import {useDispatch, useSelector} from "react-redux";
-import {selectSearchValue, setSearchValue} from "../../redux/rootslices/search.slice";
+import {selectSearchValue, setSearchValue} from "../../redux/rootslices/data/search.slice";
 import Groups from "./sub-pages/group/Groups";
 import {
     ContactPage, ExitToApp,

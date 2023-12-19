@@ -1,4 +1,4 @@
-import {AuthData} from "../redux/rootslices/auth-data.slice";
+import {AuthData} from "../redux/rootslices/data/auth-data.slice";
 
 export const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

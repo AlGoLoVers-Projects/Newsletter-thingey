@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import GroupList from "./GroupList";
-import {GroupResponse, useGetGroupsMutation} from "../../../../redux/rootslices/groups.slice";
+import {GroupResponse, useGetGroupsMutation} from "../../../../redux/rootslices/api/groups.slice";
 import {Result} from "../../../../types/result";
 import {showFailureToast} from "../../../../util/toasts";
 import {CircularProgress} from "@mui/material";

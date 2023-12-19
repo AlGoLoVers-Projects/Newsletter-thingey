@@ -7,7 +7,7 @@ import {isEmpty} from "../../../../util/validation";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
 import {authorizedPaths} from "../../../../router/paths";
-import {GroupDataRequest, useNewGroupMutation} from "../../../../redux/rootslices/groups.slice";
+import {GroupDataRequest, useNewGroupMutation} from "../../../../redux/rootslices/api/groups.slice";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
 
 export default function NewGroup(): React.ReactElement {

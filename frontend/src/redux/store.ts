@@ -11,11 +11,14 @@ import {
     REGISTER,
     REHYDRATE,
 } from 'redux-persist/es/constants';
+import {baseApiSlice} from "./rootslices/api/base.slice";
+import { authenticationSlice as authenticationSlice } from './rootslices/api/authentication.slice';
+import { groupsSlice as groupSlice } from './rootslices/api/groups.slice';
 
 const persistConfig: PersistConfig<any> = {
     key: 'root',
     storage: storage,
-    blacklist: ['search'],
+    blacklist: ['search', authenticationSlice.reducerPath, groupSlice.reducerPath],
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
@@ -28,7 +31,7 @@ const store = configureStore({
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
             }
         }
-    ).concat(),
+    ).concat(baseApiSlice.middleware)
 });
 
 export const persist = persistStore(store);

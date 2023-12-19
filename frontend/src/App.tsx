@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {useLocation, useNavigate, useRoutes} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {
     clearAuthData,
     selectToken,
     setUserData,
     UserData,
-} from './redux/rootslices/auth-data.slice';
+} from './redux/rootslices/data/auth-data.slice';
 import {
     TokenValidationRequest,
     useValidateTokenMutation,
-} from './redux/rootslices/authentication.slice';
+} from './redux/rootslices/api/authentication.slice';
 import {Result} from './types/result';
 import {showFailureToast} from './util/toasts';
 import {CircularProgress, Container, CssBaseline} from "@mui/material";
@@ -21,7 +21,7 @@ export default function App() {
     const token = useSelector(selectToken);
     const [isValidatingToken, setValidatingToken] = useState(true);
     const dispatch = useDispatch();
-    const navigate  = useNavigate();
+    const navigate = useNavigate();
     const [validateToken] = useValidateTokenMutation();
 
     useEffect(() => {

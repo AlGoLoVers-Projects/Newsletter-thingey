@@ -12,7 +12,7 @@ import {DesignedBy} from "../../../components/branding/DesignedBy";
 import CodeInput from "../../../components/elements/CodeInput";
 import {VerifiedOutlined} from "@mui/icons-material";
 import {showFailureToast, showSuccessToast} from "../../../util/toasts";
-import {useVerifyMutation, VerificationRequest} from "../../../redux/rootslices/authentication.slice";
+import {useVerifyMutation, VerificationRequest} from "../../../redux/rootslices/api/authentication.slice";
 import {Result} from "../../../types/result";
 import {paths} from "../../../router/paths";
 

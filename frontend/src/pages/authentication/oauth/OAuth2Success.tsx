@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom";
 import {useLocation} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {authorizedPaths, paths} from "../../../router/paths";
-import {AuthData, setAuthData} from "../../../redux/rootslices/auth-data.slice";
+import {AuthData, setAuthData} from "../../../redux/rootslices/data/auth-data.slice";
 import {validateAuthData} from "../../../util/validation";
 
 export default function OAuth2Success(): React.ReactElement {

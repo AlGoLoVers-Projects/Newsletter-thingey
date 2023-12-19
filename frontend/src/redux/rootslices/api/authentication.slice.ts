@@ -1,6 +1,6 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import {Result} from "../../types/result";
-import {AuthData, UserData} from "./auth-data.slice";
+import {Result} from "../../../types/result";
+import {AuthData, UserData} from "../data/auth-data.slice";
+import {baseApiSlice} from "./base.slice";
 
 export type SignInRequest = {
     email: string;
@@ -36,9 +36,7 @@ export type ResetPasswordRequest = {
     verificationCode: number
 }
 
-export const apiSlice = createApi({
-    reducerPath: 'api',
-    baseQuery: fetchBaseQuery(),
+export const authenticationSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({
         signIn: builder.mutation<Result<AuthData>, SignInRequest>({
             query: (credentials) => ({
@@ -85,6 +83,4 @@ export const apiSlice = createApi({
     }),
 });
 
-//TODO: Change to query if needed
-
-export const { useSignInMutation, useSignUpMutation, useVerifyMutation, useValidateTokenMutation, useForgotPasswordMutation, useResetPasswordMutation  } = apiSlice;
+export const { useSignInMutation, useSignUpMutation, useVerifyMutation, useValidateTokenMutation, useForgotPasswordMutation, useResetPasswordMutation  } = authenticationSlice;
