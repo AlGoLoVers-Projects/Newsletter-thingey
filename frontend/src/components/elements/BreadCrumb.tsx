@@ -1,5 +1,5 @@
 import React from 'react';
-import {Breadcrumbs, Link, Typography} from '@mui/material';
+import {Breadcrumbs, Link} from '@mui/material';
 import {useLocation} from 'react-router-dom';
 
 const BreadCrumb = (): React.ReactElement => {

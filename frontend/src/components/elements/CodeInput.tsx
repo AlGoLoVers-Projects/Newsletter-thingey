@@ -48,7 +48,7 @@ export default function CodeInput(props: { length: number, error?: boolean, onCh
 
     useEffect(() => {
         if(props.onChange)  props.onChange(code.join(""));
-    }, [code])
+    }, [code, props])
 
     function handleKeyDown(evt: KeyboardEvent<HTMLInputElement>) {
         const index = parseInt(evt.currentTarget.dataset.index as string);

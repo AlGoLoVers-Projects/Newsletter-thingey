@@ -25,7 +25,7 @@ import Groups from "./sub-pages/group/Groups";
 import {
     ContactPage, ExitToApp,
     Group,
-    InfoRounded, Person2Rounded, QuestionAnswer, SvgIconComponent,
+    InfoRounded, Person2Rounded, QuestionAnswer,
 } from "@mui/icons-material";
 import {authorizedPaths, dashboardPaths, Path} from "../../router/paths";
 import BreadCrumb from "../../components/elements/BreadCrumb";

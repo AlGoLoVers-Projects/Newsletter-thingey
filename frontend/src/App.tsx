@@ -14,7 +14,7 @@ import {
 import {Result} from './types/result';
 import {showFailureToast} from './util/toasts';
 import {CircularProgress, Container, CssBaseline} from "@mui/material";
-import Routes from "./router/routes";
+import ApplicationRoutes from "./router/ApplicationRoutes";
 import {paths} from "./router/paths";
 
 export default function App() {
@@ -59,7 +59,7 @@ export default function App() {
         } else {
             setValidatingToken(false)
         }
-    }, [token, validateToken, dispatch]);
+    }, [token, validateToken, dispatch, navigate]);
 
     if (isValidatingToken) {
         return (
@@ -82,5 +82,5 @@ export default function App() {
         );
     }
 
-    return <Routes/>
+    return <ApplicationRoutes/>
 }

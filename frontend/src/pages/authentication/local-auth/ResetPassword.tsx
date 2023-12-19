@@ -47,7 +47,7 @@ export default function ResetPassword(): React.ReactElement {
             showFailureToast("Could not get user id")
             navigate(paths.forgotPassword)
         }
-    }, [data])
+    }, [data, navigate])
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

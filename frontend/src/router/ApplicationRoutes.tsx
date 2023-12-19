@@ -76,10 +76,10 @@ export const routes: Routes = [
     {
         path: authorizedPaths.dashboard,
         element: <Dashboard/>,
-        authorised: false
+        authorised: true
     },
 ];
 
-export default function Routes() {
+export default function ApplicationRoutes() {
     return useRoutes(buildRoutes())
 }

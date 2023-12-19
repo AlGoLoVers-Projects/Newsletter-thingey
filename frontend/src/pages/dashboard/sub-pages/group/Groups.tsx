@@ -14,7 +14,7 @@ import {authorizedPaths} from "../../../../router/paths";
 
 const Groups = (): React.ReactElement => {
 
-    const [groupList, {isLoading: isLoading}] = useGetGroupsMutation();
+    const [groupList, {isLoading}] = useGetGroupsMutation();
     const [groups, setGroups] = useState<GroupResponse>([])
 
     const navigate = useNavigate();
@@ -49,7 +49,7 @@ const Groups = (): React.ReactElement => {
                 showFailureToast(responseData.message ?? 'Token validation failed, signing out')
             })
 
-    }, [])
+    }, [groupList])
 
     return (
         <Container
