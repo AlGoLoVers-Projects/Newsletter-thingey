@@ -3,14 +3,13 @@ import React, {useState} from "react";
 import {Card, Container} from "@mui/material";
 import Box from "@mui/material/Box";
 import {isEmpty} from "../../../../util/validation";
-import {useNavigate} from "react-router-dom";
-import {authorizedPaths} from "../../../../router/paths";
-import {GroupDataRequest, useNewGroupMutation} from "../../../../redux/rootslices/api/groups.slice";
-import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
+import {useLocation, useNavigate} from "react-router-dom";
+import {GroupData, GroupDataRequest} from "../../../../redux/rootslices/api/groups.slice";
 
 export default function ManageGroup(): React.ReactElement {
     const navigate = useNavigate()
-    const [newGroup, {isLoading: isCreatingGroup}] = useNewGroupMutation()
+    const { state } = useLocation();
+    const groupData = (state as GroupData)
 
     const [groupNameError, setGroupNameError] = useState<string>('')
     const [groupDescError, setGroupDescError] = useState<string>('')
@@ -43,23 +42,6 @@ export default function ManageGroup(): React.ReactElement {
                 groupDescription: description
             }
 
-            newGroup(data)
-                .unwrap()
-                .then((response) => {
-                    if (response.success) {
-                        showSuccessToast("Group has been created successfully")
-                        navigate(authorizedPaths.groups)
-
-                        //TODO: Redirect to users management in future
-
-                    } else {
-                        showFailureToast(response.message ?? 'Group creation failed, try again later')
-                    }
-                })
-                .catch((result) => {
-                    showFailureToast(result.data.message ?? "Could not create new group")
-                })
-
         }
 
     }
@@ -91,7 +73,7 @@ export default function ManageGroup(): React.ReactElement {
                     },
                 }}
             >
-                New Group
+                Manage Newsletter Group
             </Typography>
             <Box
                 maxWidth="xl"
@@ -109,7 +91,7 @@ export default function ManageGroup(): React.ReactElement {
                     <Typography component="h1" variant="h5" sx={{
                         fontWeight: 'bold',
                     }}>
-                        Create new Newsletter Group
+                        Manage {groupData.groupName}
                     </Typography>
 
                 </Card>

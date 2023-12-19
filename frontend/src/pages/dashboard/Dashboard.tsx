@@ -31,6 +31,7 @@ import {authorizedPaths, dashboardPaths, Path} from "../../router/paths";
 import BreadCrumb from "../../components/elements/BreadCrumb";
 import {ReactElement} from "react";
 import NewGroup from "./sub-pages/group/NewGroup";
+import ManageGroup from "./sub-pages/group/ManageGroup";
 
 const drawerWidth = 240;
 
@@ -302,6 +303,7 @@ export default function Dashboard(): React.ReactElement {
                     <Route path={'/'} element={<Navigate to={authorizedPaths.groups}/>}/>
                     <Route path={dashboardPaths.groups} element={<Groups/>}/>
                     <Route path={dashboardPaths.newGroup} element={<NewGroup/>}/>
+                    <Route path={dashboardPaths.manageGroup} element={<ManageGroup/>}/>
                 </Routes>
             </Box>
         </Box>

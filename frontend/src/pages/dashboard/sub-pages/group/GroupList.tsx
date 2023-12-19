@@ -18,14 +18,17 @@ import {DeleteForeverRounded} from "@mui/icons-material";
 import {GroupData} from "../../../../redux/rootslices/api/groups.slice";
 import {useSelector} from "react-redux";
 import {selectSearchValue} from "../../../../redux/rootslices/data/search.slice";
+import {useNavigate} from "react-router-dom";
+import {authorizedPaths} from "../../../../router/paths";
 
 function Row(props: { row: GroupData }) {
     const {row} = props;
-    let theme = useTheme()
+    const theme = useTheme()
+    const navigate = useNavigate()
     const [open, setOpen] = React.useState(false);
 
     const handleRowClick = () => {
-        console.log("Row clicked:", row.groupName);
+        navigate(authorizedPaths.manageGroup, {state: props.row})
     };
 
     return (

@@ -19,7 +19,8 @@ export const dashboardPaths = {
     profile: 'profile',
     aboutUs: 'aboutUs',
     contactUs: 'contactUs',
-    newGroup: 'groups/newGroup'
+    newGroup: 'groups/newGroup',
+    manageGroup: 'groups/manageGroup'
 };
 
 export const authorizedPaths = {
@@ -31,6 +32,7 @@ export const authorizedPaths = {
     aboutUs: `/dashboard/${dashboardPaths.aboutUs}`,
     contactUs: `/dashboard/${dashboardPaths.contactUs}`,
     newGroup: `/dashboard/${dashboardPaths.newGroup}`,
+    manageGroup: `/dashboard/${dashboardPaths.manageGroup}`,
     signOut: '/signout',
 };
 
