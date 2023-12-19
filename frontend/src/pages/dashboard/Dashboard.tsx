@@ -25,7 +25,7 @@ import Groups from "./sub-pages/group/Groups";
 import {
     ContactPage, ExitToApp,
     Group,
-    InfoRounded, Person2Rounded, QuestionAnswer,
+    InfoRounded, InsertInvitationRounded, Person2Rounded, QuestionAnswer,
 } from "@mui/icons-material";
 import {authorizedPaths, dashboardPaths, Path} from "../../router/paths";
 import BreadCrumb from "../../components/elements/BreadCrumb";
@@ -183,6 +183,11 @@ export default function Dashboard(): React.ReactElement {
             title: 'Questions',
             icon: <QuestionAnswer/>,
             path: authorizedPaths.questions
+        },
+        {
+            title: 'Invites',
+            icon: <InsertInvitationRounded/>,
+            path: authorizedPaths.invitations
         },
     ]
 

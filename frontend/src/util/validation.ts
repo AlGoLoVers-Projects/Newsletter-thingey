@@ -23,3 +23,18 @@ export const validateAuthData = (authData: AuthData): boolean => {
     const { displayName, authorities, token } = authData;
     return displayName !== null && authorities !== null && token !== null && authorities.length > 0;
 };
+
+export const formatDateToIndianStandard = (date: string): string => {
+    const options: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        timeZone: 'Asia/Kolkata', // Indian Standard Time
+    };
+
+    return new Date(date).toLocaleString('en-IN', options);
+};

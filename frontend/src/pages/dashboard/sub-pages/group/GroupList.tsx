@@ -20,6 +20,7 @@ import {useSelector} from "react-redux";
 import {selectSearchValue} from "../../../../redux/rootslices/data/search.slice";
 import {useNavigate} from "react-router-dom";
 import {authorizedPaths} from "../../../../router/paths";
+import {formatDateToIndianStandard, isEmpty} from "../../../../util/validation";
 
 function Row(props: { row: GroupData }) {
     const {row} = props;
@@ -29,6 +30,14 @@ function Row(props: { row: GroupData }) {
 
     const handleRowClick = () => {
         navigate(authorizedPaths.manageGroup, {state: props.row})
+    };
+
+    const handleDateString = (date: string | null) => {
+        if (!isEmpty(date) && date !== null) {
+            return  formatDateToIndianStandard(date);
+        }
+
+        return ''
     };
 
     return (
@@ -56,7 +65,8 @@ function Row(props: { row: GroupData }) {
                     {row.groupName}
                 </TableCell>
                 <TableCell align="right">{row.groupOwner.emailAddress}</TableCell>
-                <TableCell align="right">{row.updatedAt}</TableCell>
+
+                <TableCell align="right">{handleDateString(row.updatedAt)}</TableCell>
                 <TableCell align="right">
                     <IconButton
                         aria-label="expand row"
