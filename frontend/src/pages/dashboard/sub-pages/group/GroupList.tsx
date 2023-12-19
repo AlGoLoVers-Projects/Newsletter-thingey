@@ -72,8 +72,7 @@ function Row(props: { row: GroupData }) {
                         aria-label="expand row"
                         size="small"
                         onClick={() => {
-                            // Handle delete button click logic here
-                            console.log("Delete button clicked:", row.groupName);
+                            //TODO: Handle delete button click logic here
                         }}
                     >
                         <DeleteForeverRounded/>
