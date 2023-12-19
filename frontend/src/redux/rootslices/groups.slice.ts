@@ -25,6 +25,17 @@ export type GroupData = {
     updatedAt: string | null;
 };
 
+export type GroupDataRequest = {
+    groupName: string,
+    groupDescription: string
+}
+
+export type GroupIdRequest = {
+    groupId: string
+}
+
+export type GroupEditRequest = GroupDataRequest & GroupIdRequest;
+
 export type GroupResponse = GroupData[];
 
 export const apiSlice = createApi({
@@ -37,9 +48,28 @@ export const apiSlice = createApi({
                 method: 'GET',
             }),
         }),
+        newGroup: builder.mutation<Result<string>, GroupDataRequest>({
+            query: (data) => ({
+                url: '/api/group/provisionNewGroup',
+                method: 'POST',
+                body: data
+            }),
+        }),
+        editGroup: builder.mutation<Result<string>, GroupEditRequest>({
+            query: (data) => ({
+                url: '/api/group/editGroupInformation',
+                method: 'PUT',
+                body: data
+            }),
+        }),
+        deleteGroup: builder.mutation<Result<string>, GroupIdRequest>({
+            query: (data) => ({
+                url: '/api/group/deleteGroup',
+                method: 'DELETE',
+                body: data
+            }),
+        }),
     }),
 });
 
-//TODO: Change to query if needed
-
-export const {useGetGroupsMutation} = apiSlice;
+export const {useGetGroupsMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation} = apiSlice;
