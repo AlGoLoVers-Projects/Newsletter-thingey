@@ -56,7 +56,10 @@ function Row(props: { row: GroupData }) {
                     <IconButton
                         aria-label="expand row"
                         size="small"
-                        onClick={() => setOpen(!open)}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            setOpen(!open)
+                        }}
                     >
                         {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                     </IconButton>
