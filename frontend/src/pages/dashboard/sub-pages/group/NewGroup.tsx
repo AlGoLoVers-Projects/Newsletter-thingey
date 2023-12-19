@@ -61,7 +61,6 @@ export default function NewGroup(): React.ReactElement {
                 .catch((result) => {
                     showFailureToast(result.data.message ?? "Could not create new group")
                 })
-
         }
 
     }
@@ -148,7 +147,7 @@ export default function NewGroup(): React.ReactElement {
                             id="description"
                             autoComplete="text"
                             error={!isEmpty(groupDescError)}
-                            helperText={groupNameError}
+                            helperText={groupDescError}
                         />
                         <Box sx={{
                             flex: 1
