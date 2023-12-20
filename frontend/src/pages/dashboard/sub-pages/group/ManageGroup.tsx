@@ -268,7 +268,7 @@ export default function ManageGroup(): React.ReactElement {
                             disabled={isLoading}
                             sx={{mt: 3, mb: 1}}
                             onClick={() => {
-                                navigate(authorizedPaths.manageGroupUsers, {state: groupData})
+                                navigate(authorizedPaths.manageGroupUsers, {state: groupData.id})
                             }}
                             endIcon={<NavigateNext />}
                         >

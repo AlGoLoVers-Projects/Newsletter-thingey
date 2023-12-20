@@ -6,11 +6,16 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {GroupData} from "../../../../redux/rootslices/api/groups.slice";
 import Button from "@mui/material/Button";
 import {NavigateNext} from "@mui/icons-material";
+import {useSelector} from "react-redux";
+import {selectGroupByIdMemoized} from "../../../../redux/rootslices/data/groups.slice";
 
 export default function ManageGroupUsers(): React.ReactElement {
     const {state} = useLocation();
-    const navigate = useNavigate()
-    const groupData = state as GroupData;
+    const groupId = state as string;
+
+    const groupData: GroupData = useSelector(
+        (state) => selectGroupByIdMemoized(state, groupId)
+    ) ?? {} as GroupData;
 
     return (
         <Container

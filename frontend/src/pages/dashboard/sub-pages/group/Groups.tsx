@@ -8,11 +8,11 @@ import GroupList from "./GroupList";
 import {GroupListData, useGetGroupsMutation} from "../../../../redux/rootslices/api/groups.slice";
 import {Result} from "../../../../types/result";
 import {showFailureToast} from "../../../../util/toasts";
-import {CircularProgress} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {authorizedPaths} from "../../../../router/paths";
 import {useDispatch} from "react-redux";
 import {setGroupData} from "../../../../redux/rootslices/data/groups.slice";
+import {CircularProgress} from "@mui/material";
 
 const Groups = (): React.ReactElement => {
 
@@ -81,7 +81,7 @@ const Groups = (): React.ReactElement => {
                 Groups
             </Typography>
             <Box>
-                <GroupList/>
+                {isLoading ? <CircularProgress/> : <GroupList/>}
             </Box>
             <Fab
                 color="primary"

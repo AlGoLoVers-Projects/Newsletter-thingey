@@ -145,7 +145,7 @@ export default function GroupList(): React.ReactElement {
                     </Table>
                 </TableContainer>
                 : <Typography variant="body2" color="text.secondary" align="center">
-                    No results found
+                    No groups found
                 </Typography>
             }
         </Card>
