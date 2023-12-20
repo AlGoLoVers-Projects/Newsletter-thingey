@@ -12,6 +12,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
 import {authorizedPaths} from "../../../../router/paths";
+import {NavigateNext} from "@mui/icons-material";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -240,7 +241,7 @@ export default function ManageGroup(): React.ReactElement {
                         Manage Users
                     </Typography>
                     <Typography variant="body2">
-                        Invite, remove and edit permissions to users
+                        Add or remove existing users, revoke or grant editing permission and manage your group invitations.
                     </Typography>
                     <Box sx={{
                         display: "flex",
@@ -253,8 +254,12 @@ export default function ManageGroup(): React.ReactElement {
                             variant="contained"
                             disabled={isLoading}
                             sx={{mt: 3, mb: 1}}
+                            onClick={() => {
+                                navigate(authorizedPaths.manageGroupUsers, {state: groupData})
+                            }}
+                            endIcon={<NavigateNext />}
                         >
-                            Update Users
+                            Manage Users
                         </Button>
                     </Box>
                 </Card>
@@ -275,7 +280,7 @@ export default function ManageGroup(): React.ReactElement {
                     </Typography>
                     <Typography variant="body2">
                         Deleting the group will remove all information including group specific questions, users
-                        associated with the groups and all responses. Proceed with caution
+                        associated with the groups and all responses. Proceed with caution.
                     </Typography>
                     <Box sx={{
                         display: "flex",
