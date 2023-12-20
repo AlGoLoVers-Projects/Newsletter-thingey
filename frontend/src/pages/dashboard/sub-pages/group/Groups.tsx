@@ -11,13 +11,15 @@ import {showFailureToast} from "../../../../util/toasts";
 import {CircularProgress} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {authorizedPaths} from "../../../../router/paths";
+import {useDispatch} from "react-redux";
+import {setGroupData} from "../../../../redux/rootslices/data/groups.slice";
 
 const Groups = (): React.ReactElement => {
 
     const [groupList, {isLoading}] = useGetGroupsMutation();
-    const [groups, setGroups] = useState<GroupListData>([])
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         groupList(null)
@@ -34,7 +36,7 @@ const Groups = (): React.ReactElement => {
 
                                 return dateB.localeCompare(dateA);
                             }) ?? 0;
-                        setGroups(sortedData)
+                        dispatch(setGroupData(sortedData))
                     } else {
                         showFailureToast(responseData.message ?? 'Token validation failed, signing out')
                     }
@@ -79,14 +81,7 @@ const Groups = (): React.ReactElement => {
                 Groups
             </Typography>
             <Box>
-                {
-                    isLoading ?
-                        <CircularProgress/> : groups.length !== 0
-                            ? <GroupList rows={groups}/>
-                            : <Typography variant="body2" color="text.secondary" align="center">
-                                No data found
-                            </Typography>
-                }
+                <GroupList/>
             </Box>
             <Fab
                 color="primary"

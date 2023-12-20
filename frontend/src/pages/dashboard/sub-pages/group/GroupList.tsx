@@ -15,12 +15,13 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {styled} from "@mui/material/styles";
 import {Card, tableCellClasses, useTheme} from "@mui/material";
 import {DeleteForeverRounded} from "@mui/icons-material";
-import {GroupData} from "../../../../redux/rootslices/api/groups.slice";
+import {GroupData, GroupListData} from "../../../../redux/rootslices/api/groups.slice";
 import {useSelector} from "react-redux";
 import {selectSearchValue} from "../../../../redux/rootslices/data/search.slice";
 import {useNavigate} from "react-router-dom";
 import {authorizedPaths} from "../../../../router/paths";
 import {formatDateToIndianStandard, isEmpty} from "../../../../util/validation";
+import {selectGroupData} from "../../../../redux/rootslices/data/groups.slice";
 
 function Row(props: { row: GroupData }) {
     const {row} = props;
@@ -29,7 +30,7 @@ function Row(props: { row: GroupData }) {
     const [open, setOpen] = React.useState(false);
 
     const handleRowClick = () => {
-        navigate(authorizedPaths.manageGroup, {state: props.row})
+        navigate(authorizedPaths.manageGroup, {state: props.row.id})
     };
 
     const handleDateString = (date: string | null) => {
@@ -100,9 +101,10 @@ function Row(props: { row: GroupData }) {
     );
 }
 
-export default function GroupList(props: { rows: GroupData[] }): React.ReactElement {
+export default function GroupList(): React.ReactElement {
 
     const search = useSelector(selectSearchValue)
+    const groupData: GroupListData = useSelector(selectGroupData)
 
     const StyledTableCell = styled(TableCell)(({theme}) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -114,7 +116,7 @@ export default function GroupList(props: { rows: GroupData[] }): React.ReactElem
         },
     }));
 
-    const filteredRows = props.rows.filter((data) => {
+    const filteredRows = groupData.filter((data) => {
         const searchTerm = search.toLowerCase();
         return Object.values(data).some((value) =>
             String(value).toLowerCase().includes(searchTerm)

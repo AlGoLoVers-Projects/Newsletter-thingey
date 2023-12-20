@@ -13,11 +13,22 @@ import Button from "@mui/material/Button";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
 import {authorizedPaths} from "../../../../router/paths";
 import {NavigateNext} from "@mui/icons-material";
+import {
+    selectGroupByIdMemoized,
+    updateGroupDescription,
+    updateGroupName
+} from "../../../../redux/rootslices/data/groups.slice";
+import {useDispatch, useSelector} from "react-redux";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
     const navigate = useNavigate()
-    const groupData = state as GroupData;
+    const dispatch = useDispatch();
+    const groupId = state as string;
+
+    const groupData: GroupData = useSelector(
+        (state) => selectGroupByIdMemoized(state, groupId)
+    ) ?? {} as GroupData;
 
     const [editGroup, {isLoading}] = useEditGroupMutation()
     const [deleteGroup, {isLoading: isDeleting}] = useDeleteGroupMutation()
@@ -67,7 +78,9 @@ export default function ManageGroup(): React.ReactElement {
                 .then((response) => {
                     if (response.success) {
                         showSuccessToast("Group data updated successfully")
-                        navigate(authorizedPaths.groups)
+                        dispatch(updateGroupName({ groupId: groupData.id, groupName: name }));
+                        dispatch(updateGroupDescription({ groupId: groupData.id, groupDescription: description }));
+
                     } else {
                         showFailureToast(response.message ?? 'Group update failed, try again later')
                     }

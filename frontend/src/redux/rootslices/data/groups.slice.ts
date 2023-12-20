@@ -1,4 +1,4 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createSelector, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {GroupListData, GroupMember} from "../api/groups.slice";
 
 const groupsSlice = createSlice({
@@ -60,5 +60,9 @@ export const {
 } = groupsSlice.actions;
 
 export const selectGroupData = (state: { groupData: { groups: GroupListData } }) => state.groupData.groups;
+export const selectGroupByIdMemoized = createSelector(
+    [selectGroupData, (_, groupId) => groupId],
+    (groups, groupId) => groups.find((group) => group.id === groupId)
+);
 
 export default groupsSlice.reducer;
