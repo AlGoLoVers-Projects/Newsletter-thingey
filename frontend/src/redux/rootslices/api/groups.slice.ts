@@ -35,11 +35,11 @@ export type GroupIdRequest = {
 
 export type GroupEditRequest = GroupDataRequest & GroupIdRequest;
 
-export type GroupResponse = GroupData[];
+export type GroupListData = GroupData[];
 
 export const groupsSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getGroups: builder.mutation<Result<GroupResponse>, null>({
+        getGroups: builder.mutation<Result<GroupListData>, null>({
             query: () => ({
                 url: '/api/group/listAllGroups',
                 method: 'GET',

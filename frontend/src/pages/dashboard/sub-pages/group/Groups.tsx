@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import GroupList from "./GroupList";
-import {GroupResponse, useGetGroupsMutation} from "../../../../redux/rootslices/api/groups.slice";
+import {GroupListData, useGetGroupsMutation} from "../../../../redux/rootslices/api/groups.slice";
 import {Result} from "../../../../types/result";
 import {showFailureToast} from "../../../../util/toasts";
 import {CircularProgress} from "@mui/material";
@@ -15,7 +15,7 @@ import {authorizedPaths} from "../../../../router/paths";
 const Groups = (): React.ReactElement => {
 
     const [groupList, {isLoading}] = useGetGroupsMutation();
-    const [groups, setGroups] = useState<GroupResponse>([])
+    const [groups, setGroups] = useState<GroupListData>([])
 
     const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ const Groups = (): React.ReactElement => {
             .then((response) => {
                 console.log(response)
                 if ('data' in response) {
-                    let responseData: Result<GroupResponse> = response.data!
+                    let responseData: Result<GroupListData> = response.data!
                     if (responseData.success) {
                         const sortedData = responseData.data
                             .slice()
