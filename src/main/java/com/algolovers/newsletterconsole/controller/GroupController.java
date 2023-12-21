@@ -23,17 +23,17 @@ public class GroupController {
     final GroupService groupService;
 
     @PostMapping("/provisionNewGroup")
-    public ResponseEntity<Result<String>> provisionNewGroup(@Valid @RequestBody GroupCreationRequest groupCreationRequest) {
+    public ResponseEntity<Result<Group>> provisionNewGroup(@Valid @RequestBody GroupCreationRequest groupCreationRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<Group> result = groupService.provisionNewGroup(groupCreationRequest, user);
-        return ControllerUtils.processResultForResponse(result);
+        return ControllerUtils.processResultForResponseWithData(result);
     }
 
     @PutMapping("/editGroupInformation")
-    public ResponseEntity<Result<String>> editGroupInformation(@Valid @RequestBody GroupDetailsEditRequest groupDetailsEditRequest) {
+    public ResponseEntity<Result<Group>> editGroupInformation(@Valid @RequestBody GroupDetailsEditRequest groupDetailsEditRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Result<String> result = groupService.editGroupInformation(groupDetailsEditRequest, user);
-        return ControllerUtils.processResultForResponse(result);
+        Result<Group> result = groupService.editGroupInformation(groupDetailsEditRequest, user);
+        return ControllerUtils.processResultForResponseWithData(result);
     }
 
     @GetMapping("/listAllGroups")
@@ -44,10 +44,10 @@ public class GroupController {
     }
 
     @PostMapping("/inviteUserToGroup")
-    public ResponseEntity<Result<String>> inviteUserToGroup(@Valid @RequestBody GroupUserInvitationRequest groupUserInvitationRequest) {
+    public ResponseEntity<Result<Invitation>> inviteUserToGroup(@Valid @RequestBody GroupUserInvitationRequest groupUserInvitationRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<Invitation> result = groupService.inviteUserToGroup(groupUserInvitationRequest, user);
-        return ControllerUtils.processResultForResponse(result);
+        return ControllerUtils.processResultForResponseWithData(result);
     }
 
     @GetMapping("/listAllInvitations")
@@ -65,10 +65,10 @@ public class GroupController {
     }
 
     @PutMapping("/updateEditAccessToUser")
-    public ResponseEntity<Result<String>> updateEditAccessToUser(@Valid @RequestBody GroupUserEditAccessRequest groupUserEditAccessRequest) {
+    public ResponseEntity<Result<Group>> updateEditAccessToUser(@Valid @RequestBody GroupUserEditAccessRequest groupUserEditAccessRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Result<String> result = groupService.updateEditAccessToUser(groupUserEditAccessRequest, user);
-        return ControllerUtils.processResultForResponse(result);
+        Result<Group> result = groupService.updateEditAccessToUser(groupUserEditAccessRequest, user);
+        return ControllerUtils.processResultForResponseWithData(result);
     }
 
     @DeleteMapping("/removeUser")

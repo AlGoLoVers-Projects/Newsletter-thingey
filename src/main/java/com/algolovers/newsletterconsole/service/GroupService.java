@@ -62,7 +62,7 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    public Result<String> editGroupInformation(@Valid GroupDetailsEditRequest groupDetailsEditRequest, User authenticatedUser) {
+    public Result<Group> editGroupInformation(@Valid GroupDetailsEditRequest groupDetailsEditRequest, User authenticatedUser) {
 
         try {
             Optional<Group> optionalGroup = groupRepository.findById(groupDetailsEditRequest.getGroupId());
@@ -80,8 +80,8 @@ public class GroupService {
             group.setGroupName(groupDetailsEditRequest.getGroupName());
             group.setGroupDescription(groupDetailsEditRequest.getGroupDescription());
 
-            groupRepository.save(group);
-            return new Result<>(true, null, "Group edited successfully");
+            group = groupRepository.save(group);
+            return new Result<>(true, group, "Group edited successfully");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
@@ -209,7 +209,7 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    public Result<String> updateEditAccessToUser(GroupUserEditAccessRequest groupUserEditAccessRequest, User authenticatedUser) {
+    public Result<Group> updateEditAccessToUser(GroupUserEditAccessRequest groupUserEditAccessRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupRepository.findById(groupUserEditAccessRequest.getGroupId());
 
@@ -233,9 +233,9 @@ public class GroupService {
                 groupMember.setHasEditAccess(groupUserEditAccessRequest.getCanEdit());
 
                 groupMemberRepository.save(groupMember);
-                groupRepository.save(group);
+                group = groupRepository.save(group);
 
-                return new Result<>(true, null, "User removed from the group successfully");
+                return new Result<>(true, group, "User removed from the group successfully");
             } else {
                 return new Result<>(false, null, "User not found in the group");
             }
