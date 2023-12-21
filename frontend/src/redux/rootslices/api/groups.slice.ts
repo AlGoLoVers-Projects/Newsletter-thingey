@@ -45,14 +45,14 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
                 method: 'GET',
             }),
         }),
-        newGroup: builder.mutation<Result<string>, GroupDataRequest>({
+        newGroup: builder.mutation<Result<GroupData>, GroupDataRequest>({
             query: (data) => ({
                 url: '/api/group/provisionNewGroup',
                 method: 'POST',
                 body: data
             }),
         }),
-        editGroup: builder.mutation<Result<string>, GroupEditRequest>({
+        editGroup: builder.mutation<Result<GroupData>, GroupEditRequest>({
             query: (data) => ({
                 url: '/api/group/editGroupInformation',
                 method: 'PUT',
