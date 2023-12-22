@@ -2,7 +2,7 @@ import Typography from "@mui/material/Typography";
 import React from "react";
 import {Card, Container} from "@mui/material";
 import Box from "@mui/material/Box";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import {GroupData} from "../../../../redux/rootslices/api/groups.slice";
 import Button from "@mui/material/Button";
 import {NavigateNext} from "@mui/icons-material";
@@ -97,12 +97,10 @@ export default function ManageGroupUsers(): React.ReactElement {
                     <Typography component="h1" variant="h6" sx={{
                         fontWeight: 'bold',
                     }}>
-                        Add or remove existing users, revoke or grant editing permission and invite new users to your
-                        group.
+                        Manage Users
                     </Typography>
                     <Typography variant="body2">
-                        Deleting the group will remove all information including group specific questions, users
-                        associated with the groups and all responses. Proceed with caution.
+                        Remove existing users, revoke or grant editing permission for all users.
                     </Typography>
                     <Box sx={{
                         display: "flex",
