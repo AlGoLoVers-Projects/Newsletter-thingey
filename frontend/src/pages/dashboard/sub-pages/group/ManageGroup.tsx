@@ -23,6 +23,7 @@ import {memoizedSelectUserData} from "../../../../redux/rootslices/data/auth-dat
 import UserProfileCard from "../../../../components/elements/UserProfileCard";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import UserManagementTable from "../../../../components/elements/UserManagementTable";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -44,8 +45,6 @@ export default function ManageGroup(): React.ReactElement {
 
     const isGroupOwner = groupData.groupOwner.emailAddress === userEmailAddress
     const groupUser: GroupMember | undefined = groupData.groupMembers.find(member => member.user.emailAddress === userEmailAddress)
-
-    console.log(groupUser)
 
     if (!groupUser) {
         return <Typography variant="body1">
@@ -82,7 +81,7 @@ export default function ManageGroup(): React.ReactElement {
             >
                 {isGroupOwner ? `Manage` : ''} {groupData.groupName}
             </Typography>
-            {isGroupOwner ? <RenderOwnerGroup groupData={groupData}/> :
+            {isGroupOwner ? <RenderOwnerGroup groupData={groupData} groupUser={groupUser}/> :
                 <RenderMemberGroup groupData={groupData} canEdit={groupUser?.hasEditAccess ?? false}/>}
         </Container>
     )
@@ -176,8 +175,9 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
     )
 }
 
-function RenderOwnerGroup(props: { groupData: GroupData }): React.ReactElement {
+function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember }): React.ReactElement {
     const groupData = props.groupData;
+    const groupMembers = groupData.groupMembers.filter(member => member !== props.groupUser)
     const navigate = useNavigate()
     const dispatch = useDispatch();
 
@@ -360,33 +360,41 @@ function RenderOwnerGroup(props: { groupData: GroupData }): React.ReactElement {
                     </Box>
                 </Box>
             </Card>
-            <Card
-                sx={{
-                    mt: 3,
-                    p: 3,
-                    maxWidth: "100%",
-                    borderRadius: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}
-            >
-                <Typography component="h1" variant="h6" sx={{
-                    fontWeight: 'bold',
-                }}>
-                    Manage Users
-                </Typography>
-                <Typography variant="body2">
-                    Add or remove existing users, revoke or grant editing permission and manage your group invitations.
-                </Typography>
-                <Box sx={{
-                    display: "flex",
-                    alignSelf: "end",
-                    flexDirection: "row",
-                    gap: 2,
-                }}>
-
-                </Box>
-            </Card>
+            {groupMembers.length !== 0 ?
+                <Card
+                    sx={{
+                        mt: 3,
+                        p: 3,
+                        maxWidth: "100%",
+                        borderRadius: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Typography component="h1" variant="h6" sx={{
+                        fontWeight: 'bold',
+                    }}>
+                        Manage Users
+                    </Typography>
+                    <Typography variant="body2">
+                        Add or remove existing users, revoke or grant editing permission and manage your group
+                        invitations.
+                    </Typography>
+                    <Box sx={{
+                        display: "flex",
+                        mt: 4
+                    }}>
+                        <UserManagementTable
+                            onDeleteUser={(member) => {
+                            }}
+                            onEditToggle={(member) => {
+                            }}
+                            members={groupMembers}
+                        />
+                    </Box>
+                </Card>
+                : <React.Fragment/>
+            }
             <Card
                 sx={{
                     mt: 3,
