@@ -8,6 +8,10 @@ interface UserProfileAvatarProps {
 }
 
 const UserProfileAvatar: React.FC<UserProfileAvatarProps> = ({ user }) => {
+    if(!user) {
+        return <div>Cannot render card</div>
+    }
+
     const getInitials = (name: string) => {
         const initials = name.match(/\b\w/g) || [];
         return ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
@@ -29,7 +33,7 @@ const UserProfileAvatar: React.FC<UserProfileAvatarProps> = ({ user }) => {
             {user.profilePicture ? (
                 <img src={user.profilePicture} alt="Profile" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
             ) : (
-                getInitials(user.displayName)
+                getInitials(user?.displayName)
             )}
         </Avatar>
     );

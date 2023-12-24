@@ -13,6 +13,10 @@ interface UserProfileCardProps {
 }
 
 const UserProfileCard: React.FC<UserProfileCardProps> = ({user, useCard = false, elevation = 1}) => {
+    if(!user) {
+        return <div>Cannot render card</div>
+    }
+
     const content = (
         <Box display="flex" alignItems="center">
             <UserProfileAvatar user={user}/>

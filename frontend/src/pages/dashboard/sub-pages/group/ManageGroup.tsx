@@ -1,11 +1,11 @@
 import Typography from "@mui/material/Typography";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Card, Container} from "@mui/material";
 import Box from "@mui/material/Box";
 import {isEmpty} from "../../../../util/validation";
 import {useLocation, useNavigate} from "react-router-dom";
 import {
-    GroupData, GroupEditRequest, GroupIdRequest, useDeleteGroupMutation,
+    GroupData, GroupEditRequest, GroupIdRequest, GroupMember, useDeleteGroupMutation,
     useEditGroupMutation,
 } from "../../../../redux/rootslices/api/groups.slice";
 import TextField from "@mui/material/TextField";
@@ -19,8 +19,10 @@ import {
     updateGroupName
 } from "../../../../redux/rootslices/data/groups.slice";
 import {useDispatch, useSelector} from "react-redux";
-import {selectUserData} from "../../../../redux/rootslices/data/auth-data.slice";
+import {memoizedSelectUserData} from "../../../../redux/rootslices/data/auth-data.slice";
 import UserProfileCard from "../../../../components/elements/UserProfileCard";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -30,8 +32,26 @@ export default function ManageGroup(): React.ReactElement {
         (state) => selectGroupByIdMemoized(state, groupId)
     ) ?? {} as GroupData;
 
-    const userEmailAddress = useSelector(selectUserData).emailAddress
+    const userEmailAddress = useSelector(memoizedSelectUserData).emailAddress
+
+    if (isEmpty(groupId)) {
+        return (
+            <Typography variant="body1">
+                Failed to load data
+            </Typography>
+        )
+    }
+
     const isGroupOwner = groupData.groupOwner.emailAddress === userEmailAddress
+    const groupUser: GroupMember | undefined = groupData.groupMembers.find(member => member.user.emailAddress === userEmailAddress)
+
+    console.log(groupUser)
+
+    if (!groupUser) {
+        return <Typography variant="body1">
+            You are not part of this group
+        </Typography>
+    }
 
     return (
         <Container
@@ -62,12 +82,13 @@ export default function ManageGroup(): React.ReactElement {
             >
                 {isGroupOwner ? `Manage ${groupData.groupName}` : `View ${groupData.groupName}`}
             </Typography>
-            {isGroupOwner ? <RenderOwnerGroup groupData={groupData}/> : <RenderMemberGroup groupData={groupData}/>}
+            {isGroupOwner ? <RenderOwnerGroup groupData={groupData}/> :
+                <RenderMemberGroup groupData={groupData} canEdit={groupUser?.hasEditAccess ?? false}/>}
         </Container>
     )
 }
 
-function RenderMemberGroup(props: { groupData: GroupData }): React.ReactElement {
+function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): React.ReactElement {
     const groupData = props.groupData;
 
     //TODO: Render description, list all users, add button to leave group
@@ -104,6 +125,53 @@ function RenderMemberGroup(props: { groupData: GroupData }): React.ReactElement 
                 </Typography>
                 <UserProfileCard user={groupData.groupOwner}/>
             </Card>
+            <Card
+                sx={{
+                    mt: 3,
+                    p: 3,
+                    maxWidth: "100%",
+                    borderRadius: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                <Typography component="h1" variant="h6" sx={{
+                    fontWeight: 'bold',
+                }}>
+                    Group Members
+                </Typography>
+                <List>
+                    {groupData?.groupMembers?.map(member =>
+                        <ListItem key={member.user.emailAddress}>
+                            <UserProfileCard user={member.user}/>
+                        </ListItem>
+                    )}
+                </List>
+            </Card>
+            <Box sx={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 2,
+            }}>
+                <Box sx={{flex: 1}}/>
+                {
+                    props.canEdit ? <Button
+                        type="button"
+                        variant="outlined"
+                        sx={{mt: 3, mb: 1}}
+                    >
+                        Manage Questions
+                    </Button> : <React.Fragment/>
+                }
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="error"
+                    sx={{mt: 3, mb: 1}}
+                >
+                    Leave Group
+                </Button>
+            </Box>
         </Box>
     )
 }

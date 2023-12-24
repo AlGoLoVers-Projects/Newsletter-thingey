@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {createSelector, createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 export type UserData = {
     displayName: string;
@@ -69,3 +69,8 @@ export const selectUserData = (state: any): UserData => ({
     profilePicture: state.auth.profilePicture,
     emailAddress: state.auth.emailAddress
 });
+
+export const memoizedSelectUserData = createSelector(
+    [selectUserData],
+    (userData) => userData
+);
