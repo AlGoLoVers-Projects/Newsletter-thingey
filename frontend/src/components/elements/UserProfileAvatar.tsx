@@ -1,10 +1,10 @@
 import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import { deepOrange } from '@mui/material/colors';
-import {User} from "../../redux/rootslices/api/groups.slice";
+import {UserData} from "../../redux/rootslices/data/auth-data.slice";
 
 interface UserProfileAvatarProps {
-    user: User;
+    user: UserData;
 }
 
 const UserProfileAvatar: React.FC<UserProfileAvatarProps> = ({ user }) => {

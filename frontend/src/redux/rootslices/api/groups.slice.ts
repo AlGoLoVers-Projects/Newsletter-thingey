@@ -1,19 +1,13 @@
 import {Result} from "../../../types/result";
 import {baseApiSlice} from "./base.slice";
-
-export type User = {
-    displayName: string;
-    emailAddress: string;
-    profilePicture: string | null;
-    authorities: string[];
-};
+import {UserData} from "../data/auth-data.slice";
 
 export type GroupMember = {
-    user: User;
+    user: UserData;
     hasEditAccess: boolean;
 };
 
-export type GroupOwner = User;
+export type GroupOwner = UserData;
 
 export type GroupData = {
     id: string;

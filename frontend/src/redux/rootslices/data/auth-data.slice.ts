@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type UserData = {
-    displayName: string | null;
+    displayName: string;
     emailAddress: string;
     authorities: string[] | null;
     profilePicture: string | null;
@@ -12,7 +12,7 @@ export type AuthData = UserData & {
 };
 
 const initialState: AuthData = {
-    displayName: null,
+    displayName: '',
     emailAddress: '',
     authorities: [],
     profilePicture: null,
@@ -30,12 +30,13 @@ const authSlice = createSlice({
             return {
                 ...state,
                 displayName: action.payload.displayName,
+                emailAddress: action.payload.emailAddress,
                 authorities: action.payload.authorities,
                 profilePicture: action.payload.profilePicture,
             };
         },
 
-        setDisplayName: (state, action: PayloadAction<string | null>) => {
+        setDisplayName: (state, action: PayloadAction<string>) => {
             state.displayName = action.payload;
         },
         setAuthorities: (state, action: PayloadAction<string[] | null>) => {

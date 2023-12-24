@@ -4,10 +4,10 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import {User} from "../../redux/rootslices/api/groups.slice";
+import {UserData} from "../../redux/rootslices/data/auth-data.slice";
 
 interface UserProfileCardProps {
-    user: User;
+    user: UserData;
     useCard?: boolean;
     elevation?: number;
 }
