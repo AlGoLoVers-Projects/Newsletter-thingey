@@ -1,7 +1,6 @@
 package com.algolovers.newsletterconsole.data.entity.groups;
 
 import com.algolovers.newsletterconsole.data.entity.user.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

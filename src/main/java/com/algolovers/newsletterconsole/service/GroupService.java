@@ -159,6 +159,16 @@ public class GroupService {
         }
     }
 
+    public Result<List<Invitation>> listAllInvitationsByGroup(GroupRequest groupRequest) {
+        try {
+            List<Invitation> invitations = invitationRepository.findInvitationById_Group_Id(groupRequest.getGroupId());
+            return new Result<>(true, invitations, "Invitation fetched successfully");
+        } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
+            return new Result<>(true, null, e.getMessage());
+        }
+    }
+
     @Transactional(rollbackFor = {Exception.class})
     public Result<String> acceptInvitation(GroupUserInvitationAcceptRequest groupUserInvitationAcceptRequest, User authenticatedUser) {
 
@@ -284,10 +294,10 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    public Result<String> leaveGroup(GroupUserLeaveRequest groupUserLeaveRequest, User authenticatedUser) {
+    public Result<String> leaveGroup(GroupRequest groupRequest, User authenticatedUser) {
 
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupUserLeaveRequest.getGroupId());
+            Optional<Group> optionalGroup = groupRepository.findById(groupRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found, cannot leave group");

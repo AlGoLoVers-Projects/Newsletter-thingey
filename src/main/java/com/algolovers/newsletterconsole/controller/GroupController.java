@@ -57,6 +57,12 @@ public class GroupController {
         return ControllerUtils.processResultForResponseWithData(result);
     }
 
+    @GetMapping("/listAllInvitationsByGroup")
+    public ResponseEntity<Result<List<Invitation>>> listAllInvitationsByGroup(@Valid @RequestBody GroupRequest groupRequest) {
+        Result<List<Invitation>> result = groupService.listAllInvitationsByGroup(groupRequest);
+        return ControllerUtils.processResultForResponseWithData(result);
+    }
+
     @PostMapping("/acceptInvitation")
     public ResponseEntity<Result<String>> acceptInvitation(@Valid @RequestBody GroupUserInvitationAcceptRequest groupUserInvitationAcceptRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -79,9 +85,9 @@ public class GroupController {
     }
 
     @DeleteMapping("/leaveGroup")
-    public ResponseEntity<Result<String>> leaveGroup(@Valid @RequestBody GroupUserLeaveRequest groupUserLeaveRequest) {
+    public ResponseEntity<Result<String>> leaveGroup(@Valid @RequestBody GroupRequest groupRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Result<String> result = groupService.leaveGroup(groupUserLeaveRequest, user);
+        Result<String> result = groupService.leaveGroup(groupRequest, user);
         return ControllerUtils.processResultForResponse(result);
     }
 

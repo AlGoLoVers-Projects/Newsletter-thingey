@@ -18,4 +18,6 @@ public interface InvitationRepository extends JpaRepository<Invitation, String> 
 
     List<Invitation> findInvitationById_EmailAddress(String email);
 
+    List<Invitation> findInvitationById_Group_Id(String id_group_id);
+
 }

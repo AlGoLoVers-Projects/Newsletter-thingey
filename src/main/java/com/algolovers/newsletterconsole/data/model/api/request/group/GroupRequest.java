@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class GroupUserLeaveRequest {
+public class GroupRequest {
     @NotEmpty(message = "Group ID cannot be empty")
     String groupId;
 }
