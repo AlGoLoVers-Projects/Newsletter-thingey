@@ -170,11 +170,11 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    public Result<String> acceptInvitation(GroupUserInvitationAcceptRequest groupUserInvitationAcceptRequest, User authenticatedUser) {
+    public Result<String> acceptInvitation(GroupRequest groupRequest, User authenticatedUser) {
 
         try {
             Optional<Invitation> optionalInvitation = invitationRepository.findInvitationById_EmailAddressAndId_Group_Id(
-                    authenticatedUser.getEmailAddress(), groupUserInvitationAcceptRequest.getGroupId());
+                    authenticatedUser.getEmailAddress(), groupRequest.getGroupId());
 
             if (optionalInvitation.isEmpty()) {
                 return new Result<>(false, null, "The invitation was not found");
@@ -332,10 +332,10 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    public Result<String> deleteGroup(GroupDeletionRequest groupDeletionRequest, User authenticatedUser) {
+    public Result<String> deleteGroup(GroupRequest groupRequest, User authenticatedUser) {
 
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupDeletionRequest.getGroupId());
+            Optional<Group> optionalGroup = groupRepository.findById(groupRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found, cannot delete group");
