@@ -20,6 +20,7 @@ import {
 } from "../../../../redux/rootslices/data/groups.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {selectUserData} from "../../../../redux/rootslices/data/auth-data.slice";
+import UserProfileCard from "../../../../components/elements/UserProfileCard";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -61,18 +62,53 @@ export default function ManageGroup(): React.ReactElement {
             >
                 {isGroupOwner ? `Manage ${groupData.groupName}` : `View ${groupData.groupName}`}
             </Typography>
-            {isGroupOwner ? <RenderOwnerGroup groupData={groupData} /> : <RenderMemberGroup groupData={groupData}/>}
+            {isGroupOwner ? <RenderOwnerGroup groupData={groupData}/> : <RenderMemberGroup groupData={groupData}/>}
         </Container>
     )
 }
 
-function RenderMemberGroup(props: {groupData: GroupData}): React.ReactElement {
+function RenderMemberGroup(props: { groupData: GroupData }): React.ReactElement {
     const groupData = props.groupData;
 
-    return (<div></div>)
+    //TODO: Render description, list all users, add button to leave group
+
+    return (
+        <Box
+            maxWidth="xl"
+        >
+            <Card
+                sx={{
+                    mt: 3,
+                    p: 3,
+                    maxWidth: "100%",
+                    borderRadius: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                <Typography component="h1" variant="h6" sx={{
+                    fontWeight: 'bold',
+                }}>
+                    Group Description
+                </Typography>
+                <Typography variant="body1">
+                    {groupData.groupDescription}
+                </Typography>
+
+                <Typography component="h1" variant="h6" sx={{
+                    fontWeight: 'bold',
+                    mt: 4,
+                    mb: 1
+                }}>
+                    Group Owner
+                </Typography>
+                <UserProfileCard user={groupData.groupOwner}/>
+            </Card>
+        </Box>
+    )
 }
 
-function RenderOwnerGroup(props: {groupData: GroupData}): React.ReactElement {
+function RenderOwnerGroup(props: { groupData: GroupData }): React.ReactElement {
     const groupData = props.groupData;
     const navigate = useNavigate()
     const dispatch = useDispatch();
@@ -125,8 +161,8 @@ function RenderOwnerGroup(props: {groupData: GroupData}): React.ReactElement {
                 .then((response) => {
                     if (response.success) {
                         showSuccessToast("Group data updated successfully")
-                        dispatch(updateGroupName({ groupId: groupData.id, groupName: name }));
-                        dispatch(updateGroupDescription({ groupId: groupData.id, groupDescription: description }));
+                        dispatch(updateGroupName({groupId: groupData.id, groupName: name}));
+                        dispatch(updateGroupDescription({groupId: groupData.id, groupDescription: description}));
 
                     } else {
                         showFailureToast(response.message ?? 'Group update failed, try again later')
@@ -178,7 +214,6 @@ function RenderOwnerGroup(props: {groupData: GroupData}): React.ReactElement {
                 }}>
                     Update Group Information
                 </Typography>
-
                 <Box
                     sx={{
                         display: "flex",
@@ -289,7 +324,7 @@ function RenderOwnerGroup(props: {groupData: GroupData}): React.ReactElement {
                         onClick={() => {
                             navigate(authorizedPaths.manageGroupUsers, {state: groupData.id})
                         }}
-                        endIcon={<NavigateNext />}
+                        endIcon={<NavigateNext/>}
                     >
                         Manage Users
                     </Button>

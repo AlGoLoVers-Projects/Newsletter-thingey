@@ -309,6 +309,8 @@ public class GroupService {
                 return new Result<>(false, null, "Group owner cannot leave group, consider deleting group instead");
             }
 
+            //TODO: Remove all responses in future when leaving group. No orphan data whatsoever
+
             Set<GroupMember> groupMembers = group.getGroupMembers();
             Optional<GroupMember> optionalGroupMemberToRemove = groupMembers.stream()
                     .filter(groupMember -> groupMember.getUser().getEmailAddress().equals(authenticatedUser.getEmailAddress()))
