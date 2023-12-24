@@ -1,8 +1,10 @@
 package com.algolovers.newsletterconsole.config.security.filters;
 
 import com.algolovers.newsletterconsole.data.entity.user.User;
+import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.service.JwtService;
 import com.algolovers.newsletterconsole.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Objects;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -27,6 +30,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserService userService;
     private final JwtService jwtService;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -40,7 +44,26 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String userId = jwtService.getUserIdFromToken(token);
+        String userId = "";
+
+        try {
+            userId = jwtService.getUserIdFromToken(token);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            Result<String> result = Result.<String>builder()
+                    .success(false)
+                    .message("Unauthorized request")
+                    .build();
+
+            String jsonResponse = objectMapper.writeValueAsString(result);
+
+            try (PrintWriter writer = response.getWriter()) {
+                writer.write(jsonResponse);
+            }
+
+            return;
+        }
+
         User user = userService.loadUserById(userId);
 
         if (Objects.isNull(user)) {
