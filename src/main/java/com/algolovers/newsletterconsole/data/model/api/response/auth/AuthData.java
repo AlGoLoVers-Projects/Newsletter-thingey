@@ -14,6 +14,9 @@ public class AuthData {
     @JsonProperty("displayName")
     String displayName;
 
+    @JsonProperty("emailAddress")
+    String emailAddress;
+
     @JsonProperty("authorities")
     Collection<Authority> authorities;
 

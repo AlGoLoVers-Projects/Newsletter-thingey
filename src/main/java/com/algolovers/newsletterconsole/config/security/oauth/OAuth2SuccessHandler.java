@@ -44,6 +44,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         AuthData authData = AuthData
                 .builder()
                 .displayName(user.getDisplayName())
+                .emailAddress(user.getEmailAddress())
                 .authorities(user.getAuthorities())
                 .profilePicture(user.getProfilePicture())
                 .token(authenticatedUserToken.getToken())

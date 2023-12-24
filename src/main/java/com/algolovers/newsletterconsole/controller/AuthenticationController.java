@@ -71,6 +71,7 @@ public class AuthenticationController {
                 .builder()
                 .authorities(authenticatedUserToken.getUser().getAuthorities())
                 .displayName(authenticatedUserToken.getUser().getDisplayName())
+                .emailAddress(authenticatedUserToken.getUser().getEmailAddress())
                 .profilePicture(authenticatedUserToken.getUser().getProfilePicture())
                 .token(authenticatedUserToken.getToken())
                 .build();
@@ -110,6 +111,7 @@ public class AuthenticationController {
                 .builder()
                 .authorities(user.getAuthorities())
                 .displayName(user.getDisplayName())
+                .emailAddress(user.getEmailAddress())
                 .profilePicture(user.getProfilePicture())
                 .build();
 

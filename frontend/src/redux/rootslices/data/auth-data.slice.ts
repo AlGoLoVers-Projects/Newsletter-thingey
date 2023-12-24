@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type UserData = {
     displayName: string | null;
+    emailAddress: string;
     authorities: string[] | null;
     profilePicture: string | null;
 };
@@ -12,6 +13,7 @@ export type AuthData = UserData & {
 
 const initialState: AuthData = {
     displayName: null,
+    emailAddress: '',
     authorities: [],
     profilePicture: null,
     token: null,
@@ -64,4 +66,5 @@ export const selectUserData = (state: any): UserData => ({
     displayName: state.auth.displayName,
     authorities: state.auth.authorities,
     profilePicture: state.auth.profilePicture,
+    emailAddress: state.auth.emailAddress
 });
