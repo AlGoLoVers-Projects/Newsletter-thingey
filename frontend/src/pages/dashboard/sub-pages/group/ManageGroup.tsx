@@ -80,7 +80,7 @@ export default function ManageGroup(): React.ReactElement {
                     },
                 }}
             >
-                {isGroupOwner ? `Manage ${groupData.groupName}` : `View ${groupData.groupName}`}
+                {isGroupOwner ? `Manage` : ''} {groupData.groupName}
             </Typography>
             {isGroupOwner ? <RenderOwnerGroup groupData={groupData}/> :
                 <RenderMemberGroup groupData={groupData} canEdit={groupUser?.hasEditAccess ?? false}/>}
@@ -384,17 +384,41 @@ function RenderOwnerGroup(props: { groupData: GroupData }): React.ReactElement {
                     flexDirection: "row",
                     gap: 2,
                 }}>
+
+                </Box>
+            </Card>
+            <Card
+                sx={{
+                    mt: 3,
+                    p: 3,
+                    maxWidth: "100%",
+                    borderRadius: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                <Typography component="h1" variant="h6" sx={{
+                    fontWeight: 'bold',
+                }}>
+                    Invitations
+                </Typography>
+                <Typography variant="body2">
+                    Invite new users or revoke existing invitations. (Invitations cannot be revoked once accepted)
+                </Typography>
+                <Box sx={{
+                    display: "flex",
+                    alignSelf: "end",
+                    flexDirection: "row",
+                    gap: 2,
+                }}>
                     <Button
                         type="submit"
                         variant="contained"
-                        disabled={isLoading}
+                        disabled={false}
                         sx={{mt: 3, mb: 1}}
-                        onClick={() => {
-                            navigate(authorizedPaths.manageGroupUsers, {state: groupData.id})
-                        }}
                         endIcon={<NavigateNext/>}
                     >
-                        Manage Users
+                        Invite New User
                     </Button>
                 </Box>
             </Card>
