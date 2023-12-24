@@ -443,6 +443,79 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                 <Typography component="h1" variant="h6" sx={{
                     fontWeight: 'bold',
                 }}>
+                    Manage Questions
+                </Typography>
+                <Typography variant="body2">
+                    Curate, edit or remove questions for users to fill out
+                </Typography>
+                <Box sx={{
+                    display: "flex",
+                    alignSelf: "end",
+                    flexDirection: "row",
+                    gap: 2,
+                }}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={isDeleting || isLoading}
+                        sx={{mt: 3, mb: 1}}
+                        endIcon={<NavigateNext/>}
+                        onClick={() => {
+                        }}
+                    >
+                        Manage Questions
+                    </Button>
+                </Box>
+            </Card>
+            <Card
+                sx={{
+                    mt: 3,
+                    p: 3,
+                    maxWidth: "100%",
+                    borderRadius: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                <Typography component="h1" variant="h6" sx={{
+                    fontWeight: 'bold',
+                }}>
+                    Generate Newsletter
+                </Typography>
+                <Typography variant="body2">
+                    If you're ready to publish your newsletter, proceed by clicking on the publish button. This is a one time process, questions cannot be processed and new newsletters cannot be issued once generated. Proceed with caution.
+                </Typography>
+                <Box sx={{
+                    display: "flex",
+                    alignSelf: "end",
+                    flexDirection: "row",
+                    gap: 2,
+                }}>
+                    <Button
+                        type="submit"
+                        variant="outlined"
+                        disabled={isDeleting || isLoading}
+                        sx={{mt: 3, mb: 1}}
+                        onClick={() => {
+                        }}
+                    >
+                        Publish Newsletter
+                    </Button>
+                </Box>
+            </Card>
+            <Card
+                sx={{
+                    mt: 3,
+                    p: 3,
+                    maxWidth: "100%",
+                    borderRadius: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                <Typography component="h1" variant="h6" sx={{
+                    fontWeight: 'bold',
+                }}>
                     Delete Group
                 </Typography>
                 <Typography variant="body2">
