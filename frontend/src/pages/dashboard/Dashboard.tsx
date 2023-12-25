@@ -29,9 +29,10 @@ import {
 } from "@mui/icons-material";
 import {authorizedPaths, dashboardPaths, Path} from "../../router/paths";
 import BreadCrumb from "../../components/elements/BreadCrumb";
-import {ReactElement} from "react";
+import {ReactElement, useRef} from "react";
 import NewGroup from "./sub-pages/group/NewGroup";
 import ManageGroup from "./sub-pages/group/ManageGroup";
+import AlertDialog, {AlertDialogRef} from "../../components/elements/AlertDialog";
 
 const drawerWidth = 240;
 
@@ -152,6 +153,8 @@ export default function Dashboard(): React.ReactElement {
     const location = useLocation()
     const [open, setOpen] = React.useState(false);
 
+    const signOutRef = useRef<AlertDialogRef>(null);
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -170,7 +173,8 @@ export default function Dashboard(): React.ReactElement {
     type NavData = {
         title: string,
         icon: ReactElement
-        path: Path,
+        path?: Path,
+        onClick?: () => void
     }
 
     const primaryNavigation: NavData[] = [
@@ -229,7 +233,8 @@ export default function Dashboard(): React.ReactElement {
                 px: 2.5,
             }}
             onClick={() => {
-                navigate(data.path)
+                data.path && navigate(data.path)
+                data.onClick && data.onClick()
             }}
         >
             <ListItemIcon
@@ -297,11 +302,25 @@ export default function Dashboard(): React.ReactElement {
                 <List>
                     {buildNavigation(secondaryNavigation)}
                 </List>
+                <AlertDialog
+                    ref={signOutRef}
+                    title="Sign out?"
+                    message="Are you sure you want to sign out?."
+                    acceptLabel='Sign Out'
+                    onAccept={() => {
+                        navigate(authorizedPaths.signOut)
+                    }}
+                />
                 <List sx={{marginTop: 'auto'}}>
-                    {buildNavButton({title: 'Sign Out', icon: <ExitToApp/>, path: authorizedPaths.signOut})}
+                    {buildNavButton({
+                        title: 'Sign Out', icon: <ExitToApp/>, onClick: () => {
+                            signOutRef.current?.open()
+                        }
+                    })}
                 </List>
             </Drawer>
-            <Box component="main" sx={{flexGrow: 1, p: 3, height: "maxContent", display: "flex", flexDirection: "column"}}>
+            <Box component="main"
+                 sx={{flexGrow: 1, p: 3, height: "maxContent", display: "flex", flexDirection: "column"}}>
                 <DrawerHeader/>
                 <BreadCrumb/>
                 <Routes>
