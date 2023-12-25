@@ -32,7 +32,7 @@ export type GroupUserEditAccessRequest = {
     canEdit: boolean
 } & GroupIdRequest
 
-export type GroupUserRemovalRequest = {
+export type GroupUserRequest = {
     userEmail: string
 } & GroupIdRequest;
 
@@ -69,7 +69,7 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
                 body: data
             }),
         }),
-        removeUser: builder.mutation<Result<GroupData>, GroupUserRemovalRequest>({
+        removeUser: builder.mutation<Result<GroupData>, GroupUserRequest>({
             query: (data) => ({
                 url: '/api/group/removeUser',
                 method: 'DELETE',

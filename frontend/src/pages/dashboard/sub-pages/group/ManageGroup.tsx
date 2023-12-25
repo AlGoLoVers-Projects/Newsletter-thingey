@@ -10,7 +10,7 @@ import {
     GroupIdRequest,
     GroupMember,
     GroupUserEditAccessRequest,
-    GroupUserRemovalRequest,
+    GroupUserRequest,
     useDeleteGroupMutation,
     useEditGroupMutation,
     useLeaveGroupMutation,
@@ -35,6 +35,7 @@ import ListItem from "@mui/material/ListItem";
 import UserManagementTable from "../../../../components/elements/UserManagementTable";
 import AlertDialog, {AlertDialogRef} from "../../../../components/elements/AlertDialog";
 import InvitationDialog, {InvitationDialogRef} from "../../../../components/elements/InvitationDialog";
+import {useInviteUserToGroupMutation} from "../../../../redux/rootslices/api/invitations.slice";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -227,6 +228,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const [deleteGroup, {isLoading: isDeleting}] = useDeleteGroupMutation()
     const [removeUser, {isLoading: isRemovingUser}] = useRemoveUserMutation()
     const [userEditAccess, {isLoading: isEditingGroup}] = useUpdateEditAccessToUserMutation()
+    const [inviteUser, {isLoading: isInvitingUser}] = useInviteUserToGroupMutation()
 
     const [groupNameError, setGroupNameError] = useState<string>('')
     const [groupDescError, setGroupDescError] = useState<string>('')
@@ -290,6 +292,26 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
         }
     }
 
+    const handleInvitation = (userEmail: string) => {
+        const data: GroupUserRequest = {
+            groupId: groupData.id,
+            userEmail: userEmail
+        }
+
+        inviteUser(data)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    showSuccessToast(response.message ?? "Invited user successfully")
+                } else {
+                    showFailureToast(response.message ?? 'Failed to invite user, try again later')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.data.message ?? "Could not invite user")
+            })
+    }
+
     const handleDeletion = () => {
         const data: GroupIdRequest = {
             groupId: groupData.id
@@ -311,7 +333,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     }
 
     const handleUserDeletion = (email: string) => {
-        const data: GroupUserRemovalRequest = {
+        const data: GroupUserRequest = {
             groupId: groupData.id,
             userEmail: email
         }
@@ -513,6 +535,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                 }}>
                     <InvitationDialog ref={invitationDialogRef} onAccept={(email) => {
                         console.log(email)
+                        handleInvitation(email)
                     }}/>
                     <Button
                         type="submit"

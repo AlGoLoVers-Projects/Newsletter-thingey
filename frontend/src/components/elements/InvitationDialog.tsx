@@ -46,7 +46,6 @@ const InvitationDialog = forwardRef<InvitationDialogRef, InvitationDialogProps>(
         }
     };
 
-    // Expose the openDialog method through the ref
     useImperativeHandle(ref, () => ({
         openDialog: () => {
             setOpen(true);
