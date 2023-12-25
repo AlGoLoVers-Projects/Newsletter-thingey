@@ -12,8 +12,8 @@ import {
     REHYDRATE,
 } from 'redux-persist/es/constants';
 import {baseApiSlice} from "./rootslices/api/base.slice";
-import { authenticationSlice } from './rootslices/api/authentication.slice';
-import { groupsSlice } from './rootslices/api/groups.slice';
+import {authenticationSlice} from './rootslices/api/authentication.slice';
+import {groupsSlice} from './rootslices/api/groups.slice';
 import {invitationsSlice} from "./rootslices/api/invitations.slice";
 
 const persistConfig: PersistConfig<any> = {

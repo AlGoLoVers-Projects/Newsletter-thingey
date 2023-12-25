@@ -36,6 +36,7 @@ import UserManagementTable from "../../../../components/elements/UserManagementT
 import AlertDialog, {AlertDialogRef} from "../../../../components/elements/AlertDialog";
 import InvitationDialog, {InvitationDialogRef} from "../../../../components/elements/InvitationDialog";
 import {useInviteUserToGroupMutation} from "../../../../redux/rootslices/api/invitations.slice";
+import {InvitationsProvider} from "../../../../components/elements/Invitations";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -65,37 +66,39 @@ export default function ManageGroup(): React.ReactElement {
     }
 
     return (
-        <Container
-            component="main"
-            disableGutters
-            sx={{
-                padding: 2,
-                margin: 0,
-                display: "flex",
-                flexDirection: "column",
-                position: 'relative',
-                minWidth: "100%",
-                flex: 1
-            }}
-        >
-            <Typography
-                component="h1"
-                variant="h2"
+        <InvitationsProvider>
+            <Container
+                component="main"
+                disableGutters
                 sx={{
-                    fontWeight: 'bold',
-                    alignSelf: "flex-start",
-                    fontSize: {
-                        xs: '1rem',
-                        sm: '2rem',
-                        xl: '3rem',
-                    },
+                    padding: 2,
+                    margin: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    position: 'relative',
+                    minWidth: "100%",
+                    flex: 1
                 }}
             >
-                {isGroupOwner ? `Manage` : ''} {groupData.groupName}
-            </Typography>
-            {isGroupOwner ? <RenderOwnerGroup groupData={groupData} groupUser={groupUser}/> :
-                <RenderMemberGroup groupData={groupData} canEdit={groupUser?.hasEditAccess ?? false}/>}
-        </Container>
+                <Typography
+                    component="h1"
+                    variant="h2"
+                    sx={{
+                        fontWeight: 'bold',
+                        alignSelf: "flex-start",
+                        fontSize: {
+                            xs: '1rem',
+                            sm: '2rem',
+                            xl: '3rem',
+                        },
+                    }}
+                >
+                    {isGroupOwner ? `Manage` : ''} {groupData.groupName}
+                </Typography>
+                {isGroupOwner ? <RenderOwnerGroup groupData={groupData} groupUser={groupUser}/> :
+                    <RenderMemberGroup groupData={groupData} canEdit={groupUser?.hasEditAccess ?? false}/>}
+            </Container>
+        </InvitationsProvider>
     )
 }
 
@@ -303,6 +306,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
             .then((response) => {
                 if (response.success) {
                     showSuccessToast(response.message ?? "Invited user successfully")
+                    //TODO: get invitation data, add new invitation handler to maintain invitation list
                 } else {
                     showFailureToast(response.message ?? 'Failed to invite user, try again later')
                 }
