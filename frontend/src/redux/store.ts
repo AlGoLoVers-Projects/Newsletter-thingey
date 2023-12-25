@@ -14,11 +14,12 @@ import {
 import {baseApiSlice} from "./rootslices/api/base.slice";
 import { authenticationSlice } from './rootslices/api/authentication.slice';
 import { groupsSlice } from './rootslices/api/groups.slice';
+import {invitationsSlice} from "./rootslices/api/invitations.slice";
 
 const persistConfig: PersistConfig<any> = {
     key: 'root',
     storage: storage,
-    blacklist: ['search', authenticationSlice.reducerPath, groupsSlice.reducerPath],
+    blacklist: ['search', authenticationSlice.reducerPath, groupsSlice.reducerPath, invitationsSlice.reducerPath],
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
