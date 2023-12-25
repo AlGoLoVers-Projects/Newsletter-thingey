@@ -36,4 +36,4 @@ export const invitationsSlice = baseApiSlice.injectEndpoints({
     }),
 });
 
-export const {useInviteUserToGroupMutation, useListAllInvitationsByGroupMutation} = invitationsSlice;
+export const {useInviteUserToGroupMutation, useListAllInvitationsByGroupMutation, useRemoveInvitationFromGroupMutation} = invitationsSlice;

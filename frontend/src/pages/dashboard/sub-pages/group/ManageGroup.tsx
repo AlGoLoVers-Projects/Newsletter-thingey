@@ -38,7 +38,7 @@ import InvitationDialog, {InvitationDialogRef} from "../../../../components/elem
 import {
     Invitation,
     useInviteUserToGroupMutation,
-    useListAllInvitationsByGroupMutation
+    useListAllInvitationsByGroupMutation, useRemoveInvitationFromGroupMutation
 } from "../../../../redux/rootslices/api/invitations.slice";
 import {InvitationsActionType, InvitationsProvider, useInvitations} from "../../../../components/elements/Invitations";
 import UserInvitationListCard from "../../../../components/elements/UserInvitationListCard";
@@ -242,6 +242,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const [userEditAccess, {isLoading: isEditingGroup}] = useUpdateEditAccessToUserMutation()
     const [inviteUser, {isLoading: isInvitingUser}] = useInviteUserToGroupMutation()
     const [listInvitations] = useListAllInvitationsByGroupMutation()
+    const [deleteInvitation] = useRemoveInvitationFromGroupMutation()
 
     const [groupNameError, setGroupNameError] = useState<string>('')
     const [groupDescError, setGroupDescError] = useState<string>('')
@@ -252,6 +253,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const deleteGroupDialogRef = useRef<AlertDialogRef>(null);
     const generateNewsletterDialogRef = useRef<AlertDialogRef>(null);
     const invitationDialogRef = useRef<InvitationDialogRef>(null);
+    const deleteInvitationRef = useRef<AlertDialogRef>(null);
 
     const pullInvitations = () => {
 
@@ -274,6 +276,31 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
             })
             .catch((result) => {
                 showFailureToast(result.message ?? "Could not retrieve invitations")
+            })
+    }
+
+    const handleDeleteInvitation = (email: string) => {
+        const request: GroupUserRequest = {
+            groupId: groupData.id,
+            userEmail: email
+        }
+
+        deleteInvitation(request)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    const data: Invitation = response.data
+                    showSuccessToast(response.message ?? 'Invitation deleted successfully')
+                    invitationsDispatch({
+                        type: InvitationsActionType.REMOVE_INVITATION,
+                        payload: data.id.emailAddress,
+                    });
+                } else {
+                    showFailureToast(response.message ?? 'Failed to delete invitation')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.data.message ?? "Could not delete invitation")
             })
     }
 
@@ -573,6 +600,15 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                 <Typography variant="body2">
                     Invite new users or revoke existing invitations. (Invitations cannot be revoked once accepted)
                 </Typography>
+                <AlertDialog
+                    ref={deleteInvitationRef}
+                    title="Delete invitation?"
+                    message="Are you sure you want to delete this invitation?"
+                    acceptLabel='Delete'
+                    onAcceptWithData={(email) => {
+                        handleDeleteInvitation(email)
+                    }}
+                />
                 <Box sx={{
                     display: "flex",
                     flexDirection: "column",
@@ -584,6 +620,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                             key={invitation.id.emailAddress}
                             emailAddress={invitation.id.emailAddress}
                             onDelete={() => {
+                                deleteInvitationRef.current?.openWithData(invitation.id.emailAddress)
                             }}
                         />
                     ))}
