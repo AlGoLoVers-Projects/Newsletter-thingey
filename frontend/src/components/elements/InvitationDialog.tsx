@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {forwardRef, useState, useImperativeHandle} from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -7,16 +7,19 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import {isEmpty, isValidEmail} from "../../util/validation";
-import {useState} from "react";
 
-export interface InvitationDialogProp {
-    dialogState: boolean,
+export interface InvitationDialogProps {
     onAccept?: (data: string) => void;
 }
-export default function InvitationDialog(props: InvitationDialogProp) {
-    const {dialogState, onAccept} = props
-    const [open, setOpen] = React.useState<boolean>(dialogState);
-    const [userEmail, setUserEmail] = useState<string>('')
+
+export interface InvitationDialogRef {
+    openDialog: () => void;
+}
+
+const InvitationDialog = forwardRef<InvitationDialogRef, InvitationDialogProps>((props, ref) => {
+    const {onAccept} = props;
+    const [open, setOpen] = useState<boolean>(false);
+    const [userEmail, setUserEmail] = useState<string>('');
     const [emailError, setEmailError] = useState<string>('');
 
     const handleClose = () => {
@@ -24,7 +27,7 @@ export default function InvitationDialog(props: InvitationDialogProp) {
     };
 
     const handleInviteConfirmation = () => {
-        let valid = true
+        let valid = true;
 
         if (!userEmail) {
             setEmailError('Please enter an email address');
@@ -36,11 +39,19 @@ export default function InvitationDialog(props: InvitationDialogProp) {
             setEmailError('');
         }
 
-        if(valid) {
-            onAccept && onAccept(userEmail)
-            handleClose()
+        if (valid) {
+            onAccept && onAccept(userEmail);
+            setUserEmail('')
+            handleClose();
         }
-    }
+    };
+
+    // Expose the openDialog method through the ref
+    useImperativeHandle(ref, () => ({
+        openDialog: () => {
+            setOpen(true);
+        },
+    }));
 
     return (
         <React.Fragment>
@@ -48,7 +59,8 @@ export default function InvitationDialog(props: InvitationDialogProp) {
                 <DialogTitle>Invite User</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        To invite a new user, enter the user's email address below and click on invite. Existing users cannot be invited, and users can only join the group after registering an account.
+                        To invite a new user, enter the user's email address below and click on invite. Existing users
+                        cannot be invited, and users can only join the group after registering an account.
                     </DialogContentText>
                     <TextField
                         margin="normal"
@@ -61,7 +73,7 @@ export default function InvitationDialog(props: InvitationDialogProp) {
                         autoFocus
                         value={userEmail}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                            setUserEmail(e.target.value)
+                            setUserEmail(e.target.value);
                         }}
                         error={!isEmpty(emailError)}
                         helperText={emailError}
@@ -74,4 +86,6 @@ export default function InvitationDialog(props: InvitationDialogProp) {
             </Dialog>
         </React.Fragment>
     );
-}
+});
+
+export default InvitationDialog;

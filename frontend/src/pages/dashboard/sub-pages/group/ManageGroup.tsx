@@ -34,6 +34,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import UserManagementTable from "../../../../components/elements/UserManagementTable";
 import AlertDialog, {AlertDialogRef} from "../../../../components/elements/AlertDialog";
+import InvitationDialog, {InvitationDialogRef} from "../../../../components/elements/InvitationDialog";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -235,6 +236,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
 
     const deleteGroupDialogRef = useRef<AlertDialogRef>(null);
     const generateNewsletterDialogRef = useRef<AlertDialogRef>(null);
+    const invitationDialogRef = useRef<InvitationDialogRef>(null);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -509,11 +511,15 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     flexDirection: "row",
                     gap: 2,
                 }}>
+                    <InvitationDialog ref={invitationDialogRef} onAccept={(email) => {
+                        console.log(email)
+                    }}/>
                     <Button
                         type="submit"
                         variant="contained"
                         disabled={false}
                         sx={{mt: 3, mb: 1}}
+                        onClick={() => invitationDialogRef.current?.openDialog()}
                         endIcon={<NavigateNext/>}
                     >
                         Invite New User
