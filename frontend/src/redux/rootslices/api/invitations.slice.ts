@@ -26,6 +26,13 @@ export const invitationsSlice = baseApiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        removeInvitationFromGroup: builder.mutation<Result<Invitation>, GroupUserRequest>({
+            query: (data) => ({
+                url: '/api/group/removeInvitationFromGroup',
+                method: 'DELETE',
+                body: data,
+            }),
+        })
     }),
 });
 

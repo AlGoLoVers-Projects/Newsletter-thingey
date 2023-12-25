@@ -171,7 +171,6 @@ public class GroupService {
 
     @Transactional(rollbackFor = {Exception.class})
     public Result<Invitation> removeInvitationFromGroup(GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
-
         try {
             Optional<Group> optionalGroup = groupRepository.findById(groupUserInvitationRequest.getGroupId());
 
@@ -201,6 +200,8 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
+
+    //TODO: Add controller to let user delete their invitations for a group
 
     @Transactional(rollbackFor = {Exception.class})
     public Result<String> acceptInvitation(GroupRequest groupRequest, User authenticatedUser) {
