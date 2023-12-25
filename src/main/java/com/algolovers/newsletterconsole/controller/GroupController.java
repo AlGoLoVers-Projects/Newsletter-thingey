@@ -78,10 +78,10 @@ public class GroupController {
     }
 
     @DeleteMapping("/removeUser")
-    public ResponseEntity<Result<String>> removeUser(@Valid @RequestBody GroupUserRemovalRequest groupUserRemovalRequest) {
+    public ResponseEntity<Result<Group>> removeUser(@Valid @RequestBody GroupUserRemovalRequest groupUserRemovalRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Result<String> result = groupService.removeUser(groupUserRemovalRequest, user);
-        return ControllerUtils.processResultForResponse(result);
+        Result<Group> result = groupService.removeUser(groupUserRemovalRequest, user);
+        return ControllerUtils.processResultForResponseWithData(result);
     }
 
     @DeleteMapping("/leaveGroup")

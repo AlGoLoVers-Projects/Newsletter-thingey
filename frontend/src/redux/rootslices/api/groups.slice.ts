@@ -27,18 +27,21 @@ export type GroupIdRequest = {
     groupId: string
 }
 
+export type GroupUserEditAccessRequest = {
+    userEmail: string,
+    canEdit: boolean
+} & GroupIdRequest
+
+export type GroupUserRemovalRequest = {
+    userEmail: string
+} & GroupIdRequest;
+
 export type GroupEditRequest = GroupDataRequest & GroupIdRequest;
 
 export type GroupListData = GroupData[];
 
 export const groupsSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getGroups: builder.mutation<Result<GroupListData>, null>({
-            query: () => ({
-                url: '/api/group/listAllGroups',
-                method: 'GET',
-            }),
-        }),
         newGroup: builder.mutation<Result<GroupData>, GroupDataRequest>({
             query: (data) => ({
                 url: '/api/group/provisionNewGroup',
@@ -50,6 +53,32 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
             query: (data) => ({
                 url: '/api/group/editGroupInformation',
                 method: 'PUT',
+                body: data
+            }),
+        }),
+        getGroups: builder.mutation<Result<GroupListData>, null>({
+            query: () => ({
+                url: '/api/group/listAllGroups',
+                method: 'GET',
+            }),
+        }),
+        updateEditAccessToUser: builder.mutation<Result<GroupData>, GroupUserEditAccessRequest>({
+            query: () => ({
+                url: '/api/group/updateEditAccessToUser',
+                method: 'PUT',
+            }),
+        }),
+        removeUser: builder.mutation<Result<GroupData>, GroupUserRemovalRequest>({
+            query: (data) => ({
+                url: '/api/group/removeUser',
+                method: 'DELETE',
+                body: data
+            }),
+        }),
+        leaveGroup: builder.mutation<Result<string>, GroupIdRequest>({
+            query: (data) => ({
+                url: '/api/group/leaveGroup',
+                method: 'DELETE',
                 body: data
             }),
         }),

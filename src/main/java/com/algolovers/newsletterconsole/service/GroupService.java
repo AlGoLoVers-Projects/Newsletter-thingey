@@ -256,7 +256,7 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    public Result<String> removeUser(GroupUserRemovalRequest groupUserRemovalRequest, User authenticatedUser) {
+    public Result<Group> removeUser(GroupUserRemovalRequest groupUserRemovalRequest, User authenticatedUser) {
 
         try {
             Optional<Group> optionalGroup = groupRepository.findById(groupUserRemovalRequest.getGroupId());
@@ -281,9 +281,9 @@ public class GroupService {
                 groupMembers.remove(groupMemberToRemove);
 
                 groupMemberRepository.delete(groupMemberToRemove);
-                groupRepository.save(group);
+                group = groupRepository.save(group);
 
-                return new Result<>(true, null, "User removed from the group successfully");
+                return new Result<>(true, group, "User removed from the group successfully");
             } else {
                 return new Result<>(false, null, "User not found in the group");
             }
