@@ -17,17 +17,23 @@ const Transition = forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
+export type AlertDialogRef = {
+    openWithData: (data: any) => void;
+    open: () => void;
+    close: () => void;
+} | null;
 export interface ExternalControlledDialogProps {
     title: string;
     message: string;
     acceptLabel?: string;
     rejectLabel?: string;
     onAccept?: () => void;
+    onAcceptWithData?: (data: any) => void;
     onReject?: () => void;
 }
 
 const AlertDialog = forwardRef<
-    { open: () => void; close: () => void },
+    { open: () => void; openWithData: (data: any) => void; close: () => void },
     ExternalControlledDialogProps
 >((props, ref) => {
     const {
@@ -37,11 +43,18 @@ const AlertDialog = forwardRef<
         rejectLabel = 'Cancel',
         onAccept,
         onReject,
+        onAcceptWithData
     } = props;
 
     const [open, setOpen] = useState(false);
+    const [data, setData] = useState<any>();
 
     const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClickOpenWithData = (data: any) => {
+        setData(data)
         setOpen(true);
     };
 
@@ -51,11 +64,13 @@ const AlertDialog = forwardRef<
 
     useImperativeHandle(ref, () => ({
         open: handleClickOpen,
+        openWithData: handleClickOpenWithData,
         close: handleClose,
     }));
 
     const handleAccept = () => {
         onAccept && onAccept();
+        onAcceptWithData && onAcceptWithData(data)
         handleClose();
     };
 

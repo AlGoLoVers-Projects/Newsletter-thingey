@@ -1,9 +1,6 @@
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import {
     styled,
-    Theme,
-    createStyles,
-    makeStyles,
 } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -16,6 +13,7 @@ import Switch from '@mui/material/Switch';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {GroupMember} from "../../redux/rootslices/api/groups.slice";
+import AlertDialog, {AlertDialogRef} from "./AlertDialog";
 
 type UserManagementTableProps = {
     members: GroupMember[];
@@ -34,8 +32,18 @@ const UserManagementTable: React.FC<UserManagementTableProps>
            onEditToggle,
            onDeleteUser,
        }) => {
+    const deleteUserRef = useRef<AlertDialogRef>(null);
+
     return (
         <TableContainer component={Paper}>
+            <AlertDialog
+                ref={deleteUserRef}
+                title="Remove user?"
+                message="Are you sure you want to remove this user?."
+                onAcceptWithData={(data: any) => {
+                    onDeleteUser(data)
+                }}
+            />
             <Table>
                 <TableHead>
                     <TableRow>
@@ -58,7 +66,9 @@ const UserManagementTable: React.FC<UserManagementTableProps>
                             </TableCell>
                             <TableCell>
                                 <IconButton
-                                    onClick={() => onDeleteUser(member)}
+                                    onClick={() => {
+                                        deleteUserRef.current?.openWithData(member)
+                                    }}
                                 >
                                     <DeleteIcon/>
                                 </IconButton>

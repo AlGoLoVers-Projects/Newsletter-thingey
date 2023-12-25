@@ -1,5 +1,5 @@
 import {createSelector, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {GroupListData, GroupMember} from "../api/groups.slice";
+import {GroupData, GroupListData, GroupMember} from "../api/groups.slice";
 
 const groupsSlice = createSlice({
     name: 'group-data',
@@ -9,6 +9,17 @@ const groupsSlice = createSlice({
     reducers: {
         setGroupData: (state, action: PayloadAction<GroupListData>) => {
             state.groups = action.payload;
+        },
+        updateSingleGroupData: (
+            state,
+            action: PayloadAction<{updatedData: Partial<GroupData> }>
+        ) => {
+            const { updatedData } = action.payload;
+            const groupId = updatedData.id
+            const groupToUpdate = state.groups.find((group) => group.id === groupId);
+            if (groupToUpdate) {
+                Object.assign(groupToUpdate, updatedData);
+            }
         },
         updateGroupName: (state, action: PayloadAction<{ groupId: string; groupName: string }>) => {
             const groupToUpdate = state.groups.find((group) => group.id === action.payload.groupId);
@@ -52,6 +63,7 @@ const groupsSlice = createSlice({
 
 export const {
     setGroupData,
+    updateSingleGroupData,
     updateGroupName,
     updateGroupDescription,
     addGroupMember,

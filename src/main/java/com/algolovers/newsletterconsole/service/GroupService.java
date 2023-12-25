@@ -245,7 +245,7 @@ public class GroupService {
                 groupMemberRepository.save(groupMember);
                 group = groupRepository.save(group);
 
-                return new Result<>(true, group, "User removed from the group successfully");
+                return new Result<>(true, group, "User edit access updated successfully successfully");
             } else {
                 return new Result<>(false, null, "User not found in the group");
             }
@@ -323,7 +323,7 @@ public class GroupService {
                 groupMemberRepository.delete(groupMemberToRemove);
                 groupRepository.save(group);
 
-                return new Result<>(true, null, "User removed from the group successfully");
+                return new Result<>(true, null, "Exitted group successfully");
             } else {
                 return new Result<>(false, null, "User not found in the group");
             }

@@ -5,8 +5,16 @@ import Box from "@mui/material/Box";
 import {isEmpty} from "../../../../util/validation";
 import {useLocation, useNavigate} from "react-router-dom";
 import {
-    GroupData, GroupEditRequest, GroupIdRequest, GroupMember, useDeleteGroupMutation,
-    useEditGroupMutation, useLeaveGroupMutation,
+    GroupData,
+    GroupEditRequest,
+    GroupIdRequest,
+    GroupMember,
+    GroupUserEditAccessRequest,
+    GroupUserRemovalRequest,
+    useDeleteGroupMutation,
+    useEditGroupMutation,
+    useLeaveGroupMutation,
+    useRemoveUserMutation, useUpdateEditAccessToUserMutation,
 } from "../../../../redux/rootslices/api/groups.slice";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -16,7 +24,8 @@ import {NavigateNext} from "@mui/icons-material";
 import {
     selectGroupByIdMemoized,
     updateGroupDescription,
-    updateGroupName
+    updateGroupName,
+    updateSingleGroupData
 } from "../../../../redux/rootslices/data/groups.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {memoizedSelectUserData} from "../../../../redux/rootslices/data/auth-data.slice";
@@ -24,7 +33,7 @@ import UserProfileCard from "../../../../components/elements/UserProfileCard";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import UserManagementTable from "../../../../components/elements/UserManagementTable";
-import AlertDialog from "../../../../components/elements/AlertDialog";
+import AlertDialog, {AlertDialogRef} from "../../../../components/elements/AlertDialog";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -93,7 +102,7 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
     const navigate = useNavigate()
 
     const [leaveGroup, {isLoading}] = useLeaveGroupMutation()
-    const dialogRef = useRef<{ open: () => void; close: () => void } | null>(null);
+    const dialogRef = useRef<AlertDialogRef>(null);
 
     const handleLeaveGroup = () => {
         const data: GroupIdRequest = {
@@ -215,6 +224,8 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
 
     const [editGroup, {isLoading}] = useEditGroupMutation()
     const [deleteGroup, {isLoading: isDeleting}] = useDeleteGroupMutation()
+    const [removeUser, {isLoading: isRemovingUser}] = useRemoveUserMutation()
+    const [userEditAccess, {isLoading: isEditingGroup}] = useUpdateEditAccessToUserMutation()
 
     const [groupNameError, setGroupNameError] = useState<string>('')
     const [groupDescError, setGroupDescError] = useState<string>('')
@@ -222,8 +233,8 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const [groupName, setGroupName] = useState<string>(groupData.groupName)
     const [groupDesc, setGroupDesc] = useState<string>(groupData.groupDescription)
 
-    const deleteGroupDialogRef = useRef<{ open: () => void; close: () => void } | null>(null);
-    const generateNewsletterDialogRef = useRef<{ open: () => void; close: () => void } | null>(null);
+    const deleteGroupDialogRef = useRef<AlertDialogRef>(null);
+    const generateNewsletterDialogRef = useRef<AlertDialogRef>(null);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -278,7 +289,6 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     }
 
     const handleDeletion = () => {
-        //TODO: Ask confirmation
         const data: GroupIdRequest = {
             groupId: groupData.id
         }
@@ -295,6 +305,50 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
             })
             .catch((result) => {
                 showFailureToast(result.data.message ?? "Could delete group")
+            })
+    }
+
+    const handleUserDeletion = (email: string) => {
+        const data: GroupUserRemovalRequest = {
+            groupId: groupData.id,
+            userEmail: email
+        }
+
+        removeUser(data)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    console.log(response)
+                    showSuccessToast(response.message ?? "Removed user successfully")
+                    dispatch(updateSingleGroupData({updatedData: response.data}))
+                } else {
+                    showFailureToast(response.message ?? 'User removal failed, try again later')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.message ?? "Could not remove user")
+            })
+    }
+
+    const handleEditToggle = (email: string, canEdit: boolean) => {
+        const data: GroupUserEditAccessRequest = {
+            groupId: groupData.id,
+            userEmail: email,
+            canEdit
+        }
+
+        userEditAccess(data)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    showSuccessToast("User access changed successfully")
+                    navigate(authorizedPaths.groups)
+                } else {
+                    showFailureToast(response.message ?? 'Cannot change user access, try again later')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.data.message ?? 'Cannot change user access, try again later')
             })
     }
 
@@ -421,6 +475,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     }}>
                         <UserManagementTable
                             onDeleteUser={(member) => {
+                                handleUserDeletion(member.user.emailAddress)
                             }}
                             onEditToggle={(member) => {
                             }}
