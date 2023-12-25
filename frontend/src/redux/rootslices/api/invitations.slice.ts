@@ -1,6 +1,6 @@
 import {Result} from "../../../types/result";
 import {baseApiSlice} from "./base.slice";
-import {GroupData, GroupUserRequest} from "./groups.slice";
+import {GroupData, GroupIdRequest, GroupUserRequest} from "./groups.slice";
 
 export type Invitation = {
     id: {
@@ -19,7 +19,14 @@ export const invitationsSlice = baseApiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        listAllInvitationsByGroup: builder.mutation<Result<Invitation[]>, GroupIdRequest>({
+            query: (data) => ({
+                url: '/api/group/listAllInvitationsByGroup',
+                method: 'POST',
+                body: data,
+            }),
+        }),
     }),
 });
 
-export const {useInviteUserToGroupMutation} = invitationsSlice;
+export const {useInviteUserToGroupMutation, useListAllInvitationsByGroupMutation} = invitationsSlice;

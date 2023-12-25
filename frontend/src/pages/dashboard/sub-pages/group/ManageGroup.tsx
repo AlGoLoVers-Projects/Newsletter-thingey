@@ -35,8 +35,13 @@ import ListItem from "@mui/material/ListItem";
 import UserManagementTable from "../../../../components/elements/UserManagementTable";
 import AlertDialog, {AlertDialogRef} from "../../../../components/elements/AlertDialog";
 import InvitationDialog, {InvitationDialogRef} from "../../../../components/elements/InvitationDialog";
-import {useInviteUserToGroupMutation} from "../../../../redux/rootslices/api/invitations.slice";
-import {InvitationsProvider} from "../../../../components/elements/Invitations";
+import {
+    Invitation,
+    useInviteUserToGroupMutation,
+    useListAllInvitationsByGroupMutation
+} from "../../../../redux/rootslices/api/invitations.slice";
+import {InvitationsActionType, InvitationsProvider, useInvitations} from "../../../../components/elements/Invitations";
+import UserInvitationListCard from "../../../../components/elements/UserInvitationListCard";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -227,11 +232,16 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const navigate = useNavigate()
     const dispatch = useDispatch();
 
+    const {state, dispatch: invitationsDispatch} = useInvitations();
+
+    console.log(state)
+
     const [editGroup, {isLoading}] = useEditGroupMutation()
     const [deleteGroup, {isLoading: isDeleting}] = useDeleteGroupMutation()
     const [removeUser, {isLoading: isRemovingUser}] = useRemoveUserMutation()
     const [userEditAccess, {isLoading: isEditingGroup}] = useUpdateEditAccessToUserMutation()
     const [inviteUser, {isLoading: isInvitingUser}] = useInviteUserToGroupMutation()
+    const [listInvitations] = useListAllInvitationsByGroupMutation()
 
     const [groupNameError, setGroupNameError] = useState<string>('')
     const [groupDescError, setGroupDescError] = useState<string>('')
@@ -242,6 +252,34 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const deleteGroupDialogRef = useRef<AlertDialogRef>(null);
     const generateNewsletterDialogRef = useRef<AlertDialogRef>(null);
     const invitationDialogRef = useRef<InvitationDialogRef>(null);
+
+    const pullInvitations = () => {
+
+        const request: GroupIdRequest = {
+            groupId: groupData.id,
+        }
+
+        listInvitations(request)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    const data: Invitation[] = response.data
+                    invitationsDispatch({
+                        type: InvitationsActionType.SET_INVITATIONS,
+                        payload: data,
+                    });
+                } else {
+                    showFailureToast(response.message ?? 'Failed to get invitations')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.message ?? "Could not retrieve invitations")
+            })
+    }
+
+    useEffect(() => {
+        pullInvitations()
+    }, [listInvitations]);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -306,7 +344,11 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
             .then((response) => {
                 if (response.success) {
                     showSuccessToast(response.message ?? "Invited user successfully")
-                    //TODO: get invitation data, add new invitation handler to maintain invitation list
+                    const data: Invitation = response.data
+                    invitationsDispatch({
+                        type: InvitationsActionType.ADD_INVITATION,
+                        payload: data,
+                    });
                 } else {
                     showFailureToast(response.message ?? 'Failed to invite user, try again later')
                 }
@@ -531,6 +573,21 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                 <Typography variant="body2">
                     Invite new users or revoke existing invitations. (Invitations cannot be revoked once accepted)
                 </Typography>
+                <Box sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    mt: 2
+                }}>
+                    {state.invitations.map((invitation) => (
+                        <UserInvitationListCard
+                            key={invitation.id.emailAddress}
+                            emailAddress={invitation.id.emailAddress}
+                            onDelete={() => {
+                            }}
+                        />
+                    ))}
+                </Box>
                 <Box sx={{
                     display: "flex",
                     alignSelf: "end",

@@ -57,7 +57,7 @@ public class GroupController {
         return ControllerUtils.processResultForResponseWithData(result);
     }
 
-    @GetMapping("/listAllInvitationsByGroup")
+    @PostMapping("/listAllInvitationsByGroup")
     public ResponseEntity<Result<List<Invitation>>> listAllInvitationsByGroup(@Valid @RequestBody GroupRequest groupRequest) {
         Result<List<Invitation>> result = groupService.listAllInvitationsByGroup(groupRequest);
         return ControllerUtils.processResultForResponseWithData(result);
