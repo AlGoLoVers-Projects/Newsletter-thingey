@@ -155,7 +155,7 @@ public class GroupService {
             return new Result<>(true, invitations, "Invitation fetched successfully");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
-            return new Result<>(true, null, e.getMessage());
+            return new Result<>(false, null, e.getMessage());
         }
     }
 
@@ -165,7 +165,7 @@ public class GroupService {
             return new Result<>(true, invitations, "Invitation fetched successfully");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
-            return new Result<>(true, null, e.getMessage());
+            return new Result<>(false, null, e.getMessage());
         }
     }
 
@@ -194,7 +194,7 @@ public class GroupService {
             Invitation invitation = optionalInvitation.get();
 
             invitationRepository.delete(invitation);
-            return new Result<>(false, invitation, "Invitation has been deleted successfully");
+            return new Result<>(true, invitation, "Invitation has been deleted successfully");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
@@ -243,7 +243,7 @@ public class GroupService {
             groupRepository.save(group);
             invitationRepository.delete(invitation);
 
-            return new Result<>(false, null, "User has been added to group successfully");
+            return new Result<>(true, null, "User has been added to group successfully");
 
             //TODO: Send email?
         } catch (Exception e) {
