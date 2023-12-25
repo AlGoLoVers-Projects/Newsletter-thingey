@@ -170,6 +170,39 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
+    public Result<Invitation> removeInvitationFromGroup(GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
+
+        try {
+            Optional<Group> optionalGroup = groupRepository.findById(groupUserInvitationRequest.getGroupId());
+
+            if (optionalGroup.isEmpty()) {
+                return new Result<>(false, null, "The provided group was not found, cannot delete invitation");
+            }
+
+            Group group = optionalGroup.get();
+
+            if (!group.getGroupOwner().getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
+                return new Result<>(false, null, "Only the group owner can delete invitations");
+            }
+
+            Optional<Invitation> optionalInvitation = invitationRepository.findInvitationById_EmailAddressAndId_Group_Id(
+                    groupUserInvitationRequest.getUserEmail(), groupUserInvitationRequest.getGroupId());
+
+            if (optionalInvitation.isEmpty()) {
+                return new Result<>(false, null, "The invitation was not found");
+            }
+
+            Invitation invitation = optionalInvitation.get();
+
+            invitationRepository.delete(invitation);
+            return new Result<>(false, invitation, "Invitation has been deleted successfully");
+        } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
     public Result<String> acceptInvitation(GroupRequest groupRequest, User authenticatedUser) {
 
         try {

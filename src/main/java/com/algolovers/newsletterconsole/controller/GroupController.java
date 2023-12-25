@@ -63,6 +63,13 @@ public class GroupController {
         return ControllerUtils.processResultForResponseWithData(result);
     }
 
+    @DeleteMapping("/removeInvitationFromGroup")
+    public ResponseEntity<Result<Invitation>> removeInvitationFromGroup(@Valid @RequestBody GroupUserInvitationRequest groupUserInvitationRequest) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Result<Invitation> result = groupService.removeInvitationFromGroup(groupUserInvitationRequest, user);
+        return ControllerUtils.processResultForResponseWithData(result);
+    }
+
     @PostMapping("/acceptInvitation")
     public ResponseEntity<Result<String>> acceptInvitation(@Valid @RequestBody GroupRequest groupRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
