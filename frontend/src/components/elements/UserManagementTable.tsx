@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     styled,
 } from '@mui/material/styles';
@@ -41,7 +41,7 @@ const UserManagementTable: React.FC<UserManagementTableProps>
                 title="Remove user?"
                 message="Are you sure you want to remove this user?."
                 onAcceptWithData={(data: any) => {
-                    onDeleteUser(data)
+                    onDeleteUser(data);
                 }}
             />
             <Table>
@@ -54,7 +54,11 @@ const UserManagementTable: React.FC<UserManagementTableProps>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {members.map((member) => (
+                    {members.sort((a, b) => {
+                        const nameA = a.user.emailAddress.toLowerCase();
+                        const nameB = b.user.emailAddress.toLowerCase();
+                        return nameA.localeCompare(nameB);
+                    }).map((member) => (
                         <TableRow key={member.user.emailAddress}>
                             <TableCell>{member.user.displayName}</TableCell>
                             <TableCell>{member.user.emailAddress}</TableCell>
@@ -67,7 +71,7 @@ const UserManagementTable: React.FC<UserManagementTableProps>
                             <TableCell>
                                 <IconButton
                                     onClick={() => {
-                                        deleteUserRef.current?.openWithData(member)
+                                        deleteUserRef.current?.openWithData(member);
                                     }}
                                 >
                                     <DeleteIcon/>
