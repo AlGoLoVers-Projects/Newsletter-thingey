@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import {CircularProgress, Container, CssBaseline} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {paths} from "../../../router/paths";
@@ -10,17 +10,27 @@ import {showSuccessToast} from "../../../util/toasts";
 export default function SignOut(): React.ReactElement {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const token = useSelector(selectToken)
+    const token = useSelector(selectToken);
+
+    const timerRunningRef = useRef(false);
 
     useEffect(() => {
-        if (token) {
-            setTimeout(() => {
-                dispatch(clearAuthData())
-                showSuccessToast("You have been signed out successfully!")
-                navigate(paths.home)
-            }, 1000)
+        if (token && !timerRunningRef.current) {
+            timerRunningRef.current = true;
+
+            const timerId = setTimeout(() => {
+                dispatch(clearAuthData());
+                showSuccessToast("You have been signed out successfully!");
+                navigate(paths.home);
+            }, 1000);
+
+            return () => {
+                // Clear the timer if the component is unmounted or the effect is cleaned up
+                clearTimeout(timerId);
+                timerRunningRef.current = false;
+            };
         }
-    })
+    }, [dispatch, navigate, token]);
 
     return (
         <Container
@@ -72,5 +82,5 @@ export default function SignOut(): React.ReactElement {
                 mt: 2
             }}/>
         </Container>
-    )
+    );
 }
