@@ -14,7 +14,6 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {styled} from "@mui/material/styles";
 import {Card, tableCellClasses, useTheme} from "@mui/material";
-import {DeleteForeverRounded} from "@mui/icons-material";
 import {GroupData, GroupListData} from "../../../../redux/rootslices/api/groups.slice";
 import {useSelector} from "react-redux";
 import {selectSearchValue} from "../../../../redux/rootslices/data/search.slice";
@@ -71,17 +70,6 @@ function Row(props: { row: GroupData }) {
                 <TableCell align="right">{row.groupOwner.emailAddress}</TableCell>
 
                 <TableCell align="right">{handleDateString(row.updatedAt)}</TableCell>
-                <TableCell align="right">
-                    <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => {
-                            //TODO: Handle delete button click logic here
-                        }}
-                    >
-                        <DeleteForeverRounded/>
-                    </IconButton>
-                </TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
@@ -134,7 +122,6 @@ export default function GroupList(): React.ReactElement {
                                 <StyledTableCell>Group Name</StyledTableCell>
                                 <StyledTableCell align="right">Owner ID</StyledTableCell>
                                 <StyledTableCell align="right">Last Modified</StyledTableCell>
-                                <StyledTableCell align="right">Delete Group</StyledTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
