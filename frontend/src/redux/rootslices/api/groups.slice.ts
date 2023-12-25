@@ -63,9 +63,10 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
             }),
         }),
         updateEditAccessToUser: builder.mutation<Result<GroupData>, GroupUserEditAccessRequest>({
-            query: () => ({
+            query: (data) => ({
                 url: '/api/group/updateEditAccessToUser',
                 method: 'PUT',
+                body: data
             }),
         }),
         removeUser: builder.mutation<Result<GroupData>, GroupUserRemovalRequest>({

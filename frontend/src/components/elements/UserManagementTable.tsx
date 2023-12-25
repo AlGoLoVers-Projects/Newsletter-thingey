@@ -17,7 +17,7 @@ import AlertDialog, {AlertDialogRef} from "./AlertDialog";
 
 type UserManagementTableProps = {
     members: GroupMember[];
-    onEditToggle: (user: GroupMember) => void;
+    onEditToggle: (user: GroupMember, state: boolean) => void;
     onDeleteUser: (user: GroupMember) => void;
 };
 
@@ -60,8 +60,8 @@ const UserManagementTable: React.FC<UserManagementTableProps>
                             <TableCell>{member.user.emailAddress}</TableCell>
                             <TableCell>
                                 <Switch
-                                    checked={false}
-                                    onChange={() => onEditToggle(member)}
+                                    checked={member.hasEditAccess}
+                                    onChange={() => onEditToggle(member, !member.hasEditAccess)}
                                 />
                             </TableCell>
                             <TableCell>

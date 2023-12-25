@@ -318,7 +318,6 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
             .unwrap()
             .then((response) => {
                 if (response.success) {
-                    console.log(response)
                     showSuccessToast(response.message ?? "Removed user successfully")
                     dispatch(updateSingleGroupData({updatedData: response.data}))
                 } else {
@@ -334,7 +333,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
         const data: GroupUserEditAccessRequest = {
             groupId: groupData.id,
             userEmail: email,
-            canEdit
+            canEdit: canEdit
         }
 
         userEditAccess(data)
@@ -342,7 +341,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
             .then((response) => {
                 if (response.success) {
                     showSuccessToast("User access changed successfully")
-                    navigate(authorizedPaths.groups)
+                    dispatch(updateSingleGroupData({updatedData: response.data}))
                 } else {
                     showFailureToast(response.message ?? 'Cannot change user access, try again later')
                 }
@@ -477,7 +476,8 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                             onDeleteUser={(member) => {
                                 handleUserDeletion(member.user.emailAddress)
                             }}
-                            onEditToggle={(member) => {
+                            onEditToggle={(member, state) => {
+                                handleEditToggle(member.user.emailAddress, state)
                             }}
                             members={groupMembers}
                         />
