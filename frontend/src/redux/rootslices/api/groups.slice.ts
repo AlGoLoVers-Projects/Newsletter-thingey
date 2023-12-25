@@ -92,4 +92,4 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
     }),
 });
 
-export const {useGetGroupsMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation} = groupsSlice;
+export const {useGetGroupsMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation, useLeaveGroupMutation, useUpdateEditAccessToUserMutation, useRemoveUserMutation} = groupsSlice;

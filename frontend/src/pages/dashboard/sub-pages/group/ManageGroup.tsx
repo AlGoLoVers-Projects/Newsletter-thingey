@@ -1,12 +1,12 @@
 import Typography from "@mui/material/Typography";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Card, Container} from "@mui/material";
 import Box from "@mui/material/Box";
 import {isEmpty} from "../../../../util/validation";
 import {useLocation, useNavigate} from "react-router-dom";
 import {
     GroupData, GroupEditRequest, GroupIdRequest, GroupMember, useDeleteGroupMutation,
-    useEditGroupMutation,
+    useEditGroupMutation, useLeaveGroupMutation,
 } from "../../../../redux/rootslices/api/groups.slice";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -24,6 +24,7 @@ import UserProfileCard from "../../../../components/elements/UserProfileCard";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import UserManagementTable from "../../../../components/elements/UserManagementTable";
+import AlertDialog from "../../../../components/elements/AlertDialog";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -89,8 +90,30 @@ export default function ManageGroup(): React.ReactElement {
 
 function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): React.ReactElement {
     const groupData = props.groupData;
+    const navigate = useNavigate()
 
-    //TODO: Render description, list all users, add button to leave group
+    const [leaveGroup, {isLoading}] = useLeaveGroupMutation()
+    const dialogRef = useRef<{ open: () => void; close: () => void } | null>(null);
+
+    const handleLeaveGroup = () => {
+        const data: GroupIdRequest = {
+            groupId: groupData.id
+        }
+
+        leaveGroup(data)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    showSuccessToast("Left group successfully")
+                    navigate(authorizedPaths.groups)
+                } else {
+                    showFailureToast(response.message ?? 'Failed to leave group, try again later')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.data.message ?? "'Failed to leave group")
+            })
+    }
 
     return (
         <Box
@@ -106,6 +129,14 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
                     flexDirection: 'column',
                 }}
             >
+                <AlertDialog
+                    ref={dialogRef}
+                    title="Leave group?"
+                    message="Are you sure you want to leave this group, you won't be able to participate in future activities and receive newsletters."
+                    acceptLabel='Leave'
+
+                    onAccept={handleLeaveGroup}
+                />
                 <Typography component="h1" variant="h6" sx={{
                     fontWeight: 'bold',
                 }}>
@@ -167,6 +198,7 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
                     variant="contained"
                     color="error"
                     sx={{mt: 3, mb: 1}}
+                    onClick={() => dialogRef.current?.open()}
                 >
                     Leave Group
                 </Button>
@@ -189,6 +221,9 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
 
     const [groupName, setGroupName] = useState<string>(groupData.groupName)
     const [groupDesc, setGroupDesc] = useState<string>(groupData.groupDescription)
+
+    const deleteGroupDialogRef = useRef<{ open: () => void; close: () => void } | null>(null);
+    const generateNewsletterDialogRef = useRef<{ open: () => void; close: () => void } | null>(null);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -477,13 +512,23 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     flexDirection: 'column',
                 }}
             >
+                <AlertDialog
+                    ref={generateNewsletterDialogRef}
+                    title="Generate newsletter?"
+                    message="Are you sure you want to generate newsletter for this month, this is an irreversible action and you cannot generate any more newsletters for this month."
+                    acceptLabel='Generate Newsletter'
+                    onAccept={() => {
+                    }}
+                />
                 <Typography component="h1" variant="h6" sx={{
                     fontWeight: 'bold',
                 }}>
                     Generate Newsletter
                 </Typography>
                 <Typography variant="body2">
-                    If you're ready to publish your newsletter, proceed by clicking on the publish button. This is a one time process, questions cannot be processed and new newsletters cannot be issued once generated. Proceed with caution.
+                    If you're ready to publish your newsletter, proceed by clicking on the publish button. This is a one
+                    time process, questions cannot be processed and new newsletters cannot be issued once generated.
+                    Proceed with caution.
                 </Typography>
                 <Box sx={{
                     display: "flex",
@@ -497,6 +542,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                         disabled={isDeleting || isLoading}
                         sx={{mt: 3, mb: 1}}
                         onClick={() => {
+                            generateNewsletterDialogRef.current?.open()
                         }}
                     >
                         Publish Newsletter
@@ -513,6 +559,13 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     flexDirection: 'column',
                 }}
             >
+                <AlertDialog
+                    ref={deleteGroupDialogRef}
+                    title="Delete group?"
+                    message="Are you sure you want to delete this group, you won't be able to reverse this action and all data will be lost."
+                    acceptLabel='Delete Group'
+                    onAccept={handleDeletion}
+                />
                 <Typography component="h1" variant="h6" sx={{
                     fontWeight: 'bold',
                 }}>
@@ -534,7 +587,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                         disabled={isDeleting || isLoading}
                         sx={{mt: 3, mb: 1}}
                         onClick={() => {
-                            handleDeletion()
+                            deleteGroupDialogRef.current?.open()
                         }}
                     >
                         Delete Group
