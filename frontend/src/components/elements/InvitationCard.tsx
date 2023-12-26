@@ -103,6 +103,7 @@ const InvitationCard = (prop: InvitationCardProp) => {
                 <Button
                     variant="contained"
                     color="success"
+                    disabled={accepting || rejecting}
                     onClick={handleInvitationAccept}
                 >
                     Accept
@@ -110,6 +111,7 @@ const InvitationCard = (prop: InvitationCardProp) => {
                 <Button
                     variant="contained"
                     color="error"
+                    disabled={accepting || rejecting}
                     onClick={() => {
                         dialogRef.current?.open()
                     }}
