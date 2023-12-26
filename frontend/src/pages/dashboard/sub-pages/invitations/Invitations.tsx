@@ -64,11 +64,15 @@ function InvitationsComponent(): React.ReactElement {
                 Invitations
             </Typography>
             <Box display="flex" flexDirection="column" gap={2} sx={{mt: 2, mb: 4}}>
-                {state.invitations.map((invitation) => (
+                {state.invitations.length !== 0 ? state.invitations.map((invitation) => (
                     <InvitationCard
                         key={invitation.id.group.id}
                         invitation={invitation}/>
-                ))}
+                )) :
+                <Typography variant="body2" color="text.secondary" align="center">
+                    No invitations found
+                </Typography>
+                }
             </Box>
         </Container>
     )
