@@ -41,7 +41,17 @@ const invitationsReducer = (state: InvitationsState, action: InvitationsAction):
         case InvitationsActionType.SET_INVITATIONS:
             return { ...state, invitations: action.payload };
         case InvitationsActionType.ADD_INVITATION:
-            return { ...state, invitations: [...state.invitations, action.payload] };
+            const isDuplicate = state.invitations.some(
+                (invitation) =>
+                    invitation.id.emailAddress === action.payload.id.emailAddress &&
+                    invitation.id.group.id === action.payload.id.group.id
+            );
+
+            if (!isDuplicate) {
+                return { ...state, invitations: [...state.invitations, action.payload] };
+            }
+
+            return state;
         case InvitationsActionType.REMOVE_INVITATION:
             return { ...state, invitations: state.invitations.filter(invitation => invitation.id.emailAddress !== action.payload) };
         case InvitationsActionType.REMOVE_INVITATION_BY_ID:
