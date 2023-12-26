@@ -253,6 +253,27 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
+    public Result<String> rejectInvitation(GroupRequest groupRequest, User authenticatedUser) {
+        try {
+            Optional<Invitation> optionalInvitation = invitationRepository.findInvitationById_EmailAddressAndId_Group_Id(
+                    authenticatedUser.getEmailAddress(), groupRequest.getGroupId());
+
+            if (optionalInvitation.isEmpty()) {
+                return new Result<>(false, null, "The invitation was not found");
+            }
+
+            Invitation invitation = optionalInvitation.get();
+
+            invitationRepository.delete(invitation);
+            return new Result<>(true, null, "Invitation has been rejected");
+
+        } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> updateEditAccessToUser(GroupUserEditAccessRequest groupUserEditAccessRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupRepository.findById(groupUserEditAccessRequest.getGroupId());
@@ -396,6 +417,4 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
-
-
 }

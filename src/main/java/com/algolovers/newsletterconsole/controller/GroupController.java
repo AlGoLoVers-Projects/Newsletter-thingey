@@ -77,6 +77,13 @@ public class GroupController {
         return ControllerUtils.processResultForResponse(result);
     }
 
+    @PostMapping("/rejectInvitation")
+    public ResponseEntity<Result<String>> rejectInvitation(@Valid @RequestBody GroupRequest groupRequest) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Result<String> result = groupService.rejectInvitation(groupRequest, user);
+        return ControllerUtils.processResultForResponse(result);
+    }
+
     @PutMapping("/updateEditAccessToUser")
     public ResponseEntity<Result<Group>> updateEditAccessToUser(@Valid @RequestBody GroupUserEditAccessRequest groupUserEditAccessRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

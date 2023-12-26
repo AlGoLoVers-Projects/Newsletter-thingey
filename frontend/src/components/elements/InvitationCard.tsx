@@ -1,14 +1,19 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from "@mui/material/Box";
-import {Invitation, useAcceptInvitationMutation} from "../../redux/rootslices/api/invitations.slice";
+import {
+    Invitation,
+    useAcceptInvitationMutation,
+    useRejectInvitationMutation
+} from "../../redux/rootslices/api/invitations.slice";
 import {InvitationsActionType, useInvitations} from "./Invitations";
 import {showFailureToast, showSuccessToast} from "../../util/toasts";
 import {GroupIdRequest} from "../../redux/rootslices/api/groups.slice";
+import AlertDialog, {AlertDialogRef} from "./AlertDialog";
 
 export interface InvitationCardProp {
     invitation: Invitation
@@ -17,8 +22,10 @@ export interface InvitationCardProp {
 const InvitationCard = (prop: InvitationCardProp) => {
     const {group} = prop.invitation.id;
     const [acceptInvitation, {isLoading: accepting}] = useAcceptInvitationMutation()
+    const [rejectInvitation, {isLoading: rejecting}] = useRejectInvitationMutation()
 
-    const {state, dispatch: invitationsDispatch} = useInvitations();
+    const {dispatch: invitationsDispatch} = useInvitations();
+    const dialogRef = useRef<AlertDialogRef>(null);
 
     const handleInvitationAccept = () => {
         const request: GroupIdRequest = {
@@ -35,16 +42,47 @@ const InvitationCard = (prop: InvitationCardProp) => {
                         payload: group.id,
                     });
                 } else {
-                    showFailureToast(response.message ?? 'Failed to get invitations, try again later')
+                    showFailureToast(response.message ?? 'Failed to accept invitation, try again later')
                 }
             })
             .catch((result) => {
-                showFailureToast(result.data.message ?? "Failed to get invitations")
+                console.log(result)
+                showFailureToast(result.message ?? "Failed to accept invitation")
+            })
+    }
+
+    const handleInvitationReject = () => {
+        const request: GroupIdRequest = {
+            groupId: group.id
+        }
+
+        rejectInvitation(request)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    showSuccessToast('Invitation rejected successfully')
+                    invitationsDispatch({
+                        type: InvitationsActionType.REMOVE_INVITATION_BY_ID,
+                        payload: group.id,
+                    });
+                } else {
+                    showFailureToast(response.message ?? 'Failed to remove invitation, try again later')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.message ?? "Failed to remove invitation")
             })
     }
 
     return (
         <Card elevation={3} sx={{p: 1}}>
+            <AlertDialog
+                ref={dialogRef}
+                title='Reject invitation?'
+                message={`Are you sure you want to reject invitation for ${group.groupName}?`}
+                acceptLabel='Leave'
+                onAccept={handleInvitationReject}
+            />
             <CardContent>
                 <Typography variant="h5" component="div">
                     {group.groupName}
@@ -69,7 +107,13 @@ const InvitationCard = (prop: InvitationCardProp) => {
                 >
                     Accept
                 </Button>
-                <Button variant="contained" color="error">
+                <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => {
+                        dialogRef.current?.open()
+                    }}
+                >
                     Reject
                 </Button>
             </CardActions>
