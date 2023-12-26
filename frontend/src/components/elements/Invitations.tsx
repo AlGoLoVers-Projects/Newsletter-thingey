@@ -10,7 +10,7 @@ interface InvitationsState {
 export enum InvitationsActionType {
     SET_INVITATIONS = 'SET_INVITATIONS',
     ADD_INVITATION = 'ADD_INVITATION',
-    REMOVE_INVITATION = 'REMOVE_INVITATION',
+    REMOVE_INVITATION_BY_EMAIL = 'REMOVE_INVITATION_BY_EMAIL',
     REMOVE_INVITATION_BY_ID = 'REMOVE_INVITATION_BY_ID',
 }
 
@@ -25,7 +25,7 @@ type AddInvitationAction = {
 };
 
 type RemoveInvitationAction = {
-    type: InvitationsActionType.REMOVE_INVITATION;
+    type: InvitationsActionType.REMOVE_INVITATION_BY_EMAIL;
     payload: string; // email address
 };
 
@@ -52,7 +52,7 @@ const invitationsReducer = (state: InvitationsState, action: InvitationsAction):
             }
 
             return state;
-        case InvitationsActionType.REMOVE_INVITATION:
+        case InvitationsActionType.REMOVE_INVITATION_BY_EMAIL:
             return { ...state, invitations: state.invitations.filter(invitation => invitation.id.emailAddress !== action.payload) };
         case InvitationsActionType.REMOVE_INVITATION_BY_ID:
             return { ...state, invitations: state.invitations.filter(invitation => invitation.id.group.id !== action.payload) };

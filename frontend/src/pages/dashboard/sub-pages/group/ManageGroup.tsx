@@ -290,7 +290,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     const data: Invitation = response.data
                     showSuccessToast(response.message ?? 'Invitation deleted successfully')
                     invitationsDispatch({
-                        type: InvitationsActionType.REMOVE_INVITATION,
+                        type: InvitationsActionType.REMOVE_INVITATION_BY_EMAIL,
                         payload: data.id.emailAddress,
                     });
                 } else {
