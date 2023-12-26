@@ -1,4 +1,4 @@
-import {configureStore,} from '@reduxjs/toolkit';
+import {AnyAction, configureStore,} from '@reduxjs/toolkit';
 import {persistReducer, persistStore} from 'redux-persist';
 import {rootReducer} from './reducer';
 import {PersistConfig} from 'redux-persist/es/types';
@@ -15,6 +15,9 @@ import {baseApiSlice} from "./rootslices/api/base.slice";
 import {authenticationSlice} from './rootslices/api/authentication.slice';
 import {groupsSlice} from './rootslices/api/groups.slice';
 import {invitationsSlice} from "./rootslices/api/invitations.slice";
+import {Dispatch} from "react";
+import {clearAuthData} from "./rootslices/data/auth-data.slice";
+import {clearGroupsData} from "./rootslices/data/groups.slice";
 
 const persistConfig: PersistConfig<any> = {
     key: 'root',
@@ -34,6 +37,11 @@ const store = configureStore({
         }
     ).concat(baseApiSlice.middleware)
 });
+
+export const clearData = (dispatch: Dispatch<AnyAction>) => {
+    dispatch(clearAuthData())
+    dispatch(clearGroupsData())
+}
 
 export const persist = persistStore(store);
 

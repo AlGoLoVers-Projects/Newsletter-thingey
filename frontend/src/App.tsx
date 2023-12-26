@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-    clearAuthData,
     selectToken,
     setUserData,
     UserData,
@@ -16,6 +15,7 @@ import {showFailureToast} from './util/toasts';
 import {CircularProgress, Container, CssBaseline} from "@mui/material";
 import ApplicationRoutes from "./router/ApplicationRoutes";
 import {paths} from "./router/paths";
+import {clearData} from "./redux/store";
 
 export default function App() {
     const token = useSelector(selectToken);
@@ -38,20 +38,20 @@ export default function App() {
                             dispatch(setUserData(responseData.data));
                         } else {
                             showFailureToast(responseData.message ?? 'Token validation failed, signing out')
-                            dispatch(clearAuthData())
+                            clearData(dispatch)
                             navigate(paths.signIn)
                         }
                     } else {
                         let responseData: Result<null> = (response.error as any).data
                         showFailureToast(responseData.message ?? 'Token validation failed, signing out')
-                        dispatch(clearAuthData())
+                        clearData(dispatch)
                         navigate(paths.signIn)
                     }
                 })
                 .catch((error) => {
                     let responseData: Result<null> = error.error;
                     showFailureToast(responseData.message ?? 'Token validation failed, cannot authenticate')
-                    dispatch(clearAuthData())
+                    clearData(dispatch)
                     navigate(paths.signIn)
                 }).finally(() => {
                 setValidatingToken(false)

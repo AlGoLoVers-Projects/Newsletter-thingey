@@ -1,11 +1,13 @@
 import {createSelector, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {GroupData, GroupListData, GroupMember} from "../api/groups.slice";
 
+const initialState = {
+    groups: [] as GroupListData,
+}
+
 const groupsSlice = createSlice({
     name: 'group-data',
-    initialState: {
-        groups: [] as GroupListData,
-    },
+    initialState,
     reducers: {
         setGroupData: (state, action: PayloadAction<GroupListData>) => {
             state.groups = action.payload;
@@ -58,6 +60,9 @@ const groupsSlice = createSlice({
                 }
             }
         },
+        clearGroupsData: (_) => {
+            return initialState;
+        },
     },
 });
 
@@ -69,6 +74,7 @@ export const {
     addGroupMember,
     removeGroupMember,
     setEditAccess,
+    clearGroupsData
 } = groupsSlice.actions;
 
 export const selectGroupData = (state: { groupData: { groups: GroupListData } }) => state.groupData.groups;

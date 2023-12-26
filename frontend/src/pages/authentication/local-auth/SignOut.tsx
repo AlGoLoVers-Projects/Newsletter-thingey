@@ -4,8 +4,9 @@ import Typography from "@mui/material/Typography";
 import {paths} from "../../../router/paths";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {clearAuthData, selectToken} from "../../../redux/rootslices/data/auth-data.slice";
+import {selectToken} from "../../../redux/rootslices/data/auth-data.slice";
 import {showSuccessToast} from "../../../util/toasts";
+import {clearData} from "../../../redux/store";
 
 export default function SignOut(): React.ReactElement {
     const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function SignOut(): React.ReactElement {
             timerRunningRef.current = true;
 
             const timerId = setTimeout(() => {
-                dispatch(clearAuthData());
+                clearData(dispatch)
                 showSuccessToast("You have been signed out successfully!");
                 navigate(paths.home);
             }, 1000);
