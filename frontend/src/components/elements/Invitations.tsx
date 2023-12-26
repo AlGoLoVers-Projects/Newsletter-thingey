@@ -11,6 +11,7 @@ export enum InvitationsActionType {
     SET_INVITATIONS = 'SET_INVITATIONS',
     ADD_INVITATION = 'ADD_INVITATION',
     REMOVE_INVITATION = 'REMOVE_INVITATION',
+    REMOVE_INVITATION_BY_ID = 'REMOVE_INVITATION_BY_ID',
 }
 
 type SetInvitationsAction = {
@@ -28,7 +29,12 @@ type RemoveInvitationAction = {
     payload: string; // email address
 };
 
-type InvitationsAction = SetInvitationsAction | AddInvitationAction | RemoveInvitationAction;
+type RemoveInvitationByIdAction = {
+    type: InvitationsActionType.REMOVE_INVITATION_BY_ID;
+    payload: string; // group id
+};
+
+type InvitationsAction = SetInvitationsAction | AddInvitationAction | RemoveInvitationAction | RemoveInvitationByIdAction;
 
 const invitationsReducer = (state: InvitationsState, action: InvitationsAction): InvitationsState => {
     switch (action.type) {
@@ -38,6 +44,8 @@ const invitationsReducer = (state: InvitationsState, action: InvitationsAction):
             return { ...state, invitations: [...state.invitations, action.payload] };
         case InvitationsActionType.REMOVE_INVITATION:
             return { ...state, invitations: state.invitations.filter(invitation => invitation.id.emailAddress !== action.payload) };
+        case InvitationsActionType.REMOVE_INVITATION_BY_ID:
+            return { ...state, invitations: state.invitations.filter(invitation => invitation.id.group.id !== action.payload) };
         default:
             return state;
     }
