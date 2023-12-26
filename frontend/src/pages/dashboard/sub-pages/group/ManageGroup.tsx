@@ -130,7 +130,7 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
                 }
             })
             .catch((result) => {
-                showFailureToast(result.data.message ?? "'Failed to leave group")
+                showFailureToast(result.data.message ?? "Failed to leave group")
             })
     }
 
@@ -233,8 +233,6 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const dispatch = useDispatch();
 
     const {state, dispatch: invitationsDispatch} = useInvitations();
-
-    console.log(state)
 
     const [editGroup, {isLoading}] = useEditGroupMutation()
     const [deleteGroup, {isLoading: isDeleting}] = useDeleteGroupMutation()

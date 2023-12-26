@@ -19,6 +19,12 @@ export const invitationsSlice = baseApiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        listAllInvitations: builder.mutation<Result<Invitation[]>, null>({
+            query: () => ({
+                url: '/api/group/listAllInvitations',
+                method: 'GET',
+            }),
+        }),
         listAllInvitationsByGroup: builder.mutation<Result<Invitation[]>, GroupIdRequest>({
             query: (data) => ({
                 url: '/api/group/listAllInvitationsByGroup',
@@ -36,4 +42,4 @@ export const invitationsSlice = baseApiSlice.injectEndpoints({
     }),
 });
 
-export const {useInviteUserToGroupMutation, useListAllInvitationsByGroupMutation, useRemoveInvitationFromGroupMutation} = invitationsSlice;
+export const {useInviteUserToGroupMutation, useListAllInvitationsByGroupMutation, useRemoveInvitationFromGroupMutation, useListAllInvitationsMutation} = invitationsSlice;
