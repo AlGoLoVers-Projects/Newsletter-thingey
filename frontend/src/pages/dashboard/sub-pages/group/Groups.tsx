@@ -23,26 +23,20 @@ const Groups = (): React.ReactElement => {
 
     useEffect(() => {
         groupList(null)
+            .unwrap()
             .then((response) => {
-                console.log(response)
-                if ('data' in response) {
-                    let responseData: Result<GroupListData> = response.data!
-                    if (responseData.success) {
-                        const sortedData = responseData.data
-                            .slice()
-                            .sort((a, b) => {
-                                const dateA = a.updatedAt || '';
-                                const dateB = b.updatedAt || '';
+                if (response.success) {
+                    const sortedData = response.data
+                        .slice()
+                        .sort((a, b) => {
+                            const dateA = a.updatedAt || '';
+                            const dateB = b.updatedAt || '';
 
-                                return dateB.localeCompare(dateA);
-                            }) ?? 0;
-                        dispatch(setGroupData(sortedData))
-                    } else {
-                        showFailureToast(responseData.message ?? 'Token validation failed, signing out')
-                    }
+                            return dateB.localeCompare(dateA);
+                        }) ?? 0;
+                    dispatch(setGroupData(sortedData))
                 } else {
-                    let responseData: Result<null> = (response.error as any).data
-                    showFailureToast(responseData.message ?? 'Token validation failed, signing out')
+                    showFailureToast(response.message ?? 'Token validation failed, signing out')
                 }
             })
             .catch((error) => {
@@ -51,7 +45,7 @@ const Groups = (): React.ReactElement => {
                 showFailureToast(responseData.message ?? 'Token validation failed, signing out')
             })
 
-    }, [groupList])
+    }, [])
 
     return (
         <Container
