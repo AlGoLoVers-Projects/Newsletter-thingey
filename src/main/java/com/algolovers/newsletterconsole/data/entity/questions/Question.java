@@ -3,15 +3,18 @@ package com.algolovers.newsletterconsole.data.entity.questions;
 import com.algolovers.newsletterconsole.data.entity.converter.StringSetConverter;
 import com.algolovers.newsletterconsole.data.enums.QuestionType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "question")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "question_type")
-
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class Question {
 
@@ -24,8 +27,8 @@ public class Question {
 
     private String hint;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private QuestionType questionType;
 
     @Convert(converter = StringSetConverter.class)
