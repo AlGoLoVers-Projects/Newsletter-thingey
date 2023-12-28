@@ -1,5 +1,6 @@
-package com.algolovers.newsletterconsole.data.entity.user;
+package com.algolovers.newsletterconsole.data.entity.converter;
 
+import com.algolovers.newsletterconsole.data.entity.user.Authority;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;

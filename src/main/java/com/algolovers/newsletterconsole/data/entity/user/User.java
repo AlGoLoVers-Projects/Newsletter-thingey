@@ -1,5 +1,6 @@
 package com.algolovers.newsletterconsole.data.entity.user;
 
+import com.algolovers.newsletterconsole.data.entity.converter.AuthoritySetConverter;
 import com.algolovers.newsletterconsole.data.enums.AuthProvider;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.exceptions.PasswordResetException;
