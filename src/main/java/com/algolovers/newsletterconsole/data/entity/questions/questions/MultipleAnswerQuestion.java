@@ -13,9 +13,11 @@ import java.util.Set;
 public class MultipleAnswerQuestion extends Question {
 
     @Convert(converter = StringSetConverter.class)
+    @Column(nullable = false)
     Set<String> options;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, updatable = false)
     MultipleAnswerType multipleAnswerType;
 
     @Override

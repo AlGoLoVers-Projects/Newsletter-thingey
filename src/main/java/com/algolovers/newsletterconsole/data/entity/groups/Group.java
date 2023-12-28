@@ -1,5 +1,6 @@
 package com.algolovers.newsletterconsole.data.entity.groups;
 
+import com.algolovers.newsletterconsole.data.entity.questions.Question;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Table(name = "newsletter_group")
@@ -25,12 +27,13 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     @Pattern(regexp = "^[a-zA-Z0-9_ ]*$", message = "Username can only contain alphanumeric characters and underscores")
     @Size(min = 3, max = 30, message = "Username must have a minimum of three characters and maximum of 30 characters")
     String groupName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
+    @Size(min = 3, max = 2000, message = "Description must have a minimum of three and maximum of 2000 characters")
     String groupDescription;
 
     @ManyToOne
@@ -44,9 +47,8 @@ public class Group {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    //TODO: Add questions. Questions -> List<Questions> it can be edited modified bla bla.
-    //Monthly responses should be maintained somewhere
-    //private List<Questions> questions;
+    @OneToMany
+    private List<Question> questions;
 
     @Override
     public String toString() {
