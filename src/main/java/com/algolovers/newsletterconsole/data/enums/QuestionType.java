@@ -1,6 +1,10 @@
 package com.algolovers.newsletterconsole.data.enums;
 
-public enum MultipleAnswerType {
+public enum QuestionType {
+    TEXT,
+    IMAGE,
+    DATE,
+    TIME,
     RADIO_SINGLE,
     RADIO_MULTIPLE,
     DROPDOWN_SINGLE,
