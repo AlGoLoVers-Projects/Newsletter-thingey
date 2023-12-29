@@ -201,8 +201,6 @@ public class GroupService {
         }
     }
 
-    //TODO: Add controller to let user delete their invitations for a group
-
     @Transactional(rollbackFor = {Exception.class})
     public Result<String> acceptInvitation(GroupRequest groupRequest, User authenticatedUser) {
 
