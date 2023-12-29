@@ -1,16 +1,16 @@
 package com.algolovers.newsletterconsole.service;
 
-import com.algolovers.newsletterconsole.data.entity.groups.Group;
 import com.algolovers.newsletterconsole.data.entity.questions.Question;
-import com.algolovers.newsletterconsole.data.enums.QuestionType;
 import com.algolovers.newsletterconsole.data.model.api.Result;
+import com.algolovers.newsletterconsole.data.model.api.request.group.GroupRequest;
+import com.algolovers.newsletterconsole.data.model.api.request.question.GroupQuestionsRequest;
 import com.algolovers.newsletterconsole.repository.GroupRepository;
 import com.algolovers.newsletterconsole.repository.QuestionsRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -21,11 +21,11 @@ public class QuestionsService {
     private final GroupRepository groupRepository;
 
     @Transactional(rollbackFor = {Exception.class})
-    public Result<Question> newQuestion() {
+    public Result<List<Question>> createOrUpdateQuestions(@Valid GroupQuestionsRequest groupQuestionsRequest) {
         return null;
     }
 
-    public Result<List<Question>> getQuestions() {
+    public Result<List<Question>> getQuestions(@Valid GroupRequest groupRequest) {
         return null;
     }
 

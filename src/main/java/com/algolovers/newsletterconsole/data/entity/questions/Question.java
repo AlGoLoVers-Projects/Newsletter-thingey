@@ -22,6 +22,8 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    private Integer index;
+
     @Column(nullable = false)
     private String question;
 
