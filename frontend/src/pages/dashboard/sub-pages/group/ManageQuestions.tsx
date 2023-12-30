@@ -17,8 +17,6 @@ import {
     useGetQuestionsMutation
 } from "../../../../redux/rootslices/api/questions.slice";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import QuestionCard from "../../../../components/elements/QuestionCard";
 
 function ManageQuestionsComponent(): React.ReactElement {
@@ -184,19 +182,15 @@ function ManageQuestionsComponent(): React.ReactElement {
                     <Box sx={{
                         display: "flex",
                         width: "100%",
+                        flexDirection: "column",
+                        gap: 1,
                         mt: 4
                     }}>
-
-                        <List sx={{
-                            width: "100%",
-                        }}>
                             {
                                 questionsState.map((question, index) => (
-                                    <QuestionCard/>
+                                    <QuestionCard question={question} index={index}/>
                                 ))
                             }
-                        </List>
-
                         {/*TODO: Render existing questions here*/}
                         {/*TODO: Create slice to maintain questions*/}
                         {/*TODO: Create provider for questions. ADD, UPDATE, REORDER INDEX, DELETE*/}

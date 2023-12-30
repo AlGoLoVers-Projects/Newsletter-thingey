@@ -8,14 +8,20 @@ import {
     FormControl,
     InputLabel,
     Select,
+    Typography,
 } from '@mui/material';
 import {AddCircleOutline} from '@mui/icons-material';
-import {multiOptionType, QuestionType} from "../../redux/rootslices/api/questions.slice"; // Import makeStyles
+import {multiOptionType, Question, QuestionType} from "../../redux/rootslices/api/questions.slice";
 
 
-const QuestionCard = () => {
-    const [questionType, setQuestionType] = useState<QuestionType>(QuestionType.TEXT);
-    const [options, setOptions] = useState<string[]>([]);
+export interface QuestionCardProps {
+    question: Question,
+    index: number
+}
+
+const QuestionCard = (props: QuestionCardProps) => {
+    const [questionType, setQuestionType] = useState<QuestionType>(props.question.questionType ?? QuestionType.TEXT);
+    const [options, setOptions] = useState<string[]>(props.question.options ?? []);
     const [newOption, setNewOption] = useState('');
 
     const handleOptionAdd = () => {
@@ -30,32 +36,29 @@ const QuestionCard = () => {
             width: '100%',
             display: 'flex',
             flexWrap: 'wrap',
+            borderRadius: 3,
             backgroundColor: '#2a2a2a',
-            p: 2
+            p: 2,
+            '& > *': {
+                mb: 2, // Add space between elements
+            },
         }}>
+            <Typography variant="h6" sx={{width: '100%', mb: 2}}>
+                Question {props.index}
+            </Typography>
             <TextField
-                label="Hint"
-                variant="outlined"
-                margin="dense"
-                sx={{
-                    marginBottom: 2,
-                    minWidth: "50%"
-                }}
-                // Add your hint state and change the value accordingly
-                // value={hint}
-                // onChange={(e) => setHint(e.target.value)}
-            />
-            <TextField
+                fullWidth
+                value={props.question.question}
                 label="Question"
                 variant="outlined"
                 margin="dense"
-                sx={{
-                    marginBottom: 2,
-                    minWidth: "50%"
-                }}
-                // Add your question state and change the value accordingly
-                // value={question}
-                // onChange={(e) => setQuestion(e.target.value)}
+            />
+            <TextField
+                fullWidth
+                value={props.question.hint}
+                label="Hint"
+                variant="outlined"
+                margin="dense"
             />
             <FormControl fullWidth variant="outlined" margin="dense">
                 <InputLabel htmlFor="question-type">Question Type</InputLabel>
@@ -74,50 +77,45 @@ const QuestionCard = () => {
             {multiOptionType.includes(
                 questionType
             ) && (
-                <FormControl
-                    sx={{
-                        minWidth: "50%"
-                    }}
-                    variant="outlined"
-                    margin="dense">
-                    <InputLabel htmlFor="options">Options</InputLabel>
-                    <Select
-                        multiple
-                        value={options}
-                        onChange={(e) => setOptions(e.target.value as string[])}
-                        label="Options"
-                        renderValue={(selected) => (selected as string[]).join(', ')}
+                <React.Fragment>
+                    <FormControl
+                        variant="outlined"
+                        margin="dense"
+                        fullWidth
                     >
-                        {options.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            )}
-            {multiOptionType.includes(
-                questionType
-            ) && (
-                <TextField
-                    label="New Option"
-                    variant="outlined"
-                    margin="dense"
-                    sx={{
-                        minWidth: "50%"
-                    }}
-                    value={newOption}
-                    onChange={(e) => setNewOption(e.target.value)}
-                    InputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton onClick={handleOptionAdd} edge="end">
-                                    <AddCircleOutline/>
-                                </IconButton>
-                            </InputAdornment>
-                        ),
-                    }}
-                />
+                        <InputLabel htmlFor="options">Options</InputLabel>
+                        <Select
+                            multiple
+                            value={options}
+                            onChange={(e) => setOptions(e.target.value as string[])}
+                            label="Options"
+                            renderValue={(selected) => (selected as string[]).join(', ')}
+                        >
+                            {options.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        label="New Option"
+                        variant="outlined"
+                        margin="dense"
+                        fullWidth
+                        value={newOption}
+                        onChange={(e) => setNewOption(e.target.value)}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton onClick={handleOptionAdd} edge="end">
+                                        <AddCircleOutline/>
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                </React.Fragment>
             )}
         </Card>
     );

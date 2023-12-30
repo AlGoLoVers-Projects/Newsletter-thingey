@@ -13,6 +13,8 @@ export enum QuestionType {
     DROPDOWN_MULTIPLE = 'DROPDOWN_MULTIPLE'
 }
 
+export const multiOptionType = [QuestionType.RADIO, QuestionType.CHECKBOX, QuestionType.DROPDOWN_SINGLE, QuestionType.DROPDOWN_MULTIPLE]
+
 export type Question = {
     questionIndex: number;
     question: string;
