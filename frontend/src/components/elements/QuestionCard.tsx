@@ -109,7 +109,7 @@ const QuestionCard = (props: QuestionCardProps) => {
                 >
                     {Object.values(QuestionType).map((type) => (
                         <MenuItem key={type} value={type}>
-                            {type}
+                            {type.replace(/_/g, ' ')}
                         </MenuItem>
                     ))}
                 </Select>

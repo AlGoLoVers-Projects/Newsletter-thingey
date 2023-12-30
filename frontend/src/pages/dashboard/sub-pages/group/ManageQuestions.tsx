@@ -219,7 +219,12 @@ function ManageQuestionsComponent(): React.ReactElement {
                             New Question
                         </Button>
                     </Box>
-                    <Typography variant="body2">
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            mt: 1
+                        }}
+                    >
                         Curate, add or modify questions tailored for your group so you can stay in touch with
                         each other.
                     </Typography>
@@ -252,6 +257,7 @@ function ManageQuestionsComponent(): React.ReactElement {
                                 <QuestionCard
                                     question={question}
                                     index={index}
+                                    key={index}
                                     onChange={(question) => {
                                         const payload: EditQuestion = {
                                             questionIndex: index,
