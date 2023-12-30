@@ -403,7 +403,7 @@ public class GroupService {
             }
 
             Set<GroupMember> groupMembers = group.getGroupMembers();
-            groupMemberRepository.deleteAll(group.getGroupMembers());
+            groupMemberRepository.deleteAll(groupMembers);
             groupMembers.clear();
 
             invitationRepository.deleteById_Group(group);
