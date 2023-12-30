@@ -1,5 +1,5 @@
-import {QuestionRequest, Questions} from "../../redux/rootslices/api/questions.slice";
-import React, {createContext, ReactNode, useContext, useReducer} from "react";
+import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import {Question, Questions} from "../../redux/rootslices/api/questions.slice";
 
 export enum QuestionsActionType {
     SET_QUESTIONS = 'SET_QUESTIONS',
@@ -16,27 +16,27 @@ type SetQuestionsAction = {
 
 type AddQuestionAction = {
     type: QuestionsActionType.ADD_QUESTION;
-    payload: QuestionRequest;
+    payload: Question;
 };
 
 type RemoveQuestionAction = {
     type: QuestionsActionType.REMOVE_QUESTION;
-    payload: string;
+    payload: number;
 };
 
 type EditQuestionAction = {
     type: QuestionsActionType.EDIT_QUESTION;
     payload: {
-        id: string;
-        data: Partial<QuestionRequest>;
+        questionIndex: number;
+        data: Partial<Question>;
     };
 };
 
 type ReorderQuestionsAction = {
     type: QuestionsActionType.REORDER_QUESTIONS;
     payload: {
-        startIndex: number;
-        endIndex: number;
+        oldIndex: number;
+        newIndex: number;
     };
 };
 
@@ -52,19 +52,20 @@ const questionsReducer = (state: Questions, action: QuestionsAction): Questions 
         case QuestionsActionType.SET_QUESTIONS:
             return action.payload;
         case QuestionsActionType.ADD_QUESTION:
-            return [...state, { id: null, ...action.payload }];
+            return [...state, action.payload];
         case QuestionsActionType.REMOVE_QUESTION:
-            return state.filter((question) => question.id !== action.payload);
+            return state.filter((_, index) => index !== action.payload);
         case QuestionsActionType.EDIT_QUESTION:
-            return state.map((question) =>
-                question.id === action.payload.id
+            return state.map((question, index) =>
+                index === action.payload.questionIndex
                     ? { ...question, ...action.payload.data }
                     : question
             );
         case QuestionsActionType.REORDER_QUESTIONS:
-            const { startIndex, endIndex } = action.payload;
-            const [reorderedQuestion] = state.splice(startIndex, 1);
-            state.splice(endIndex, 0, reorderedQuestion);
+            const { oldIndex, newIndex } = action.payload;
+            const [reorderedQuestion] = state.splice(oldIndex, 1);
+            reorderedQuestion.questionIndex = newIndex; // Update the questionIndex
+            state.splice(newIndex, 0, reorderedQuestion);
             return [...state];
         default:
             return state;
