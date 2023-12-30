@@ -16,19 +16,19 @@ repositories {
 	mavenCentral()
 }
 
-task appNpmInstall(type: NpmTask) {
+tasks.register('appNpmInstall', NpmTask) {
 	description = "Installs all dependencies from package.json"
 	workingDir = file("${project.projectDir}/frontend")
 	args = ["install"]
 }
 
-task appNpmBuild(type: NpmTask) {
+tasks.register('appNpmBuild', NpmTask) {
 	description = "Builds production version of the frontend"
 	workingDir = file("${project.projectDir}/frontend")
 	args = ["run", "build"]
 }
 
-task copyWebApp(type: Copy) {
+tasks.register('copyWebApp', Copy) {
 	from 'frontend/build'
 	into 'build/resources/main/static/.'
 }
