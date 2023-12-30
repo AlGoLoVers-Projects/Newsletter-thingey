@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {
     Card,
-    CardContent,
     TextField,
     MenuItem,
     InputAdornment,
@@ -11,7 +10,7 @@ import {
     Select,
 } from '@mui/material';
 import {AddCircleOutline} from '@mui/icons-material';
-import {QuestionType} from "../../redux/rootslices/api/questions.slice"; // Import makeStyles
+import {multiOptionType, QuestionType} from "../../redux/rootslices/api/questions.slice"; // Import makeStyles
 
 
 const QuestionCard = () => {
@@ -32,88 +31,94 @@ const QuestionCard = () => {
             display: 'flex',
             flexWrap: 'wrap',
             backgroundColor: '#2a2a2a',
+            p: 2
         }}>
-            <CardContent>
-                <TextField
-                    fullWidth
-                    label="Hint"
-                    variant="outlined"
-                    margin="dense"
+            <TextField
+                label="Hint"
+                variant="outlined"
+                margin="dense"
+                sx={{
+                    marginBottom: 2,
+                    minWidth: "50%"
+                }}
+                // Add your hint state and change the value accordingly
+                // value={hint}
+                // onChange={(e) => setHint(e.target.value)}
+            />
+            <TextField
+                label="Question"
+                variant="outlined"
+                margin="dense"
+                sx={{
+                    marginBottom: 2,
+                    minWidth: "50%"
+                }}
+                // Add your question state and change the value accordingly
+                // value={question}
+                // onChange={(e) => setQuestion(e.target.value)}
+            />
+            <FormControl fullWidth variant="outlined" margin="dense">
+                <InputLabel htmlFor="question-type">Question Type</InputLabel>
+                <Select
+                    value={questionType}
+                    onChange={(e) => setQuestionType(e.target.value as QuestionType)}
+                    label="Question Type"
+                >
+                    {Object.values(QuestionType).map((type) => (
+                        <MenuItem key={type} value={type}>
+                            {type}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+            {multiOptionType.includes(
+                questionType
+            ) && (
+                <FormControl
                     sx={{
-                        marginBottom: 2
+                        minWidth: "50%"
                     }}
-                    // Add your hint state and change the value accordingly
-                    // value={hint}
-                    // onChange={(e) => setHint(e.target.value)}
-                />
-                <TextField
-                    fullWidth
-                    label="Question"
                     variant="outlined"
-                    margin="dense"
-                    sx={{
-                        marginBottom: 2
-                    }}
-                    // Add your question state and change the value accordingly
-                    // value={question}
-                    // onChange={(e) => setQuestion(e.target.value)}
-                />
-                <FormControl fullWidth variant="outlined" margin="dense">
-                    <InputLabel htmlFor="question-type">Question Type</InputLabel>
+                    margin="dense">
+                    <InputLabel htmlFor="options">Options</InputLabel>
                     <Select
-                        value={questionType}
-                        onChange={(e) => setQuestionType(e.target.value as QuestionType)}
-                        label="Question Type"
+                        multiple
+                        value={options}
+                        onChange={(e) => setOptions(e.target.value as string[])}
+                        label="Options"
+                        renderValue={(selected) => (selected as string[]).join(', ')}
                     >
-                        {Object.values(QuestionType).map((type) => (
-                            <MenuItem key={type} value={type}>
-                                {type}
+                        {options.map((option) => (
+                            <MenuItem key={option} value={option}>
+                                {option}
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
-                {['RADIO', 'CHECKBOX', 'DROPDOWN_SINGLE', 'DROPDOWN_MULTIPLE'].includes(
-                    questionType
-                ) && (
-                    <FormControl fullWidth variant="outlined" margin="dense">
-                        <InputLabel htmlFor="options">Options</InputLabel>
-                        <Select
-                            multiple
-                            value={options}
-                            onChange={(e) => setOptions(e.target.value as string[])}
-                            label="Options"
-                            renderValue={(selected) => (selected as string[]).join(', ')}
-                        >
-                            {options.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                )}
-                {['RADIO_SINGLE', 'RADIO_MULTIPLE', 'DROPDOWN_SINGLE', 'DROPDOWN_MULTIPLE'].includes(
-                    questionType
-                ) && (
-                    <TextField
-                        fullWidth
-                        label="New Option"
-                        variant="outlined"
-                        margin="dense"
-                        value={newOption}
-                        onChange={(e) => setNewOption(e.target.value)}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton onClick={handleOptionAdd} edge="end">
-                                        <AddCircleOutline/>
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                )}
-            </CardContent>
+            )}
+            {multiOptionType.includes(
+                questionType
+            ) && (
+                <TextField
+                    label="New Option"
+                    variant="outlined"
+                    margin="dense"
+                    sx={{
+                        minWidth: "50%"
+                    }}
+                    value={newOption}
+                    onChange={(e) => setNewOption(e.target.value)}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={handleOptionAdd} edge="end">
+                                    <AddCircleOutline/>
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+            )}
         </Card>
     );
 };
