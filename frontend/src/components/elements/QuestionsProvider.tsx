@@ -24,12 +24,14 @@ type RemoveQuestionAction = {
     payload: number;
 };
 
+export type EditQuestion = {
+    questionIndex: number;
+    data: Partial<Question>;
+}
+
 type EditQuestionAction = {
     type: QuestionsActionType.EDIT_QUESTION;
-    payload: {
-        questionIndex: number;
-        data: Partial<Question>;
-    };
+    payload: EditQuestion;
 };
 
 type ReorderQuestionsAction = {

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
     Card,
     TextField,
@@ -10,13 +10,13 @@ import {
     Select,
     Typography,
 } from '@mui/material';
-import {AddCircleOutline} from '@mui/icons-material';
-import {multiOptionType, Question, QuestionType} from "../../redux/rootslices/api/questions.slice";
-
+import { AddCircleOutline } from '@mui/icons-material';
+import { multiOptionType, Question, QuestionType } from "../../redux/rootslices/api/questions.slice";
 
 export interface QuestionCardProps {
-    question: Question,
-    index: number
+    question: Question;
+    index: number;
+    onChange: (updatedQuestion: Question) => void; // Add onChange prop
 }
 
 const QuestionCard = (props: QuestionCardProps) => {
@@ -28,7 +28,19 @@ const QuestionCard = (props: QuestionCardProps) => {
         if (newOption.trim() !== '' && !options.includes(newOption)) {
             setOptions([...options, newOption]);
             setNewOption('');
+            props.onChange({
+                ...props.question,
+                options: [...options, newOption],
+            });
         }
+    };
+
+    const handleQuestionChange = (value: string | string[], field: keyof Question) => {
+        const updatedQuestion = {
+            ...props.question,
+            [field]: value,
+        };
+        props.onChange(updatedQuestion);
     };
 
     return (
@@ -43,7 +55,7 @@ const QuestionCard = (props: QuestionCardProps) => {
                 mb: 2, // Add space between elements
             },
         }}>
-            <Typography variant="h6" sx={{width: '100%', mb: 2}}>
+            <Typography variant="h6" sx={{ width: '100%', mb: 2 }}>
                 Question {props.index}
             </Typography>
             <TextField
@@ -52,6 +64,7 @@ const QuestionCard = (props: QuestionCardProps) => {
                 label="Question"
                 variant="outlined"
                 margin="dense"
+                onChange={(e) => handleQuestionChange(e.target.value, 'question')}
             />
             <TextField
                 fullWidth
@@ -59,12 +72,16 @@ const QuestionCard = (props: QuestionCardProps) => {
                 label="Hint"
                 variant="outlined"
                 margin="dense"
+                onChange={(e) => handleQuestionChange(e.target.value, 'hint')}
             />
             <FormControl fullWidth variant="outlined" margin="dense">
                 <InputLabel htmlFor="question-type">Question Type</InputLabel>
                 <Select
                     value={questionType}
-                    onChange={(e) => setQuestionType(e.target.value as QuestionType)}
+                    onChange={(e) => {
+                        setQuestionType(e.target.value as QuestionType);
+                        handleQuestionChange(e.target.value as string, 'questionType');
+                    }}
                     label="Question Type"
                 >
                     {Object.values(QuestionType).map((type) => (
@@ -87,7 +104,10 @@ const QuestionCard = (props: QuestionCardProps) => {
                         <Select
                             multiple
                             value={options}
-                            onChange={(e) => setOptions(e.target.value as string[])}
+                            onChange={(e) => {
+                                setOptions(e.target.value as string[]);
+                                handleQuestionChange(e.target.value as string[], 'options');
+                            }}
                             label="Options"
                             renderValue={(selected) => (selected as string[]).join(', ')}
                         >
@@ -109,7 +129,7 @@ const QuestionCard = (props: QuestionCardProps) => {
                             endAdornment: (
                                 <InputAdornment position="end">
                                     <IconButton onClick={handleOptionAdd} edge="end">
-                                        <AddCircleOutline/>
+                                        <AddCircleOutline />
                                     </IconButton>
                                 </InputAdornment>
                             ),

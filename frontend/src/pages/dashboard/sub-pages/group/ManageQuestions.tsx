@@ -8,7 +8,12 @@ import {useSelector} from "react-redux";
 import {selectGroupByIdMemoized} from "../../../../redux/rootslices/data/groups.slice";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
-import {QuestionsActionType, QuestionsProvider, useQuestions} from "../../../../components/elements/QuestionsProvider";
+import {
+    EditQuestion,
+    QuestionsActionType,
+    QuestionsProvider,
+    useQuestions
+} from "../../../../components/elements/QuestionsProvider";
 import {
     GroupQuestionsRequest,
     Question, Questions,
@@ -186,15 +191,23 @@ function ManageQuestionsComponent(): React.ReactElement {
                         gap: 1,
                         mt: 4
                     }}>
-                            {
-                                questionsState.map((question, index) => (
-                                    <QuestionCard question={question} index={index}/>
-                                ))
-                            }
-                        {/*TODO: Render existing questions here*/}
-                        {/*TODO: Create slice to maintain questions*/}
-                        {/*TODO: Create provider for questions. ADD, UPDATE, REORDER INDEX, DELETE*/}
+                        {
+                            questionsState.map((question, index) => (
+                                <QuestionCard question={question} index={index} onChange={(question) => {
+                                    const payload: EditQuestion = {
+                                        questionIndex: index,
+                                        data: question
+                                    }
 
+                                    questionsDispatch({
+                                        type: QuestionsActionType.EDIT_QUESTION,
+                                        payload: payload
+                                    });
+
+                                    setOriginalQuestionState(questionsState)
+                                }}/>
+                            ))
+                        }
                     </Box>
                     <Box sx={{
                         display: "flex",
