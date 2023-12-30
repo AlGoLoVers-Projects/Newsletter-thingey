@@ -15,7 +15,7 @@ import {
     useQuestions
 } from "../../../../components/elements/QuestionsProvider";
 import {
-    GroupQuestionsRequest,
+    GroupQuestionsRequest, multiOptionType,
     Question, Questions,
     QuestionType,
     useCreateOrUpdateQuestionsMutation,
@@ -23,6 +23,12 @@ import {
 } from "../../../../redux/rootslices/api/questions.slice";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
 import QuestionCard from "../../../../components/elements/QuestionCard";
+import Alert from "@mui/material/Alert";
+
+type QuestionError = {
+    question?: string;
+    options?: string
+}
 
 function ManageQuestionsComponent(): React.ReactElement {
     const {state} = useLocation();
@@ -37,8 +43,7 @@ function ManageQuestionsComponent(): React.ReactElement {
     const [updateQuestions, {isLoading: updatingQuestions}] = useCreateOrUpdateQuestionsMutation()
 
     const [originalQuestionState, setOriginalQuestionState] = useState<Questions>();
-
-    console.log(questionsState)
+    const [errors, setErrors] = useState<QuestionError[] | null>();
 
     useEffect(() => {
         handleGetQuestions()
@@ -68,7 +73,41 @@ function ManageQuestionsComponent(): React.ReactElement {
             })
     }
 
+    const validateQuestions = (questions: Questions): QuestionError[] => {
+        const errors: QuestionError[] = [];
+
+        questions.forEach((question, index) => {
+            const questionError: QuestionError = {};
+
+            if (!question.question || question.question.trim() === '') {
+                questionError.question = 'Question is required for question number ' + (index + 1);
+            }
+
+            if (
+                multiOptionType.includes(question.questionType) &&
+                (!question.options || question.options.length === 0)
+            ) {
+                questionError.options = 'Options are required for question ' + (index + 1);
+            }
+
+            errors[index] = questionError;
+        });
+
+        return errors;
+    };
+
     const handleUpdateQuestions = () => {
+        const validationErrors: QuestionError[] = validateQuestions(questionsState);
+
+        if (validationErrors.some((error) => Object.keys(error).length > 0)) {
+            console.log('Validation errors:', validationErrors);
+            setErrors(validationErrors)
+            showFailureToast('There are errors in your questions, please handle them')
+            return;
+        } else {
+            setErrors(null)
+        }
+
         const request: GroupQuestionsRequest = {
             groupId: groupId,
             questions: questionsState
@@ -184,6 +223,23 @@ function ManageQuestionsComponent(): React.ReactElement {
                         Curate, add or modify questions tailored for your group so you can stay in touch with
                         each other.
                     </Typography>
+                    {errors && (
+                        <Alert severity="error" sx={{mt: 2}}>
+                            <Typography variant="body1">Validation Errors:</Typography>
+                            <ul>
+                                {errors.map((errorList, index) => (
+                                    <React.Fragment key={index}>
+                                        {errorList.question && (
+                                            <li>{errorList.question}</li>
+                                        )}
+                                        {errorList.options && (
+                                            <li>{errorList.options}</li>
+                                        )}
+                                    </React.Fragment>
+                                ))}
+                            </ul>
+                        </Alert>
+                    )}
                     <Box sx={{
                         display: "flex",
                         width: "100%",
