@@ -1,6 +1,6 @@
 import {Result} from "../../../types/result";
 import {baseApiSlice} from "./base.slice";
-import {GroupData, GroupIdRequest, GroupUserRequest} from "./groups.slice";
+import {GroupData, GroupRequest, GroupUserRequest} from "./groups.slice";
 
 export type Invitation = {
     id: {
@@ -19,14 +19,14 @@ export const invitationsSlice = baseApiSlice.injectEndpoints({
                 body: data,
             }),
         }),
-        acceptInvitation: builder.mutation<Result<String>, GroupIdRequest>({
+        acceptInvitation: builder.mutation<Result<String>, GroupRequest>({
             query: (data) => ({
                 url: '/api/group/acceptInvitation',
                 method: 'POST',
                 body: data
             }),
         }),
-        rejectInvitation: builder.mutation<Result<String>, GroupIdRequest>({
+        rejectInvitation: builder.mutation<Result<String>, GroupRequest>({
             query: (data) => ({
                 url: '/api/group/rejectInvitation',
                 method: 'POST',
@@ -39,7 +39,7 @@ export const invitationsSlice = baseApiSlice.injectEndpoints({
                 method: 'GET',
             }),
         }),
-        listAllInvitationsByGroup: builder.mutation<Result<Invitation[]>, GroupIdRequest>({
+        listAllInvitationsByGroup: builder.mutation<Result<Invitation[]>, GroupRequest>({
             query: (data) => ({
                 url: '/api/group/listAllInvitationsByGroup',
                 method: 'POST',

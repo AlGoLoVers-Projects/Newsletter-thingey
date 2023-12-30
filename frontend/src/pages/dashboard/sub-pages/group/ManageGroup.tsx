@@ -7,7 +7,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {
     GroupData,
     GroupEditRequest,
-    GroupIdRequest,
+    GroupRequest,
     GroupMember,
     GroupUserEditAccessRequest,
     GroupUserRequest,
@@ -115,7 +115,7 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
     const dialogRef = useRef<AlertDialogRef>(null);
 
     const handleLeaveGroup = () => {
-        const data: GroupIdRequest = {
+        const data: GroupRequest = {
             groupId: groupData.id
         }
 
@@ -257,7 +257,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
 
     const pullInvitations = () => {
 
-        const request: GroupIdRequest = {
+        const request: GroupRequest = {
             groupId: groupData.id,
         }
 
@@ -386,7 +386,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     }
 
     const handleDeletion = () => {
-        const data: GroupIdRequest = {
+        const data: GroupRequest = {
             groupId: groupData.id
         }
 

@@ -23,20 +23,20 @@ export type GroupDataRequest = {
     groupDescription: string
 }
 
-export type GroupIdRequest = {
+export type GroupRequest = {
     groupId: string
 }
 
 export type GroupUserEditAccessRequest = {
     userEmail: string,
     canEdit: boolean
-} & GroupIdRequest
+} & GroupRequest
 
 export type GroupUserRequest = {
     userEmail: string
-} & GroupIdRequest;
+} & GroupRequest;
 
-export type GroupEditRequest = GroupDataRequest & GroupIdRequest;
+export type GroupEditRequest = GroupDataRequest & GroupRequest;
 
 export type GroupListData = GroupData[];
 
@@ -76,14 +76,14 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
                 body: data
             }),
         }),
-        leaveGroup: builder.mutation<Result<string>, GroupIdRequest>({
+        leaveGroup: builder.mutation<Result<string>, GroupRequest>({
             query: (data) => ({
                 url: '/api/group/leaveGroup',
                 method: 'DELETE',
                 body: data
             }),
         }),
-        deleteGroup: builder.mutation<Result<string>, GroupIdRequest>({
+        deleteGroup: builder.mutation<Result<string>, GroupRequest>({
             query: (data) => ({
                 url: '/api/group/deleteGroup',
                 method: 'DELETE',

@@ -12,7 +12,7 @@ import {
 } from "../../redux/rootslices/api/invitations.slice";
 import {InvitationsActionType, useInvitations} from "./Invitations";
 import {showFailureToast, showSuccessToast} from "../../util/toasts";
-import {GroupIdRequest} from "../../redux/rootslices/api/groups.slice";
+import {GroupRequest} from "../../redux/rootslices/api/groups.slice";
 import AlertDialog, {AlertDialogRef} from "./AlertDialog";
 
 export interface InvitationCardProp {
@@ -28,7 +28,7 @@ const InvitationCard = (prop: InvitationCardProp) => {
     const dialogRef = useRef<AlertDialogRef>(null);
 
     const handleInvitationAccept = () => {
-        const request: GroupIdRequest = {
+        const request: GroupRequest = {
             groupId: group.id
         }
 
@@ -52,7 +52,7 @@ const InvitationCard = (prop: InvitationCardProp) => {
     }
 
     const handleInvitationReject = () => {
-        const request: GroupIdRequest = {
+        const request: GroupRequest = {
             groupId: group.id
         }
 
