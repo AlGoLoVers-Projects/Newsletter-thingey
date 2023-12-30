@@ -19,6 +19,7 @@ import {
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
+import QuestionCard from "../../../../components/elements/QuestionCard";
 
 function ManageQuestionsComponent(): React.ReactElement {
     const {state} = useLocation();
@@ -182,22 +183,16 @@ function ManageQuestionsComponent(): React.ReactElement {
                     </Typography>
                     <Box sx={{
                         display: "flex",
+                        width: "100%",
                         mt: 4
                     }}>
 
-                        <List>
+                        <List sx={{
+                            width: "100%",
+                        }}>
                             {
                                 questionsState.map((question, index) => (
-                                    <ListItem key={index}>
-                                        <Card>
-                                            <Typography>
-                                                {question.question}
-                                            </Typography>
-                                            <Typography>
-                                                {question.questionType}
-                                            </Typography>
-                                        </Card>
-                                    </ListItem>
+                                    <QuestionCard/>
                                 ))
                             }
                         </List>
