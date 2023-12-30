@@ -7,12 +7,12 @@ public enum QuestionType {
     IMAGE,
     DATE,
     TIME,
-    RADIO_SINGLE,
-    RADIO_MULTIPLE,
+    RADIO,
+    CHECKBOX,
     DROPDOWN_SINGLE,
     DROPDOWN_MULTIPLE;
 
-    public static final Set<QuestionType> multiOptionType = Set.of(RADIO_SINGLE, RADIO_MULTIPLE, DROPDOWN_SINGLE, DROPDOWN_MULTIPLE);
+    public static final Set<QuestionType> multiOptionType = Set.of(RADIO, CHECKBOX, DROPDOWN_SINGLE, DROPDOWN_MULTIPLE);
 
     public static boolean isMultipleOptionQuestion(QuestionType questionType) {
         return multiOptionType.contains(questionType);

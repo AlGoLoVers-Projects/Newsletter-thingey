@@ -87,7 +87,7 @@ public class QuestionsService {
             group.setQuestions(questions);
             groupRepository.save(group);
 
-            return new Result<>(true, null, "Questions updated successfully");
+            return new Result<>(true, questions, "Questions updated successfully");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());

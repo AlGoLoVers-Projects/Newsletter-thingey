@@ -52,7 +52,11 @@ const questionsReducer = (state: Questions, action: QuestionsAction): Questions 
         case QuestionsActionType.SET_QUESTIONS:
             return action.payload;
         case QuestionsActionType.ADD_QUESTION:
-            return [...state, action.payload];
+            const newQuestion = {
+                ...action.payload,
+                questionIndex: state.length,
+            };
+            return [...state, newQuestion];
         case QuestionsActionType.REMOVE_QUESTION:
             return state.filter((_, index) => index !== action.payload);
         case QuestionsActionType.EDIT_QUESTION:

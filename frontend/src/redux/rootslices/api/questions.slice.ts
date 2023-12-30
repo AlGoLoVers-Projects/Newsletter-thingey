@@ -3,17 +3,17 @@ import {Result} from "../../../types/result";
 import {GroupRequest} from "./groups.slice";
 
 export enum QuestionType {
-    TEXT,
-    IMAGE,
-    DATE,
-    TIME,
-    RADIO_SINGLE,
-    RADIO_MULTIPLE,
-    DROPDOWN_SINGLE,
-    DROPDOWN_MULTIPLE
+    TEXT = 'TEXT',
+    IMAGE = 'IMAGE',
+    DATE = 'DATE',
+    TIME = 'TIME',
+    RADIO = 'RADIO',
+    CHECKBOX = 'CHECKBOX',
+    DROPDOWN_SINGLE = 'DROPDOWN_SINGLE',
+    DROPDOWN_MULTIPLE = 'DROPDOWN_MULTIPLE'
 }
 
-export type QuestionRequest = {
+export type Question = {
     questionIndex: number;
     question: string;
     hint: string | null;
@@ -21,16 +21,12 @@ export type QuestionRequest = {
     options: string[] | null
 }
 
-export type Question = {
-    id: string | null;
-} & QuestionRequest
+export type Questions = Question[]
 
 export type GroupQuestionsRequest = {
     groupId: string,
-    questions: QuestionRequest[]
+    questions: Questions
 }
-
-export type Questions = Question[]
 
 export const invitationsSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({

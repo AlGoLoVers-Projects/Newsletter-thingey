@@ -1,6 +1,7 @@
 package com.algolovers.newsletterconsole.data.model.api.request.question;
 
 import com.algolovers.newsletterconsole.data.enums.QuestionType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class QuestionRequest {
 
     @NotNull(message = "Index cannot be null")
