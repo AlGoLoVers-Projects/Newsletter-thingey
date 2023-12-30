@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
     Card,
     TextField,
@@ -10,13 +10,16 @@ import {
     Select,
     Typography,
 } from '@mui/material';
-import { AddCircleOutline } from '@mui/icons-material';
-import { multiOptionType, Question, QuestionType } from "../../redux/rootslices/api/questions.slice";
+import {AddCircleOutline} from '@mui/icons-material';
+import {multiOptionType, Question, QuestionType} from "../../redux/rootslices/api/questions.slice";
+import Box from "@mui/material/Box";
+import CloseIcon from "@mui/icons-material/Close";
 
 export interface QuestionCardProps {
     question: Question;
     index: number;
-    onChange: (updatedQuestion: Question) => void; // Add onChange prop
+    onChange: (updatedQuestion: Question) => void;
+    onDelete: () => void;
 }
 
 const QuestionCard = (props: QuestionCardProps) => {
@@ -43,6 +46,10 @@ const QuestionCard = (props: QuestionCardProps) => {
         props.onChange(updatedQuestion);
     };
 
+    const handleDelete = () => {
+        props.onDelete();
+    };
+
     return (
         <Card sx={{
             width: '100%',
@@ -51,13 +58,29 @@ const QuestionCard = (props: QuestionCardProps) => {
             borderRadius: 3,
             backgroundColor: '#2a2a2a',
             p: 2,
+            position: 'relative',
             '& > *': {
-                mb: 2, // Add space between elements
+                mb: 2,
             },
         }}>
-            <Typography variant="h6" sx={{ width: '100%', mb: 2 }}>
-                Question {props.index}
-            </Typography>
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between"
+                }}
+            >
+                <Typography variant="h6" sx={{width: '100%'}}>
+                    Question {props.index + 1}
+                </Typography>
+                <IconButton
+                    onClick={handleDelete}
+                    sx={{}}
+                >
+                    <CloseIcon/>
+                </IconButton>
+            </Box>
             <TextField
                 fullWidth
                 value={props.question.question}
@@ -129,7 +152,7 @@ const QuestionCard = (props: QuestionCardProps) => {
                             endAdornment: (
                                 <InputAdornment position="end">
                                     <IconButton onClick={handleOptionAdd} edge="end">
-                                        <AddCircleOutline />
+                                        <AddCircleOutline/>
                                     </IconButton>
                                 </InputAdornment>
                             ),

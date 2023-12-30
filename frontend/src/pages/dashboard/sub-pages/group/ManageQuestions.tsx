@@ -182,7 +182,7 @@ function ManageQuestionsComponent(): React.ReactElement {
                     </Box>
                     <Typography variant="body2">
                         Curate, add or modify questions tailored for your group so you can stay in touch with
-                        eachother.
+                        each other.
                     </Typography>
                     <Box sx={{
                         display: "flex",
@@ -193,19 +193,28 @@ function ManageQuestionsComponent(): React.ReactElement {
                     }}>
                         {
                             questionsState.map((question, index) => (
-                                <QuestionCard question={question} index={index} onChange={(question) => {
-                                    const payload: EditQuestion = {
-                                        questionIndex: index,
-                                        data: question
-                                    }
+                                <QuestionCard
+                                    question={question}
+                                    index={index}
+                                    onChange={(question) => {
+                                        const payload: EditQuestion = {
+                                            questionIndex: index,
+                                            data: question
+                                        }
 
-                                    questionsDispatch({
-                                        type: QuestionsActionType.EDIT_QUESTION,
-                                        payload: payload
-                                    });
+                                        questionsDispatch({
+                                            type: QuestionsActionType.EDIT_QUESTION,
+                                            payload: payload
+                                        });
 
-                                    setOriginalQuestionState(questionsState)
-                                }}/>
+                                        setOriginalQuestionState(questionsState)
+                                    }}
+                                    onDelete={() => {
+                                        questionsDispatch({
+                                            type: QuestionsActionType.REMOVE_QUESTION,
+                                            payload: index
+                                        });
+                                    }}/>
                             ))
                         }
                     </Box>
