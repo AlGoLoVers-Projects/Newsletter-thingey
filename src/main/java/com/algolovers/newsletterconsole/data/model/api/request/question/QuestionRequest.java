@@ -11,7 +11,7 @@ import java.util.Set;
 public class QuestionRequest {
 
     @NotNull(message = "Index cannot be null")
-    private Integer index;
+    private Integer questionIndex;
 
     @NotEmpty(message = "Question cannot be blank")
     private String question;

@@ -67,7 +67,7 @@ public class QuestionsService {
                         .question(question.getQuestion())
                         .questionType(question.getQuestionType())
                         .hint(question.getHint())
-                        .index(question.getIndex())
+                        .questionIndex(question.getQuestionIndex())
                         .build();
 
                 if (QuestionType.isMultipleOptionQuestion(question.getQuestionType())) {
