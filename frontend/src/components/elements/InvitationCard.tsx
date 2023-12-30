@@ -10,7 +10,7 @@ import {
     useAcceptInvitationMutation,
     useRejectInvitationMutation
 } from "../../redux/rootslices/api/invitations.slice";
-import {InvitationsActionType, useInvitations} from "./Invitations";
+import {InvitationsActionType, useInvitations} from "./InvitationsProvider";
 import {showFailureToast, showSuccessToast} from "../../util/toasts";
 import {GroupRequest} from "../../redux/rootslices/api/groups.slice";
 import AlertDialog, {AlertDialogRef} from "./AlertDialog";

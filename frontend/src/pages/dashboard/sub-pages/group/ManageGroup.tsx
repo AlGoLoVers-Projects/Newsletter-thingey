@@ -40,7 +40,7 @@ import {
     useInviteUserToGroupMutation,
     useListAllInvitationsByGroupMutation, useRemoveInvitationFromGroupMutation
 } from "../../../../redux/rootslices/api/invitations.slice";
-import {InvitationsActionType, InvitationsProvider, useInvitations} from "../../../../components/elements/Invitations";
+import {InvitationsActionType, InvitationsProvider, useInvitations} from "../../../../components/elements/InvitationsProvider";
 import UserInvitationListCard from "../../../../components/elements/UserInvitationListCard";
 
 export default function ManageGroup(): React.ReactElement {

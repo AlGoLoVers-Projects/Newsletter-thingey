@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import Typography from "@mui/material/Typography";
-import {InvitationsActionType, InvitationsProvider, useInvitations} from "../../../../components/elements/Invitations";
+import {InvitationsActionType, InvitationsProvider, useInvitations} from "../../../../components/elements/InvitationsProvider";
 import {Box, Container} from "@mui/material";
 import {Invitation, useListAllInvitationsMutation} from "../../../../redux/rootslices/api/invitations.slice";
 import {showFailureToast} from "../../../../util/toasts";
