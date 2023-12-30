@@ -204,13 +204,15 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
             }}>
                 <Box sx={{flex: 1}}/>
                 {
-                    props.canEdit ? <Button
-                        type="button"
-                        variant="outlined"
-                        sx={{mt: 3, mb: 1}}
-                    >
-                        Manage Questions
-                    </Button> : <React.Fragment/>
+                    props.canEdit ?
+                        <Button
+                            type="button"
+                            variant="outlined"
+                            sx={{mt: 3, mb: 1}}
+                            onClick={() => navigate(authorizedPaths.manageQuestions, {state: groupData.id})}
+                        >
+                            Manage Questions
+                        </Button> : <React.Fragment/>
                 }
                 <Button
                     type="submit"
@@ -675,8 +677,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                         disabled={isDeleting || isLoading}
                         sx={{mt: 3, mb: 1}}
                         endIcon={<NavigateNext/>}
-                        onClick={() => {
-                        }}
+                        onClick={() => navigate(authorizedPaths.manageQuestions, {state: groupData.id})}
                     >
                         Manage Questions
                     </Button>

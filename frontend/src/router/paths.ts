@@ -22,6 +22,7 @@ export const dashboardPaths = {
     contactUs: 'contactUs',
     newGroup: 'groups/newGroup',
     manageGroup: 'groups/manageGroup',
+    manageQuestions: 'groups/manageQuestions',
 };
 
 export const authorizedPaths = {
@@ -35,6 +36,7 @@ export const authorizedPaths = {
     contactUs: `/dashboard/${dashboardPaths.contactUs}`,
     newGroup: `/dashboard/${dashboardPaths.newGroup}`,
     manageGroup: `/dashboard/${dashboardPaths.manageGroup}`,
+    manageQuestions: `/dashboard/${dashboardPaths.manageQuestions}`,
     signOut: '/signout',
 };
 

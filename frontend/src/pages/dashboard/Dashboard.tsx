@@ -34,6 +34,7 @@ import NewGroup from "./sub-pages/group/NewGroup";
 import ManageGroup from "./sub-pages/group/ManageGroup";
 import AlertDialog, {AlertDialogRef} from "../../components/elements/AlertDialog";
 import Invitations from './sub-pages/invitations/Invitations';
+import ManageQuestions from "./sub-pages/group/ManageQuestions";
 
 const drawerWidth = 240;
 
@@ -330,6 +331,7 @@ export default function Dashboard(): React.ReactElement {
                     <Route path={dashboardPaths.newGroup} element={<NewGroup/>}/>
                     <Route path={dashboardPaths.manageGroup} element={<ManageGroup/>}/>
                     <Route path={dashboardPaths.invitations} element={<Invitations/>}/>
+                    <Route path={dashboardPaths.manageQuestions} element={<ManageQuestions/>}/>
                 </Routes>
             </Box>
         </Box>
