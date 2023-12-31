@@ -34,7 +34,7 @@ import NewGroup from "./sub-pages/group/NewGroup";
 import ManageGroup from "./sub-pages/group/ManageGroup";
 import AlertDialog, {AlertDialogRef} from "../../components/elements/AlertDialog";
 import Invitations from './sub-pages/invitations/Invitations';
-import ManageQuestions from "./sub-pages/group/ManageQuestions";
+import ManageQuestions from "./sub-pages/questions/ManageQuestions";
 
 const drawerWidth = 240;
 
@@ -188,7 +188,7 @@ export default function Dashboard(): React.ReactElement {
         {
             title: 'Questions',
             icon: <QuestionAnswer/>,
-            path: authorizedPaths.questions
+            path: authorizedPaths.manageGlobalQuestions
         },
         {
             title: 'Invites',

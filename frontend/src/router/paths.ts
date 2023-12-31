@@ -15,7 +15,7 @@ export const paths = {
 
 export const dashboardPaths = {
     groups: 'groups',
-    questions: 'questions',
+    manageGlobalQuestions: 'manageGlobalQuestions',
     invitations: 'invitations',
     profile: 'profile',
     aboutUs: 'aboutUs',
@@ -29,7 +29,7 @@ export const authorizedPaths = {
     dashboardRoot: '/dashboard/',
     dashboard: '/dashboard/*',
     groups: `/dashboard/${dashboardPaths.groups}`,
-    questions: `/dashboard/${dashboardPaths.questions}`,
+    manageGlobalQuestions: `/dashboard/${dashboardPaths.manageGlobalQuestions}`,
     invitations: `/dashboard/${dashboardPaths.invitations}`,
     profile: `/dashboard/${dashboardPaths.profile}`,
     aboutUs: `/dashboard/${dashboardPaths.aboutUs}`,
