@@ -21,7 +21,6 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonIgnore
     private String id;
 
     @Column(nullable = false)

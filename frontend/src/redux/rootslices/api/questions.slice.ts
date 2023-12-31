@@ -16,6 +16,7 @@ export enum QuestionType {
 export const multiOptionType = [QuestionType.RADIO, QuestionType.CHECKBOX, QuestionType.DROPDOWN_SINGLE, QuestionType.DROPDOWN_MULTIPLE]
 
 export type Question = {
+    id?: string;
     questionIndex: number;
     question: string;
     hint: string | null;
