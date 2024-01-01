@@ -64,7 +64,7 @@ export default function QuestionForm(): React.ReactElement {
     }
 
     return (
-        <Box sx={{display: 'flex', height: "100vh"}}>
+        <Box sx={{display: 'flex', height: "100%"}}>
             <CssBaseline/>
             <AppBar position="fixed" sx={{backgroundColor: theme.palette.primary.main}}>
                 <Toolbar>
@@ -92,15 +92,19 @@ export default function QuestionForm(): React.ReactElement {
                     variant="h2"
                     sx={{
                         fontWeight: 'bold',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        mb: 5
                     }}
                 >
                     {groupData?.groupName ?? 'Questions'}
                 </Typography>
                 {
                     questions?.map((question, index) => (
-                        <FormQuestionCard onAnswerChange={(id, value) => {
-                        }} question={question}/>
+                        <FormQuestionCard
+                            onAnswerChange={(id, value) => {
+                            }}
+                            question={question}
+                            index={index}/>
                     ))
                 }
             </Box>
