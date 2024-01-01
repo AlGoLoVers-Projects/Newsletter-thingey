@@ -13,6 +13,7 @@ import {AppBar, Toolbar} from "@mui/material";
 import {styled, useTheme} from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import FormQuestionCard from "../../../../components/elements/FormQuestionCard";
+import Button from "@mui/material/Button";
 
 
 const DrawerHeader = styled('div')(({theme}) => ({
@@ -93,10 +94,20 @@ export default function QuestionForm(): React.ReactElement {
                     sx={{
                         fontWeight: 'bold',
                         textAlign: 'center',
-                        mb: 5
                     }}
                 >
                     {groupData?.groupName ?? 'Questions'}
+                </Typography>
+                <Typography
+                    component="h1"
+                    variant="h6"
+                    color="text.secondary"
+                    sx={{
+                        textAlign: 'center',
+                        mb: 5
+                    }}
+                >
+                    Fill out this form for this month's newsletter edition.
                 </Typography>
                 {
                     questions?.map((question, index) => (
@@ -107,6 +118,25 @@ export default function QuestionForm(): React.ReactElement {
                             index={index}/>
                     ))
                 }
+                <Box sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                }}>
+                    <Box sx={{flex: 1}}/>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{
+                            mt: 2,
+                            mb: 3,
+                            pl: 5,
+                            pr: 5,
+                        }}
+                    >
+                        Submit
+                    </Button>
+                </Box>
             </Box>
         </Box>
     )
