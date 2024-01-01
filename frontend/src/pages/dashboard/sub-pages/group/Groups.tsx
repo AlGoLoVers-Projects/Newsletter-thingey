@@ -1,12 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import Container from '@mui/material/Container';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import GroupList from "./GroupList";
-import {GroupListData, useGetGroupsMutation} from "../../../../redux/rootslices/api/groups.slice";
-import {Result} from "../../../../types/result";
+import {useGetGroupsMutation} from "../../../../redux/rootslices/api/groups.slice";
 import {showFailureToast} from "../../../../util/toasts";
 import {useNavigate} from "react-router-dom";
 import {authorizedPaths} from "../../../../router/paths";
@@ -41,8 +40,7 @@ const Groups = (): React.ReactElement => {
             })
             .catch((error) => {
                 console.log(error)
-                let responseData: Result<null> = error.error;
-                showFailureToast(responseData.message ?? 'Token validation failed, signing out')
+                showFailureToast(error.message ?? 'Token validation failed, signing out')
             })
 
     }, [])
