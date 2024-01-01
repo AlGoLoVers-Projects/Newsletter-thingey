@@ -14,6 +14,7 @@ import ForgotPassword from "../pages/authentication/local-auth/ForgotPassword";
 import ResetPassword from "../pages/authentication/local-auth/ResetPassword";
 import NewGroup from "../pages/dashboard/sub-pages/group/NewGroup";
 import QuestionForm from "../pages/dashboard/sub-pages/questions/QuestionForm";
+import {RedirectPathProvider} from "../components/elements/RedirectProvider";
 
 export type Route = {
     path: Path,
@@ -36,7 +37,10 @@ export const routes: Routes = [
     },
     {
         path: paths.signIn,
-        element: <SingIn/>,
+        element:
+            <RedirectPathProvider>
+                <SingIn/>
+            </RedirectPathProvider>,
         authorised: false
     },
     {

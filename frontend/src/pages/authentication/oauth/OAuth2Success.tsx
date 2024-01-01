@@ -8,6 +8,7 @@ import {useDispatch} from "react-redux";
 import {authorizedPaths, paths} from "../../../router/paths";
 import {AuthData, setAuthData} from "../../../redux/rootslices/data/auth-data.slice";
 import {validateAuthData} from "../../../util/validation";
+import {useRedirectPath} from "../../../components/elements/RedirectProvider";
 
 export default function OAuth2Success(): React.ReactElement {
     const navigate = useNavigate();
@@ -15,6 +16,10 @@ export default function OAuth2Success(): React.ReactElement {
     const dispatch = useDispatch();
     const queryParams = new URLSearchParams(location.search);
     const data = queryParams.get("data");
+
+    const {redirectPath, setRedirect} = useRedirectPath();
+    const redirectToPath = redirectPath || authorizedPaths.dashboardRoot;
+
     useEffect(() => {
         if (!data) {
             navigate(paths.oauth2Failure + "?exception=Could not authorize user, authentication token not found.")
@@ -25,7 +30,8 @@ export default function OAuth2Success(): React.ReactElement {
             if (validateAuthData(authData)) {
                 dispatch(setAuthData(authData));
                 setTimeout(() => {
-                    navigate(authorizedPaths.dashboardRoot)
+                    navigate(redirectToPath)
+                    setRedirect('')
                 }, 400)
             } else {
                 navigate(paths.oauth2Failure + "?exception=Could not decode user information, please try signing in again.")

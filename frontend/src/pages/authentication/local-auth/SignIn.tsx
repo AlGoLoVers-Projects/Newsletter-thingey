@@ -15,14 +15,15 @@ import {Card} from "@mui/material";
 import OrDivider from "../../../components/elements/OrDivider";
 import GoogleAuthButton from "../../../components/elements/GoogleAuthButton";
 import {SignInRequest, useSignInMutation} from "../../../redux/rootslices/api/authentication.slice";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {isEmpty, isValidEmail, validateAuthData} from "../../../util/validation";
 import {Result} from "../../../types/result";
 import {showFailureToast, showSuccessToast} from "../../../util/toasts";
 import {useDispatch, useSelector} from "react-redux";
 import 'react-toastify/dist/ReactToastify.css';
-import {Navigate, useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {AuthData, selectToken, setAuthData} from "../../../redux/rootslices/data/auth-data.slice";
+import {useRedirectPath} from "../../../components/elements/RedirectProvider";
 
 
 export default function SignIn(): React.ReactElement {
@@ -31,10 +32,24 @@ export default function SignIn(): React.ReactElement {
     const dispatch = useDispatch();
     let navigation = useNavigate();
 
+    const location = useLocation();
+
+    const {redirectPath, setRedirect} = useRedirectPath();
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const redirectPath = queryParams.get('redirect');
+        if (redirectPath) {
+            setRedirect(redirectPath)
+        }
+    }, [location.search]);
+
     const [signIn, {isLoading: isSigningIn}] = useSignInMutation();
 
     const [emailError, setEmailError] = useState<string>('');
     const [passwordError, setPasswordError] = useState<string>('');
+
+    const redirectToPath = redirectPath || authorizedPaths.dashboardRoot;
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -76,7 +91,8 @@ export default function SignIn(): React.ReactElement {
                             if (validateAuthData(responseData.data)) {
                                 showSuccessToast(responseData.message ?? 'Signed in successfully')
                                 dispatch(setAuthData(responseData.data));
-                                navigation(authorizedPaths.dashboardRoot)
+                                navigation(redirectToPath)
+                                setRedirect('')
                             } else {
                                 showFailureToast(responseData.message ?? 'Could not decode user information, please try signing in again')
                             }
@@ -97,7 +113,8 @@ export default function SignIn(): React.ReactElement {
     };
 
     if (token) {
-        return <Navigate to={authorizedPaths.dashboardRoot}/>;
+        navigation(redirectToPath)
+        setRedirect('')
     }
 
     return (
