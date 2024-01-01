@@ -60,7 +60,10 @@ export const routes: Routes = [
     },
     {
         path: paths.oauthSuccess,
-        element: <OAuth2Success/>,
+        element:
+            <RedirectPathProvider>
+                <OAuth2Success/>
+            </RedirectPathProvider>,
         authorised: false
     },
     {

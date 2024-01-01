@@ -14,8 +14,8 @@ import {Result} from './types/result';
 import {showFailureToast} from './util/toasts';
 import {CircularProgress, Container, CssBaseline} from "@mui/material";
 import ApplicationRoutes from "./router/ApplicationRoutes";
-import {paths} from "./router/paths";
 import {clearData} from "./redux/store";
+import {useBuildRedirectPath} from "./util/utilities";
 
 export default function App() {
     const token = useSelector(selectToken);
@@ -23,6 +23,8 @@ export default function App() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [validateToken] = useValidateTokenMutation();
+
+    const redirectPath = useBuildRedirectPath()
 
     useEffect(() => {
         if (token) {
@@ -39,20 +41,20 @@ export default function App() {
                         } else {
                             showFailureToast(responseData.message ?? 'Token validation failed, signing out')
                             clearData(dispatch)
-                            navigate(paths.signIn)
+                            navigate(redirectPath)
                         }
                     } else {
                         let responseData: Result<null> = (response.error as any).data
                         showFailureToast(responseData.message ?? 'Token validation failed, signing out')
                         clearData(dispatch)
-                        navigate(paths.signIn)
+                        navigate(redirectPath)
                     }
                 })
                 .catch((error) => {
                     let responseData: Result<null> = error.error;
                     showFailureToast(responseData.message ?? 'Token validation failed, cannot authenticate')
                     clearData(dispatch)
-                    navigate(paths.signIn)
+                    navigate(redirectPath)
                 }).finally(() => {
                 setValidatingToken(false)
             })
