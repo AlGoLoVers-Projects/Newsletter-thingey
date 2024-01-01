@@ -13,6 +13,7 @@ import OAuth2Failure from "../pages/authentication/oauth/OAuth2Failure";
 import ForgotPassword from "../pages/authentication/local-auth/ForgotPassword";
 import ResetPassword from "../pages/authentication/local-auth/ResetPassword";
 import NewGroup from "../pages/dashboard/sub-pages/group/NewGroup";
+import QuestionForm from "../pages/dashboard/sub-pages/questions/QuestionForm";
 
 export type Route = {
     path: Path,
@@ -78,6 +79,11 @@ export const routes: Routes = [
         element: <Dashboard/>,
         authorised: true
     },
+    {
+        path: authorizedPaths.form,
+        element: <QuestionForm/>,
+        authorised: true
+    }
 ];
 
 export default function ApplicationRoutes() {

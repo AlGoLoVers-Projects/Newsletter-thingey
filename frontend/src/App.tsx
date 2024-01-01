@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import {
     selectToken,
@@ -22,6 +22,7 @@ export default function App() {
     const [isValidatingToken, setValidatingToken] = useState(true);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const [validateToken] = useValidateTokenMutation();
 
     useEffect(() => {
@@ -39,20 +40,20 @@ export default function App() {
                         } else {
                             showFailureToast(responseData.message ?? 'Token validation failed, signing out')
                             clearData(dispatch)
-                            navigate(paths.signIn)
+                            navigate(`${paths.signIn}?redirect=${encodeURIComponent(location.pathname)}`);
                         }
                     } else {
                         let responseData: Result<null> = (response.error as any).data
                         showFailureToast(responseData.message ?? 'Token validation failed, signing out')
                         clearData(dispatch)
-                        navigate(paths.signIn)
+                        navigate(`${paths.signIn}?redirect=${encodeURIComponent(location.pathname)}`);
                     }
                 })
                 .catch((error) => {
                     let responseData: Result<null> = error.error;
                     showFailureToast(responseData.message ?? 'Token validation failed, cannot authenticate')
                     clearData(dispatch)
-                    navigate(paths.signIn)
+                    navigate(`${paths.signIn}?redirect=${encodeURIComponent(location.pathname)}`);
                 }).finally(() => {
                 setValidatingToken(false)
             })

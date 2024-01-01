@@ -37,6 +37,7 @@ export const authorizedPaths = {
     newGroup: `/dashboard/${dashboardPaths.newGroup}`,
     manageGroup: `/dashboard/${dashboardPaths.manageGroup}`,
     manageQuestions: `/dashboard/${dashboardPaths.manageQuestions}`,
+    form: '/form/:formId',
     signOut: '/signout',
 };
 
