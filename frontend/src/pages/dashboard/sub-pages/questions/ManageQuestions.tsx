@@ -58,10 +58,10 @@ function ManageQuestionsComponent(): React.ReactElement {
             .unwrap()
             .then((response) => {
                 if (response.success) {
-                    setOriginalQuestionState(response.data)
+                    setOriginalQuestionState(response.data.questions)
                     questionsDispatch({
                         type: QuestionsActionType.SET_QUESTIONS,
-                        payload: response.data
+                        payload: response.data.questions
                     });
                 } else {
                     showFailureToast(response.message ?? 'Failed to load questions, try again later')
@@ -118,10 +118,10 @@ function ManageQuestionsComponent(): React.ReactElement {
             .then((response) => {
                 if (response.success) {
                     showSuccessToast(response.message ?? 'Updated questions successfully')
-                    setOriginalQuestionState(response.data)
+                    setOriginalQuestionState(response.data.questions)
                     questionsDispatch({
                         type: QuestionsActionType.SET_QUESTIONS,
-                        payload: response.data
+                        payload: response.data.questions
                     });
                 } else {
                     showFailureToast(response.message ?? 'Failed to update questions, try again later')

@@ -8,6 +8,7 @@ import com.algolovers.newsletterconsole.data.enums.QuestionType;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.group.GroupRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.question.GroupQuestionsRequest;
+import com.algolovers.newsletterconsole.data.model.api.response.questions.QuestionsResponse;
 import com.algolovers.newsletterconsole.repository.GroupRepository;
 import com.algolovers.newsletterconsole.repository.QuestionsRepository;
 import jakarta.validation.Valid;
@@ -30,7 +31,7 @@ public class QuestionsService {
     private final GroupRepository groupRepository;
 
     @Transactional(rollbackFor = {Exception.class})
-    public Result<List<Question>> createOrUpdateQuestions(@Valid GroupQuestionsRequest groupQuestionsRequest, User authenticatedUser) {
+    public Result<QuestionsResponse> createOrUpdateQuestions(@Valid GroupQuestionsRequest groupQuestionsRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupRepository.findById(groupQuestionsRequest.getGroupId());
 
@@ -50,11 +51,11 @@ public class QuestionsService {
                     .findFirst();
 
             if (groupMember.isEmpty()) {
-                return new Result<>(true, null, "You are not part of this group");
+                return new Result<>(false, null, "You are not part of this group");
             }
 
             if (!groupMember.get().isHasEditAccess()) {
-                return new Result<>(true, null, "You do not have edit access to update questions, try requesting access from the group owner");
+                return new Result<>(false, null, "You do not have edit access to update questions, try requesting access from the group owner");
             }
 
             List<Question> questions = group.getQuestions();
@@ -87,14 +88,20 @@ public class QuestionsService {
             group.setQuestions(questions);
             groupRepository.save(group);
 
-            return new Result<>(true, questions, "Questions updated successfully");
+            QuestionsResponse questionsResponse = QuestionsResponse
+                    .builder()
+                    .questions(questions)
+                    .group(group)
+                    .build();
+
+            return new Result<>(true, questionsResponse, "Questions updated successfully");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
         }
     }
 
-    public Result<List<Question>> getQuestions(@Valid GroupRequest groupRequest, User authenticatedUser) {
+    public Result<QuestionsResponse> getQuestions(@Valid GroupRequest groupRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupRepository.findById(groupRequest.getGroupId());
 
@@ -114,7 +121,7 @@ public class QuestionsService {
                     .findFirst();
 
             if (groupMember.isEmpty()) {
-                return new Result<>(true, null, "You are not part of this group");
+                return new Result<>(false, null, "You are not part of this group");
             }
 
             List<Question> questions =
@@ -123,7 +130,13 @@ public class QuestionsService {
                             .sorted(Comparator.comparingInt(Question::getQuestionIndex))
                             .toList();
 
-            return new Result<>(true, questions, "Questions fetched successfully");
+            QuestionsResponse questionsResponse = QuestionsResponse
+                    .builder()
+                    .questions(questions)
+                    .group(group)
+                    .build();
+
+            return new Result<>(true, questionsResponse, "Questions fetched successfully");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());

@@ -5,6 +5,7 @@ import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.group.GroupRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.question.GroupQuestionsRequest;
+import com.algolovers.newsletterconsole.data.model.api.response.questions.QuestionsResponse;
 import com.algolovers.newsletterconsole.service.QuestionsService;
 import com.algolovers.newsletterconsole.utils.ControllerUtils;
 import jakarta.validation.Valid;
@@ -26,16 +27,16 @@ public class QuestionsController {
     private final QuestionsService questionsService;
 
     @PostMapping("/createOrUpdateQuestions")
-    public ResponseEntity<Result<List<Question>>> createOrUpdateQuestions(@Valid @RequestBody GroupQuestionsRequest groupQuestionsRequest) {
+    public ResponseEntity<Result<QuestionsResponse>> createOrUpdateQuestions(@Valid @RequestBody GroupQuestionsRequest groupQuestionsRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Result<List<Question>> questions = questionsService.createOrUpdateQuestions(groupQuestionsRequest, user);
+        Result<QuestionsResponse> questions = questionsService.createOrUpdateQuestions(groupQuestionsRequest, user);
         return ControllerUtils.processResultForResponseWithData(questions);
     }
 
     @PostMapping("/getQuestions")
-    public ResponseEntity<Result<List<Question>>> getQuestions(@Valid @RequestBody GroupRequest groupRequest) {
+    public ResponseEntity<Result<QuestionsResponse>> getQuestions(@Valid @RequestBody GroupRequest groupRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Result<List<Question>> questions = questionsService.getQuestions(groupRequest, user);
+        Result<QuestionsResponse> questions = questionsService.getQuestions(groupRequest, user);
         return ControllerUtils.processResultForResponseWithData(questions);
     }
 

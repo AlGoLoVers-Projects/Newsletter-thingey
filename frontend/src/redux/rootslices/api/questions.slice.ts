@@ -1,6 +1,8 @@
 import {baseApiSlice} from "./base.slice";
 import {Result} from "../../../types/result";
-import {GroupRequest} from "./groups.slice";
+import {GroupData, GroupRequest} from "./groups.slice";
+import exp from "node:constants";
+import Groups from "../../../pages/dashboard/sub-pages/group/Groups";
 
 export enum QuestionType {
     TEXT = 'TEXT',
@@ -31,16 +33,21 @@ export type GroupQuestionsRequest = {
     questions: Questions
 }
 
+export type GroupQuestionsResponse = {
+    questions: Questions,
+    group: GroupData
+}
+
 export const invitationsSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        createOrUpdateQuestions: builder.mutation<Result<Questions>, GroupQuestionsRequest>({
+        createOrUpdateQuestions: builder.mutation<Result<GroupQuestionsResponse>, GroupQuestionsRequest>({
             query: (data) => ({
                 url: '/api/questions/createOrUpdateQuestions',
                 method: 'POST',
                 body: data,
             }),
         }),
-        getQuestions: builder.mutation<Result<Questions>, GroupRequest>({
+        getQuestions: builder.mutation<Result<GroupQuestionsResponse>, GroupRequest>({
             query: (data) => ({
                 url: '/api/questions/getQuestions',
                 method: 'POST',

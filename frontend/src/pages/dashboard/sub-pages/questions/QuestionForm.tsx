@@ -1,6 +1,7 @@
-import React, {useEffect} from "react";
-import { GroupRequest as GroupIdRequest} from "../../../../redux/rootslices/api/groups.slice";
+import React, {useEffect, useState} from "react";
+import {GroupData, GroupRequest as GroupIdRequest} from "../../../../redux/rootslices/api/groups.slice";
 import {
+    Questions,
     useGetQuestionsMutation
 } from "../../../../redux/rootslices/api/questions.slice";
 import {showFailureToast} from "../../../../util/toasts";
@@ -27,6 +28,9 @@ export default function QuestionForm(): React.ReactElement {
 
     const [getQuestions, {isLoading: loadingQuestions}] = useGetQuestionsMutation()
 
+    const [groupData, setGroupData] = useState<GroupData>()
+    const [questions, setQuestions] = useState<Questions>()
+
     const navigate = useNavigate()
 
     if (groupId === undefined) {
@@ -46,7 +50,8 @@ export default function QuestionForm(): React.ReactElement {
             .unwrap()
             .then((response) => {
                 if (response.success) {
-                    //response.data
+                    setGroupData(response.data.group)
+                    setQuestions(response.data.questions)
                 } else {
                     showFailureToast(response.message ?? 'Failed to load questions, try again later')
                 }
@@ -83,8 +88,11 @@ export default function QuestionForm(): React.ReactElement {
                         textAlign: 'center'
                     }}
                 >
-                    Question
+                    {groupData?.groupName ?? 'Questions'}
                 </Typography>
+                {
+
+                }
             </Box>
         </Box>
     )
