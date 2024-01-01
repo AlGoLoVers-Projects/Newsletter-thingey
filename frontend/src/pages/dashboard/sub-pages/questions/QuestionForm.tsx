@@ -12,6 +12,7 @@ import Box from "@mui/material/Box";
 import {AppBar, Toolbar} from "@mui/material";
 import {styled, useTheme} from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import FormQuestionCard from "../../../../components/elements/FormQuestionCard";
 
 
 const DrawerHeader = styled('div')(({theme}) => ({
@@ -77,8 +78,14 @@ export default function QuestionForm(): React.ReactElement {
                     </Typography>
                 </Toolbar>
             </AppBar>
-            <Box component="main"
-                 sx={{flexGrow: 1, p: 3, height: "maxContent", display: "flex", flexDirection: "column"}}>
+            <Box
+                component="main"
+                sx={{
+                    p: 2,
+                    gap: 2,
+                    width: "100%",
+                }}
+            >
                 <DrawerHeader/>
                 <Typography
                     component="h1"
@@ -91,7 +98,10 @@ export default function QuestionForm(): React.ReactElement {
                     {groupData?.groupName ?? 'Questions'}
                 </Typography>
                 {
-
+                    questions?.map((question, index) => (
+                        <FormQuestionCard onAnswerChange={(id, value) => {
+                        }} question={question}/>
+                    ))
                 }
             </Box>
         </Box>
