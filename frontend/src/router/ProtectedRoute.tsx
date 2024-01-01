@@ -1,5 +1,5 @@
-import React, {ReactNode, useEffect, useState} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
+import React, {ReactNode, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import {paths} from "./paths";
 import {useDispatch, useSelector} from "react-redux";
 import {selectAuthState} from "../redux/rootslices/data/auth-data.slice";
@@ -14,13 +14,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({children}) => {
     const authData = useSelector(selectAuthState)
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const location = useLocation();
 
     useEffect(() => {
         if (navigate !== undefined && dispatch !== undefined) {
             if (!validateAuthData(authData)) {
                 clearData(dispatch)
-                navigate(`${paths.signIn}?redirect=${encodeURIComponent(location.pathname)}`);
+                navigate(paths.signIn)
             }
         }
     }, [authData, dispatch, navigate])
