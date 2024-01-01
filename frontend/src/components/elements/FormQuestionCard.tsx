@@ -4,6 +4,8 @@ import {
     Card,
     CardContent,
     TextField,
+    Input,
+    InputLabel,
     FormControl,
     Select,
     MenuItem,
@@ -26,26 +28,17 @@ const FormQuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswerChang
             case QuestionType.TEXT:
                 return <TextField label="Answer" fullWidth />;
             case QuestionType.IMAGE:
-                // Implement image input field logic
-                return null;
+                return (
+                    <FormControl fullWidth>
+                        <Input
+                            type="file"
+                        />
+                    </FormControl>
+                )
             case QuestionType.DATE:
                 return <TextField type="date" fullWidth />;
             case QuestionType.TIME:
                 return <TextField type="time" fullWidth />;
-            case QuestionType.RADIO:
-                return (
-                    <FormControl fullWidth>
-                        <Select
-                            labelId={`radio-label-${question.id}`}
-                            label="Select Option"
-                            onChange={(e) => onAnswerChange(question.id, e.target.value)}
-                        >
-                            {question.options && question.options.map((option, index) => (
-                                <MenuItem key={index} value={option}>{option}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                );
             case QuestionType.CHECKBOX:
                 return (
                     <FormGroup>
@@ -58,27 +51,12 @@ const FormQuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswerChang
                         ))}
                     </FormGroup>
                 );
-            case QuestionType.DROPDOWN_SINGLE:
+            case QuestionType.DROPDOWN:
                 return (
                     <Select
                         labelId={`dropdown-label-${question.id}`}
                         label="Select Option"
                         fullWidth
-                        onChange={(e) => onAnswerChange(question.id, e.target.value)}
-                    >
-                        {question.options && question.options.map((option, index) => (
-                            <MenuItem key={index} value={option}>{option}</MenuItem>
-                        ))}
-                    </Select>
-                );
-            case QuestionType.DROPDOWN_MULTIPLE:
-                return (
-                    <Select
-                        labelId={`dropdown-multiple-label-${question.id}`}
-                        label="Select Options"
-                        multiple
-                        fullWidth
-                        value={[]} // Ensure that value is an array
                         onChange={(e) => onAnswerChange(question.id, e.target.value)}
                     >
                         {question.options && question.options.map((option, index) => (

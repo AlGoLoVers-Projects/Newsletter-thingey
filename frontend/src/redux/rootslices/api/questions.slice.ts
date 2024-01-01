@@ -9,13 +9,11 @@ export enum QuestionType {
     IMAGE = 'IMAGE',
     DATE = 'DATE',
     TIME = 'TIME',
-    RADIO = 'RADIO',
     CHECKBOX = 'CHECKBOX',
-    DROPDOWN_SINGLE = 'DROPDOWN_SINGLE',
-    DROPDOWN_MULTIPLE = 'DROPDOWN_MULTIPLE'
+    DROPDOWN = 'DROPDOWN',
 }
 
-export const multiOptionType = [QuestionType.RADIO, QuestionType.CHECKBOX, QuestionType.DROPDOWN_SINGLE, QuestionType.DROPDOWN_MULTIPLE]
+export const multiOptionType = [QuestionType.CHECKBOX, QuestionType.DROPDOWN]
 
 export type Question = {
     id?: string;
