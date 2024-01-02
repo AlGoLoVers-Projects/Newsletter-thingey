@@ -51,6 +51,8 @@ export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
     const groupId = state as string;
 
+    const navigator = useNavigate()
+
     const groupData: GroupData = useSelector(
         (state) => selectGroupByIdMemoized(state, groupId)
     ) ?? {} as GroupData;
@@ -107,6 +109,19 @@ export default function ManageGroup(): React.ReactElement {
                 <Typography variant="body2" color="text.secondary">
                     Group ID: {groupData.id}
                 </Typography>
+                {
+                    groupData.acceptQuestionResponse ?
+                        <Button
+                            type="button"
+                            variant="contained"
+                            color="info"
+                            sx={{mt: 3, mb: 1}}
+                            onClick={() => {navigator(`/form/${groupData.id}`)}}
+                            endIcon={<NavigateNext/>}
+                        >
+                            Fill questions
+                        </Button> : <React.Fragment/>
+                }
                 {isGroupOwner ? <RenderOwnerGroup groupData={groupData} groupUser={groupUser}/> :
                     <RenderMemberGroup groupData={groupData} canEdit={groupUser?.hasEditAccess ?? false}/>}
             </Container>
