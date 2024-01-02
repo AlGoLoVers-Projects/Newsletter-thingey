@@ -112,6 +112,11 @@ public class GroupController {
         return ControllerUtils.processResultForResponse(result);
     }
 
-    //TODO: Add controller to let group owner give edit access.
+    @PostMapping("/releaseQuestions")
+    public ResponseEntity<Result<Group>> releaseQuestions(@Valid @RequestBody GroupRequest groupRequest) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Result<Group> result = groupService.releaseQuestions(groupRequest, user);
+        return ControllerUtils.processResultForResponseWithData(result);
+    }
 
 }

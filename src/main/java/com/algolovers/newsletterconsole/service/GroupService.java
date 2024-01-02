@@ -4,23 +4,18 @@ import com.algolovers.newsletterconsole.data.entity.groups.Group;
 import com.algolovers.newsletterconsole.data.entity.groups.GroupMember;
 import com.algolovers.newsletterconsole.data.entity.groups.Invitation;
 import com.algolovers.newsletterconsole.data.entity.groups.InvitationId;
+import com.algolovers.newsletterconsole.data.entity.reponse.ResponseData;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.group.*;
-import com.algolovers.newsletterconsole.repository.GroupMemberRepository;
-import com.algolovers.newsletterconsole.repository.GroupRepository;
-import com.algolovers.newsletterconsole.repository.InvitationRepository;
-import com.algolovers.newsletterconsole.repository.UserRepository;
+import com.algolovers.newsletterconsole.repository.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +26,7 @@ public class GroupService {
     private final InvitationRepository invitationRepository;
     private final UserRepository userRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final ResponseRepository responseRepository;
 
     @Transactional(rollbackFor = {Exception.class})
     public Result<Group> provisionNewGroup(@Valid GroupCreationRequest groupCreationRequest, @Valid User groupOwner) {
@@ -41,6 +37,7 @@ public class GroupService {
                 .groupDescription(groupCreationRequest.getGroupDescription())
                 .groupMembers(new HashSet<>())
                 .groupOwner(groupOwner)
+                .acceptQuestionResponse(false)
                 .build();
 
         GroupMember groupOwnerMember = new GroupMember();
@@ -410,6 +407,49 @@ public class GroupService {
             groupRepository.delete(group);
 
             return new Result<>(true, null, "Group has been deleted successfully");
+        } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public Result<Group> releaseQuestions(@Valid GroupRequest groupRequest, User authenticatedUser) {
+        try {
+            Optional<Group> optionalGroup = groupRepository.findById(groupRequest.getGroupId());
+
+            if (optionalGroup.isEmpty()) {
+                return new Result<>(false, null, "The provided group was not found");
+            }
+
+            Group group = optionalGroup.get();
+
+            Optional<GroupMember> groupMember = group
+                    .getGroupMembers()
+                    .stream()
+                    .filter(member ->
+                            authenticatedUser
+                                    .getEmailAddress()
+                                    .equals(member.getUser().getEmailAddress()))
+                    .findFirst();
+
+            if (groupMember.isEmpty()) {
+                return new Result<>(false, null, "You are not part of this group");
+            }
+
+            if (!groupMember.get().isHasEditAccess()) {
+                return new Result<>(false, null, "You do not have edit access to release questions");
+            }
+
+            group.setAcceptQuestionResponse(true);
+
+            List<ResponseData> questionResponses = group.getQuestionResponses();
+            responseRepository.deleteAll(questionResponses);
+            questionResponses.clear();
+
+            //TODO: Push email to everyone to fill form.
+            group = groupRepository.save(group);
+            return new Result<>(true, group, "Users have been requested to fill out the form. Check back soon to generate news letter");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());

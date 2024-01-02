@@ -51,6 +51,8 @@ public class Group {
     @OneToMany
     private List<Question> questions;
 
+    private boolean acceptQuestionResponse; //FALSE -> set to true when questions are released. Form collects data then and saves response. response is cleared during any shift of this value. clicking on publish will set this value back to false.
+
     @OneToMany
     private List<ResponseData> questionResponses;
 
