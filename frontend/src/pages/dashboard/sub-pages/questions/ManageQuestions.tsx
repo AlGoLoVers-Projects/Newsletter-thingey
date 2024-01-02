@@ -129,7 +129,7 @@ function ManageQuestionsComponent(): React.ReactElement {
             })
             .catch((result) => {
                 console.log(result)
-                showFailureToast(result.message ?? "Failed to update questions")
+                showFailureToast(result.data.message ?? "Failed to update questions")
             })
     }
 

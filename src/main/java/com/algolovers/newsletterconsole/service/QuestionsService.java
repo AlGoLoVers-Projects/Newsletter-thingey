@@ -41,6 +41,10 @@ public class QuestionsService {
 
             Group group = optionalGroup.get();
 
+            if (group.isAcceptQuestionResponse()) {
+                return new Result<>(false, null, "Cannot accept changes to questions until newsletter is published");
+            }
+
             Optional<GroupMember> groupMember = group
                     .getGroupMembers()
                     .stream()

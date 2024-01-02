@@ -14,7 +14,7 @@ import {
     useDeleteGroupMutation,
     useEditGroupMutation,
     useLeaveGroupMutation,
-    useRemoveUserMutation, useUpdateEditAccessToUserMutation,
+    useRemoveUserMutation, useUpdateEditAccessToUserMutation, useReleaseQuestionsMutation,
 } from "../../../../redux/rootslices/api/groups.slice";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -40,7 +40,11 @@ import {
     useInviteUserToGroupMutation,
     useListAllInvitationsByGroupMutation, useRemoveInvitationFromGroupMutation
 } from "../../../../redux/rootslices/api/invitations.slice";
-import {InvitationsActionType, InvitationsProvider, useInvitations} from "../../../../components/elements/InvitationsProvider";
+import {
+    InvitationsActionType,
+    InvitationsProvider,
+    useInvitations
+} from "../../../../components/elements/InvitationsProvider";
 import UserInvitationListCard from "../../../../components/elements/UserInvitationListCard";
 
 export default function ManageGroup(): React.ReactElement {
@@ -109,10 +113,14 @@ export default function ManageGroup(): React.ReactElement {
 
 function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): React.ReactElement {
     const groupData = props.groupData;
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [leaveGroup, {isLoading}] = useLeaveGroupMutation()
+    const [releaseQuestions] = useReleaseQuestionsMutation()
+
     const dialogRef = useRef<AlertDialogRef>(null);
+    const releaseQuestionRef = useRef<AlertDialogRef>(null);
 
     const handleLeaveGroup = () => {
         const data: GroupRequest = {
@@ -131,6 +139,27 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
             })
             .catch((result) => {
                 showFailureToast(result.data.message ?? "Failed to leave group")
+            })
+    }
+
+    const handleReleaseQuestions = () => {
+        const request: GroupRequest = {
+            groupId: groupData.id,
+        }
+
+        releaseQuestions(request)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    dispatch(updateSingleGroupData({updatedData: response.data}))
+                    showSuccessToast(response.message ?? 'Questions released successfully')
+
+                } else {
+                    showFailureToast(response.message ?? 'Failed to release questions')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.data.message ?? "Could not release questions")
             })
     }
 
@@ -155,6 +184,15 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
                     acceptLabel='Leave'
 
                     onAccept={handleLeaveGroup}
+                />
+                <AlertDialog
+                    ref={releaseQuestionRef}
+                    title="Release questions?"
+                    message="Are you sure you want to release questions for this month, this is an irrevrersible action. Questions can be requested again only after newsletter is generated?"
+                    acceptLabel='Release'
+                    onAccept={() => {
+                        handleReleaseQuestions()
+                    }}
                 />
                 <Typography component="h1" variant="h6" sx={{
                     fontWeight: 'bold',
@@ -205,14 +243,30 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
                 <Box sx={{flex: 1}}/>
                 {
                     props.canEdit ?
-                        <Button
-                            type="button"
-                            variant="outlined"
-                            sx={{mt: 3, mb: 1}}
-                            onClick={() => navigate(authorizedPaths.manageQuestions, {state: groupData.id})}
-                        >
-                            Manage Questions
-                        </Button> : <React.Fragment/>
+                        <React.Fragment>
+                            <Button
+                                type="submit"
+                                variant="outlined"
+                                disabled={groupData.acceptQuestionResponse}
+                                sx={{mt: 3, mb: 1}}
+                                onClick={() => {
+                                    releaseQuestionRef.current?.open()
+                                }}
+                            >
+                                Publish Questions
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="contained"
+                                sx={{mt: 3, mb: 1}}
+                                disabled={groupData.acceptQuestionResponse}
+                                endIcon={<NavigateNext/>}
+                                onClick={() => navigate(authorizedPaths.manageQuestions, {state: groupData.id})}
+                            >
+                                Manage Questions
+                            </Button>
+                        </React.Fragment>
+                        : <React.Fragment/>
                 }
                 <Button
                     type="submit"
@@ -243,6 +297,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const [inviteUser, {isLoading: isInvitingUser}] = useInviteUserToGroupMutation()
     const [listInvitations] = useListAllInvitationsByGroupMutation()
     const [deleteInvitation] = useRemoveInvitationFromGroupMutation()
+    const [releaseQuestions] = useReleaseQuestionsMutation()
 
     const [groupNameError, setGroupNameError] = useState<string>('')
     const [groupDescError, setGroupDescError] = useState<string>('')
@@ -254,6 +309,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const generateNewsletterDialogRef = useRef<AlertDialogRef>(null);
     const invitationDialogRef = useRef<InvitationDialogRef>(null);
     const deleteInvitationRef = useRef<AlertDialogRef>(null);
+    const releaseQuestionRef = useRef<AlertDialogRef>(null);
 
     const pullInvitations = () => {
 
@@ -276,6 +332,27 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
             })
             .catch((result) => {
                 showFailureToast(result.message ?? "Could not retrieve invitations")
+            })
+    }
+
+    const handleReleaseQuestions = () => {
+        const request: GroupRequest = {
+            groupId: groupData.id,
+        }
+
+        releaseQuestions(request)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    dispatch(updateSingleGroupData({updatedData: response.data}))
+                    showSuccessToast(response.message ?? 'Questions released successfully')
+
+                } else {
+                    showFailureToast(response.message ?? 'Failed to release questions')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.data.message ?? "Could not release questions")
             })
     }
 
@@ -632,7 +709,6 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     gap: 2,
                 }}>
                     <InvitationDialog ref={invitationDialogRef} onAccept={(email) => {
-                        console.log(email)
                         handleInvitation(email)
                     }}/>
                     <Button
@@ -671,13 +747,22 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     flexDirection: "row",
                     gap: 2,
                 }}>
+                    <AlertDialog
+                        ref={releaseQuestionRef}
+                        title="Release questions?"
+                        message="Are you sure you want to release questions for this month, this is an irrevrersible action. Questions can be requested again only after newsletter is generated?"
+                        acceptLabel='Release'
+                        onAccept={() => {
+                            handleReleaseQuestions()
+                        }}
+                    />
                     <Button
                         type="submit"
                         variant="outlined"
-                        disabled={isDeleting || isLoading}
+                        disabled={isDeleting || isLoading || groupData.acceptQuestionResponse}
                         sx={{mt: 3, mb: 1}}
                         onClick={() => {
-                            //TODO: Alert dialog, confirm. Publish question by making request to API.
+                            releaseQuestionRef.current?.open()
                         }}
                     >
                         Publish Questions
@@ -685,7 +770,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     <Button
                         type="submit"
                         variant="contained"
-                        disabled={isDeleting || isLoading}
+                        disabled={isDeleting || isLoading || groupData.acceptQuestionResponse}
                         sx={{mt: 3, mb: 1}}
                         endIcon={<NavigateNext/>}
                         onClick={() => navigate(authorizedPaths.manageQuestions, {state: groupData.id})}

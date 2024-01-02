@@ -98,7 +98,14 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
                 body: data
             }),
         }),
+        releaseQuestions: builder.mutation<Result<GroupData>, GroupRequest>({
+            query: (data) => ({
+                url: '/api/group/releaseQuestions',
+                method: 'POST',
+                body: data
+            })
+        })
     }),
 });
 
-export const {useGetGroupsMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation, useLeaveGroupMutation, useUpdateEditAccessToUserMutation, useRemoveUserMutation} = groupsSlice;
+export const {useGetGroupsMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation, useLeaveGroupMutation, useUpdateEditAccessToUserMutation, useRemoveUserMutation, useReleaseQuestionsMutation} = groupsSlice;

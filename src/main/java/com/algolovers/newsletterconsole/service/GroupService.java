@@ -4,6 +4,7 @@ import com.algolovers.newsletterconsole.data.entity.groups.Group;
 import com.algolovers.newsletterconsole.data.entity.groups.GroupMember;
 import com.algolovers.newsletterconsole.data.entity.groups.Invitation;
 import com.algolovers.newsletterconsole.data.entity.groups.InvitationId;
+import com.algolovers.newsletterconsole.data.entity.questions.Question;
 import com.algolovers.newsletterconsole.data.entity.reponse.ResponseData;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
@@ -439,6 +440,12 @@ public class GroupService {
 
             if (!groupMember.get().isHasEditAccess()) {
                 return new Result<>(false, null, "You do not have edit access to release questions");
+            }
+
+            List<Question> questions = group.getQuestions();
+
+            if(questions.isEmpty()) {
+                return new Result<>(false, null, "Please add questions before releasing question form");
             }
 
             group.setAcceptQuestionResponse(true);
