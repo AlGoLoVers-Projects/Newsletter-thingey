@@ -9,6 +9,12 @@ export type GroupMember = {
 
 export type GroupOwner = UserData;
 
+export type ResponseData = {
+    id: string;
+    user: UserData;
+    responseDate: string;
+}
+
 export type GroupData = {
     id: string;
     groupName: string;
@@ -16,6 +22,8 @@ export type GroupData = {
     groupOwner: GroupOwner;
     groupMembers: GroupMember[];
     updatedAt: string | null;
+    acceptQuestionResponse: boolean;
+    responseData: ResponseData
 };
 
 export type GroupDataRequest = {

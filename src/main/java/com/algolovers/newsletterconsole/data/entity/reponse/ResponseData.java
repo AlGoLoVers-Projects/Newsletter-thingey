@@ -22,6 +22,7 @@ public class ResponseData {
     private String id;
 
     @ManyToOne
+    @JsonIgnore
     Group group;
 
     @ManyToOne

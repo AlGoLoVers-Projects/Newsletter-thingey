@@ -110,33 +110,61 @@ export default function QuestionForm(): React.ReactElement {
                     Fill out this form for this month's newsletter edition.
                 </Typography>
                 {
-                    questions?.map((question, index) => (
-                        <FormQuestionCard
-                            onAnswerChange={(id, value) => {
-                            }}
-                            question={question}
-                            index={index}/>
-                    ))
+                    groupData?.acceptQuestionResponse ?
+                        <React.Fragment>
+                            {
+                                questions?.map((question, index) => (
+                                    <FormQuestionCard
+                                        onAnswerChange={(id, value) => {
+                                        }}
+                                        question={question}
+                                        index={index}/>
+                                ))
+                            }
+                            <Box sx={{
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "row",
+                            }}>
+                                <Box sx={{flex: 1}}/>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    sx={{
+                                        mt: 2,
+                                        mb: 3,
+                                        pl: 5,
+                                        pr: 5,
+                                    }}
+                                >
+                                    Submit
+                                </Button>
+                            </Box>
+                        </React.Fragment> :
+                        <React.Fragment>
+                            <Typography
+                                component="h1"
+                                variant="h6"
+                                sx={{
+                                    textAlign: 'center',
+                                }}
+                            >
+                                Sorry, this form is closed now. Please check back later or reach out to your group owner/editor for a form.
+                            </Typography>
+                            <Typography
+                                component="h1"
+                                variant="h6"
+                                color="text.secondary"
+                                sx={{
+                                    textAlign: 'center',
+                                    mb: 5
+                                }}
+                            >
+                                Contact <a href={`mailto:${groupData?.groupOwner.emailAddress}`}>{groupData?.groupOwner.emailAddress}</a> for more information
+                            </Typography>
+                        </React.Fragment>
+
                 }
-                <Box sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                }}>
-                    <Box sx={{flex: 1}}/>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        sx={{
-                            mt: 2,
-                            mb: 3,
-                            pl: 5,
-                            pr: 5,
-                        }}
-                    >
-                        Submit
-                    </Button>
-                </Box>
             </Box>
         </Box>
     )

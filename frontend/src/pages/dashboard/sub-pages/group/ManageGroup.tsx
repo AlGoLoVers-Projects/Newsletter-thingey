@@ -673,6 +673,17 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                 }}>
                     <Button
                         type="submit"
+                        variant="outlined"
+                        disabled={isDeleting || isLoading}
+                        sx={{mt: 3, mb: 1}}
+                        onClick={() => {
+                            //TODO: Alert dialog, confirm. Publish question by making request to API.
+                        }}
+                    >
+                        Publish Questions
+                    </Button>
+                    <Button
+                        type="submit"
                         variant="contained"
                         disabled={isDeleting || isLoading}
                         sx={{mt: 3, mb: 1}}

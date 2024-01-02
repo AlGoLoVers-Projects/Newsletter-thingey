@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -49,9 +50,10 @@ public class Group {
     private LocalDateTime updatedAt;
 
     @OneToMany
+    @JsonIgnore
     private List<Question> questions;
 
-    private boolean acceptQuestionResponse; //FALSE -> set to true when questions are released. Form collects data then and saves response. response is cleared during any shift of this value. clicking on publish will set this value back to false.
+    private boolean acceptQuestionResponse = false; //FALSE -> set to true when questions are released. Form collects data then and saves response. response is cleared during any shift of this value. clicking on publish will set this value back to false.
 
     @OneToMany
     private List<ResponseData> questionResponses;
