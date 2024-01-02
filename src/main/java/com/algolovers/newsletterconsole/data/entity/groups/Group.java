@@ -1,6 +1,7 @@
 package com.algolovers.newsletterconsole.data.entity.groups;
 
 import com.algolovers.newsletterconsole.data.entity.questions.Question;
+import com.algolovers.newsletterconsole.data.entity.reponse.ResponseData;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -49,6 +50,9 @@ public class Group {
 
     @OneToMany
     private List<Question> questions;
+
+    @OneToMany
+    private List<ResponseData> questionResponses;
 
     @Override
     public String toString() {

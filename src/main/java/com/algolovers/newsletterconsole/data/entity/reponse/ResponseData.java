@@ -5,7 +5,9 @@ import com.algolovers.newsletterconsole.data.entity.groups.Group;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Immutable;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -13,6 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "response_data")
 @Data
+@Immutable
 public class ResponseData {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,8 +28,9 @@ public class ResponseData {
     User user;
 
     @CreationTimestamp
-    private LocalDateTime verificationTokenExpirationDate;
+    private LocalDateTime responseDate;
 
+    @JsonIgnore
     @Convert(converter = QuestionResponseSetConverter.class)
     Set<QuestionResponse> questionResponses;
 
