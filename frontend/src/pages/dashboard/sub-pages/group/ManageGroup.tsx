@@ -104,6 +104,9 @@ export default function ManageGroup(): React.ReactElement {
                 >
                     {isGroupOwner ? `Manage` : ''} {groupData.groupName}
                 </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    Group ID: {groupData.id}
+                </Typography>
                 {isGroupOwner ? <RenderOwnerGroup groupData={groupData} groupUser={groupUser}/> :
                     <RenderMemberGroup groupData={groupData} canEdit={groupUser?.hasEditAccess ?? false}/>}
             </Container>
