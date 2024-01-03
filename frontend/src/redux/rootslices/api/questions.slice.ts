@@ -33,7 +33,8 @@ export type GroupQuestionsRequest = {
 
 export type GroupQuestionsResponse = {
     questions: Questions,
-    group: GroupData
+    group: GroupData,
+    questionsAlreadyTaken?: boolean
 }
 
 export const invitationsSlice = baseApiSlice.injectEndpoints({

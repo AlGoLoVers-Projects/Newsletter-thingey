@@ -110,6 +110,7 @@ export default function ManageGroup(): React.ReactElement {
                     Group ID: {groupData.id}
                 </Typography>
                 {
+                    //TODO: Either fill questions in form, or close form after user fills it.
                     groupData.acceptQuestionResponse ?
                         <Button
                             type="button"

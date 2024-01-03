@@ -32,6 +32,7 @@ export default function QuestionForm(): React.ReactElement {
 
     const [groupData, setGroupData] = useState<GroupData>()
     const [questions, setQuestions] = useState<Questions>()
+    const [questionsAlreadyTaken, setQuestionsAlreadyTaken] = useState<boolean>()
 
     const navigate = useNavigate()
 
@@ -54,6 +55,7 @@ export default function QuestionForm(): React.ReactElement {
                 if (response.success) {
                     setGroupData(response.data.group)
                     setQuestions(response.data.questions)
+                    setQuestionsAlreadyTaken(response.data.questionsAlreadyTaken)
                 } else {
                     showFailureToast(response.message ?? 'Failed to load questions, try again later')
                 }
@@ -116,6 +118,7 @@ export default function QuestionForm(): React.ReactElement {
                                 questions?.map((question, index) => (
                                     <FormQuestionCard
                                         onAnswerChange={(id, value) => {
+
                                         }}
                                         question={question}
                                         index={index}/>
@@ -130,6 +133,7 @@ export default function QuestionForm(): React.ReactElement {
                                 <Button
                                     type="submit"
                                     variant="contained"
+                                    disabled={loadingQuestions}
                                     sx={{
                                         mt: 2,
                                         mb: 3,
@@ -149,7 +153,12 @@ export default function QuestionForm(): React.ReactElement {
                                     textAlign: 'center',
                                 }}
                             >
-                                Sorry, this form is closed now. Please check back later or reach out to your group owner/editor for a form.
+                                {
+                                    questionsAlreadyTaken ?
+                                        'You have already submitted this form, check back later.' :
+                                        'Sorry, this form is closed now. Please check back later or reach out to your group owner/editor for a form.'
+                                }
+
                             </Typography>
                             <Typography
                                 component="h1"
@@ -160,10 +169,11 @@ export default function QuestionForm(): React.ReactElement {
                                     mb: 5
                                 }}
                             >
-                                Contact <a href={`mailto:${groupData?.groupOwner.emailAddress}`}>{groupData?.groupOwner.emailAddress}</a> for more information
+                                Contact <a
+                                href={`mailto:${groupData?.groupOwner.emailAddress}`}>{groupData?.groupOwner.emailAddress}</a> for
+                                more information
                             </Typography>
                         </React.Fragment>
-
                 }
             </Box>
         </Box>

@@ -134,10 +134,15 @@ public class QuestionsService {
                             .sorted(Comparator.comparingInt(Question::getQuestionIndex))
                             .toList();
 
+            boolean userExists = group.getQuestionResponses()
+                    .stream()
+                    .anyMatch(responseData -> responseData.getUser().getEmailAddress().equals(authenticatedUser.getEmailAddress()));
+
             QuestionsResponse questionsResponse = QuestionsResponse
                     .builder()
                     .questions(questions)
                     .group(group)
+                    .questionsAlreadyTaken(userExists)
                     .build();
 
             return new Result<>(true, questionsResponse, "Questions fetched successfully");

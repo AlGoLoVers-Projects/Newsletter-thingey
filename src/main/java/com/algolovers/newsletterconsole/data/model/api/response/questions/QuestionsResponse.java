@@ -16,4 +16,5 @@ import java.util.List;
 public class QuestionsResponse {
     List<Question> questions;
     Group group;
+    Boolean questionsAlreadyTaken;
 }

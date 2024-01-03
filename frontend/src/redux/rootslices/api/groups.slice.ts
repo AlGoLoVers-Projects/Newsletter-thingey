@@ -23,7 +23,7 @@ export type GroupData = {
     groupMembers: GroupMember[];
     updatedAt: string | null;
     acceptQuestionResponse: boolean;
-    responseData: ResponseData
+    responseData: ResponseData[]
 };
 
 export type GroupDataRequest = {

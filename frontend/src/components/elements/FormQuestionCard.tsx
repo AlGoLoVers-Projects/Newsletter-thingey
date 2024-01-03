@@ -23,6 +23,11 @@ interface QuestionCardProps {
     onAnswerChange: (id: string | undefined, value: any) => void;
 }
 
+export type FormQuestionResponse = {
+    id: string;
+    response: string;
+}
+
 const FormQuestionCard: React.FC<QuestionCardProps> = ({question, index, onAnswerChange}) => {
     const renderInputField = () => {
         switch (question.questionType) {
