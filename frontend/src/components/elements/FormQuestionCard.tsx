@@ -38,12 +38,12 @@ const FormQuestionCard: React.FC<QuestionCardProps> = ({question, index, onAnswe
                         fullWidth
                         multiline
                         rows={2}
-                        sx={{ mb: 2, mt: 1 }}
+                        sx={{mb: 2, mt: 1}}
                     />
                 );
             case QuestionType.IMAGE:
                 return (
-                    <FormControl fullWidth sx={{ mb: 2, mt: 1 }}>
+                    <FormControl fullWidth sx={{mb: 2, mt: 1}}>
                         <Input
                             type="file"
                             color="secondary"
@@ -51,16 +51,16 @@ const FormQuestionCard: React.FC<QuestionCardProps> = ({question, index, onAnswe
                     </FormControl>
                 );
             case QuestionType.DATE:
-                return <TextField type="date" fullWidth sx={{ mb: 2, mt: 1 }} />;
+                return <TextField type="date" fullWidth sx={{mb: 2, mt: 1}}/>;
             case QuestionType.TIME:
-                return <TextField type="time" fullWidth sx={{ mb: 2, mt: 1 }} />;
+                return <TextField type="time" fullWidth sx={{mb: 2, mt: 1}}/>;
             case QuestionType.CHECKBOX:
                 return (
-                    <FormGroup sx={{ mb: 2, mt: 1 }}>
+                    <FormGroup sx={{mb: 2, mt: 1}}>
                         {question.options && question.options.map((option, index) => (
                             <FormControlLabel
                                 key={index}
-                                control={<Checkbox />}
+                                control={<Checkbox/>}
                                 label={option}
                             />
                         ))}
@@ -72,8 +72,7 @@ const FormQuestionCard: React.FC<QuestionCardProps> = ({question, index, onAnswe
                         labelId={`dropdown-label-${question.id}`}
                         label="Select Option"
                         fullWidth
-                        onChange={(e) => onAnswerChange(question.id, e.target.value)}
-                        sx={{ mb: 2, mt: 1 }}
+                        sx={{mb: 2, mt: 1}}
                     >
                         {question.options && question.options.map((option, index) => (
                             <MenuItem key={index} value={option}>{option}</MenuItem>
@@ -86,10 +85,10 @@ const FormQuestionCard: React.FC<QuestionCardProps> = ({question, index, onAnswe
     };
 
     return (
-        <Card sx={{ marginBottom: 2, width: '100%' }}>
+        <Card sx={{marginBottom: 2, width: '100%'}}>
             <CardContent>
                 <Box display="flex" alignItems="center">
-                    <Avatar sx={{ marginRight: '16px', backgroundColor: '#ccc' }}>
+                    <Avatar sx={{marginRight: '16px', backgroundColor: '#ccc'}}>
                         <Typography variant="body1" align="center">{index + 1}</Typography>
                     </Avatar>
                     <Box flex="1">
