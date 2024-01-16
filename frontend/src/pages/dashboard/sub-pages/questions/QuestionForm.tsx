@@ -134,6 +134,7 @@ export default function QuestionForm(): React.ReactElement {
                                         onAnswerChange={(response) => {
                                             handleAnswerChange(response, index)
                                         }}
+                                        key={index}
                                         question={question}
                                         index={index}/>
                                 ))

@@ -35,6 +35,7 @@ export type FormQuestionResponse =
 
 const FormQuestionCard: React.FC<QuestionCardProps> = ({ question, index, onAnswerChange }) => {
     const [selectedCheckboxOptions, setSelectedCheckboxOptions] = useState<string[]>([]);
+    const [selectedValue, setSelectedValue] = useState<string>('');
 
     const handleAnswerChange = (value: any, type: QuestionType) => {
         let response: FormQuestionResponse;
@@ -49,6 +50,7 @@ const FormQuestionCard: React.FC<QuestionCardProps> = ({ question, index, onAnsw
             case QuestionType.DATE:
             case QuestionType.TIME:
             case QuestionType.DROPDOWN:
+                setSelectedValue(value)
                 response = { type, response: value as SingleOptionResponse, id: question.id ?? '' };
                 break;
             case QuestionType.CHECKBOX:
@@ -140,6 +142,7 @@ const FormQuestionCard: React.FC<QuestionCardProps> = ({ question, index, onAnsw
                         label="Select Option"
                         fullWidth
                         sx={{ mb: 2, mt: 1 }}
+                        value={selectedValue}
                         onChange={(event) => handleAnswerChange(event.target.value, question.questionType)}
                     >
                         {question.options && question.options.map((option, index) => (
