@@ -31,7 +31,8 @@ export type FormQuestionResponse =
     | { type: QuestionType.TEXT; response: TextResponse; id: string }
     | { type: QuestionType.IMAGE; response: ImageResponse; id: string }
     | { type: QuestionType.DATE | QuestionType.TIME | QuestionType.DROPDOWN; response: SingleOptionResponse; id: string }
-    | { type: QuestionType.CHECKBOX; response: MultipleOptionsResponse; id: string };
+    | { type: QuestionType.CHECKBOX; response: MultipleOptionsResponse; id: string }
+    | undefined;
 
 const FormQuestionCard: React.FC<QuestionCardProps> = ({ question, index, onAnswerChange }) => {
     const [selectedCheckboxOptions, setSelectedCheckboxOptions] = useState<string[]>([]);

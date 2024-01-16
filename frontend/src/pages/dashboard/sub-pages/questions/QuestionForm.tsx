@@ -45,6 +45,11 @@ export default function QuestionForm(): React.ReactElement {
         handleGetQuestions()
     }, []);
 
+    useEffect(() => {
+        let length = questions?.length ?? 0
+        setFormResponses(Array.from({ length }, () => undefined))
+    }, [questions]);
+
     const handleGetQuestions = () => {
         const request: GroupIdRequest = {
             groupId: groupId ?? ''
