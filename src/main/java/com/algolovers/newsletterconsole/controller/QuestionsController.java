@@ -1,7 +1,6 @@
 package com.algolovers.newsletterconsole.controller;
 
 import com.algolovers.newsletterconsole.data.entity.groups.Group;
-import com.algolovers.newsletterconsole.data.entity.questions.Question;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.group.GroupRequest;
@@ -42,8 +41,9 @@ public class QuestionsController {
 
     @PostMapping("/submitResponses")
     public ResponseEntity<Result<Group>> submitResponses(@RequestBody FormDataResponse formDataResponse) {
-        System.out.println(formDataResponse);
-        return ControllerUtils.processResultForResponseWithData(new Result<>(true, null, null));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Result<Group> result = questionsService.submitResponses(formDataResponse, user);
+        return ControllerUtils.processResultForResponseWithData(result);
     }
 
 }

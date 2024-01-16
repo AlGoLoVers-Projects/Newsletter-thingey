@@ -33,6 +33,7 @@ public class ResponseData {
 
     @JsonIgnore
     @Convert(converter = QuestionResponseSetConverter.class)
+    @Column(length = 2500)
     Set<QuestionResponse> questionResponses;
 
 }
