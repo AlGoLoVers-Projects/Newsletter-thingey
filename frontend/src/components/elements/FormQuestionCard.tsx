@@ -55,7 +55,6 @@ const FormQuestionCard: React.FC<QuestionCardProps> = ({ question, index, onAnsw
                 response = { type, response: value as SingleOptionResponse, id: question.id ?? '' };
                 break;
             case QuestionType.CHECKBOX:
-                console.log(value)
                 const checkboxOptions = Array.isArray(value)
                     ? value.map((v) => v.toString())
                     : [value.toString()];
