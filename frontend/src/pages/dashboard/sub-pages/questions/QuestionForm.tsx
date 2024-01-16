@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {GroupData, GroupRequest as GroupIdRequest} from "../../../../redux/rootslices/api/groups.slice";
 import {
-    Questions,
+    Questions, QuestionType,
     useGetQuestionsMutation
 } from "../../../../redux/rootslices/api/questions.slice";
 import {showFailureToast} from "../../../../util/toasts";
@@ -14,6 +14,7 @@ import {styled, useTheme} from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import FormQuestionCard, {FormQuestionResponse} from "../../../../components/elements/FormQuestionCard";
 import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
 
 
 const DrawerHeader = styled('div')(({theme}) => ({
@@ -23,6 +24,60 @@ const DrawerHeader = styled('div')(({theme}) => ({
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
 }));
+
+const validateData = (responses: FormQuestionResponse[]): string[] => {
+    const errors: string[] = [];
+
+    for (let i = 0; i < responses.length; i++) {
+        const response = responses[i];
+        const questionIndex = i + 1; // Question index is 1-based
+
+        if(!response) {
+            errors.push(`Question ${questionIndex} cannot be empty.`);
+            continue;
+        }
+
+        switch (response.type) {
+            case QuestionType.TEXT:
+                if (response.response.trim() === '') {
+                    errors.push(`Question ${questionIndex} cannot be empty.`);
+                }
+                continue;
+
+            case QuestionType.IMAGE:
+                if (!(response.response instanceof File) || !response.response.type.startsWith('image/')) {
+                    errors.push(`Question ${questionIndex} should have a valid image file.`);
+                }
+                continue;
+
+            case QuestionType.DATE:
+                if (response.response === null || response.response.trim() === '') {
+                    errors.push(`Please choose a date for Question ${questionIndex}.`);
+                }
+                continue;
+
+            case QuestionType.TIME:
+                if (response.response === null || response.response.trim() === '') {
+                    errors.push(`Please choose a time for Question ${questionIndex}.`);
+                }
+                continue;
+
+            case QuestionType.DROPDOWN:
+                if (response.response === null || response.response.trim() === '') {
+                    errors.push(`Please choose an option for Question ${questionIndex}.`);
+                }
+                continue;
+
+            case QuestionType.CHECKBOX:
+                if (!Array.isArray(response.response) || response.response.length === 0) {
+                    errors.push(`Please choose at least one option for Question ${questionIndex}.`);
+                }
+        }
+    }
+
+    return errors;
+};
+
 
 export default function QuestionForm(): React.ReactElement {
     const {groupId} = useParams();
@@ -34,6 +89,7 @@ export default function QuestionForm(): React.ReactElement {
     const [questions, setQuestions] = useState<Questions>()
     const [questionsAlreadyTaken, setQuestionsAlreadyTaken] = useState<boolean>()
     const [formResponses, setFormResponses] = useState<FormQuestionResponse[]>([]);
+    const [errors, setErrors] = useState<string[]>([]);
 
     const navigate = useNavigate()
 
@@ -46,9 +102,17 @@ export default function QuestionForm(): React.ReactElement {
     }, []);
 
     useEffect(() => {
-        let length = questions?.length ?? 0
-        setFormResponses(Array.from({ length }, () => undefined))
+        const initialResponses: FormQuestionResponse[] = (questions ?? []).map((question) => {
+            return {
+                type: question.questionType,
+                response: '',
+                id: question.id ?? '',
+            } as FormQuestionResponse;
+        });
+
+        setFormResponses(initialResponses);
     }, [questions]);
+
 
     const handleGetQuestions = () => {
         const request: GroupIdRequest = {
@@ -82,6 +146,15 @@ export default function QuestionForm(): React.ReactElement {
 
 
     const handleSubmit = () => {
+        let errors = validateData(formResponses)
+        setErrors(errors)
+
+        if(errors.length === 0) {
+            //TODO: send to backend
+        } else {
+            showFailureToast('There are error(s), please handle them')
+        }
+
         console.log("Form Responses:", formResponses);
     };
 
@@ -130,6 +203,20 @@ export default function QuestionForm(): React.ReactElement {
                 >
                     Fill out this form for this month's newsletter edition.
                 </Typography>
+                {errors && errors.length !== 0 && (
+                    <Alert severity="error" sx={{mt: 2, mb: 2}}>
+                        <Typography variant="body1">Validation Errors:</Typography>
+                        <ul>
+                            {errors.map((error, index) => (
+                                <React.Fragment key={index}>
+                                    {error && (
+                                        <li>{error}</li>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </ul>
+                    </Alert>
+                )}
                 {
                     groupData?.acceptQuestionResponse ?
                         <React.Fragment>
