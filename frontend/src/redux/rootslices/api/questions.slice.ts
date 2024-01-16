@@ -1,8 +1,7 @@
 import {baseApiSlice} from "./base.slice";
 import {Result} from "../../../types/result";
 import {GroupData, GroupRequest} from "./groups.slice";
-import exp from "node:constants";
-import Groups from "../../../pages/dashboard/sub-pages/group/Groups";
+import {FormQuestionResponse} from "../../../components/elements/FormQuestionCard";
 
 export enum QuestionType {
     TEXT = 'TEXT',
@@ -37,6 +36,11 @@ export type GroupQuestionsResponse = {
     questionsAlreadyTaken?: boolean
 }
 
+export type FormDataResponse = {
+    responses: FormQuestionResponse[];
+    groupId: string;
+};
+
 export const invitationsSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({
         createOrUpdateQuestions: builder.mutation<Result<GroupQuestionsResponse>, GroupQuestionsRequest>({
@@ -53,7 +57,14 @@ export const invitationsSlice = baseApiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        submitResponses: builder.mutation<Result<GroupData>, FormDataResponse>({
+            query: (data) => ({
+                url: '/api/questions/submitResponses',
+                method: 'POST',
+                body: data,
+            }),
+        }),
     }),
 });
 
-export const {useCreateOrUpdateQuestionsMutation, useGetQuestionsMutation} = invitationsSlice;
+export const {useCreateOrUpdateQuestionsMutation, useGetQuestionsMutation, useSubmitResponsesMutation} = invitationsSlice;

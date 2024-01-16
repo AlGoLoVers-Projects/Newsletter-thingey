@@ -1,10 +1,12 @@
 package com.algolovers.newsletterconsole.controller;
 
+import com.algolovers.newsletterconsole.data.entity.groups.Group;
 import com.algolovers.newsletterconsole.data.entity.questions.Question;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.group.GroupRequest;
 import com.algolovers.newsletterconsole.data.model.api.request.question.GroupQuestionsRequest;
+import com.algolovers.newsletterconsole.data.model.api.response.questions.FormDataResponse;
 import com.algolovers.newsletterconsole.data.model.api.response.questions.QuestionsResponse;
 import com.algolovers.newsletterconsole.service.QuestionsService;
 import com.algolovers.newsletterconsole.utils.ControllerUtils;
@@ -16,8 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/questions")
@@ -38,6 +38,12 @@ public class QuestionsController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<QuestionsResponse> questions = questionsService.getQuestions(groupRequest, user);
         return ControllerUtils.processResultForResponseWithData(questions);
+    }
+
+    @PostMapping("/submitResponses")
+    public ResponseEntity<Result<Group>> submitResponses(@RequestBody FormDataResponse formDataResponse) {
+        System.out.println(formDataResponse);
+        return ControllerUtils.processResultForResponseWithData(new Result<>(true, null, null));
     }
 
 }

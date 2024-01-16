@@ -1,10 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {GroupData, GroupRequest as GroupIdRequest} from "../../../../redux/rootslices/api/groups.slice";
 import {
+    GroupData,
+    GroupRequest as GroupIdRequest
+} from "../../../../redux/rootslices/api/groups.slice";
+import {
+    FormDataResponse,
     Questions, QuestionType,
-    useGetQuestionsMutation
+    useGetQuestionsMutation, useSubmitResponsesMutation
 } from "../../../../redux/rootslices/api/questions.slice";
-import {showFailureToast} from "../../../../util/toasts";
+import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
 import {useNavigate, useParams} from "react-router-dom";
 import {authorizedPaths} from "../../../../router/paths";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -84,6 +88,7 @@ export default function QuestionForm(): React.ReactElement {
     const theme = useTheme()
 
     const [getQuestions, {isLoading: loadingQuestions}] = useGetQuestionsMutation()
+    const [submit, {isLoading: submitting}] = useSubmitResponsesMutation()
 
     const [groupData, setGroupData] = useState<GroupData>()
     const [questions, setQuestions] = useState<Questions>()
@@ -144,13 +149,60 @@ export default function QuestionForm(): React.ReactElement {
         });
     };
 
+    const convertFileToBase64 = (file: File | null): Promise<string | null> => {
+        return new Promise((resolve) => {
+            if (file instanceof File) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const result = reader.result as string;
+                    const base64String = result.split(',')[1];
+                    resolve(base64String || null);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                resolve(null);
+            }
+        });
+    };
 
-    const handleSubmit = () => {
+
+    const handleSubmit = async () => {
         let errors = validateData(formResponses)
         setErrors(errors)
 
-        if(errors.length === 0) {
-            //TODO: send to backend
+        if (errors.length === 0) {
+
+            const updatedResponses = await Promise.all(
+                formResponses.map(async (response) => {
+                    if (response && response.type === QuestionType.IMAGE && response.response instanceof File) {
+                        const base64String = await convertFileToBase64(response.response);
+                        return {...response, response: base64String};
+                    }
+                    return response;
+                })
+            );
+
+            console.log(updatedResponses)
+
+            const request: FormDataResponse = {
+                groupId: groupId ?? '',
+                responses: updatedResponses
+            }
+
+            submit(request)
+                .unwrap()
+                .then((response) => {
+                    if (response.success) {
+                        showSuccessToast('Response saved successfully, newsletter will be generated as soon as responses are collected from everyone')
+                        navigate(authorizedPaths.groups)
+                    } else {
+                        showFailureToast(response.message ?? 'Failed to save your response, please try later')
+                    }
+                })
+                .catch((result) => {
+                    console.log(result)
+                    showFailureToast(result.message ?? "Failed to save your response")
+                })
         } else {
             showFailureToast('There are error(s), please handle them')
         }
@@ -240,7 +292,7 @@ export default function QuestionForm(): React.ReactElement {
                                 <Button
                                     type="submit"
                                     variant="contained"
-                                    disabled={loadingQuestions}
+                                    disabled={loadingQuestions || submitting}
                                     onClick={handleSubmit}
                                     sx={{
                                         mt: 2,

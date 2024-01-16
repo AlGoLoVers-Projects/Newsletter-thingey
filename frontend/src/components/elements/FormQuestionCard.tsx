@@ -23,7 +23,7 @@ interface QuestionCardProps {
 }
 
 export type TextResponse = string;
-export type ImageResponse = File | null;
+export type ImageResponse = File | string | null;
 export type SingleOptionResponse = string | null;
 export type MultipleOptionsResponse = string[];
 
