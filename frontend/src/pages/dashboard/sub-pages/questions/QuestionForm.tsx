@@ -12,7 +12,7 @@ import Box from "@mui/material/Box";
 import {AppBar, Toolbar} from "@mui/material";
 import {styled, useTheme} from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import FormQuestionCard from "../../../../components/elements/FormQuestionCard";
+import FormQuestionCard, {FormQuestionResponse} from "../../../../components/elements/FormQuestionCard";
 import Button from "@mui/material/Button";
 
 
@@ -33,6 +33,7 @@ export default function QuestionForm(): React.ReactElement {
     const [groupData, setGroupData] = useState<GroupData>()
     const [questions, setQuestions] = useState<Questions>()
     const [questionsAlreadyTaken, setQuestionsAlreadyTaken] = useState<boolean>()
+    const [formResponses, setFormResponses] = useState<FormQuestionResponse[]>([]);
 
     const navigate = useNavigate()
 
@@ -65,6 +66,19 @@ export default function QuestionForm(): React.ReactElement {
                 showFailureToast(result.message ?? "Failed to load questions")
             })
     }
+
+    const handleAnswerChange = (response: FormQuestionResponse, index: number) => {
+        setFormResponses((prevResponses) => {
+            const updatedResponses = [...prevResponses];
+            updatedResponses[index] = response;
+            return updatedResponses;
+        });
+    };
+
+
+    const handleSubmit = () => {
+        console.log("Form Responses:", formResponses);
+    };
 
     return (
         <Box sx={{display: 'flex', height: "100%"}}>
@@ -117,8 +131,8 @@ export default function QuestionForm(): React.ReactElement {
                             {
                                 questions?.map((question, index) => (
                                     <FormQuestionCard
-                                        onAnswerChange={(id, value) => {
-
+                                        onAnswerChange={(response) => {
+                                            handleAnswerChange(response, index)
                                         }}
                                         question={question}
                                         index={index}/>
@@ -134,6 +148,7 @@ export default function QuestionForm(): React.ReactElement {
                                     type="submit"
                                     variant="contained"
                                     disabled={loadingQuestions}
+                                    onClick={handleSubmit}
                                     sx={{
                                         mt: 2,
                                         mb: 3,
