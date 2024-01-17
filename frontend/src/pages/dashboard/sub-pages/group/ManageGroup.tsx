@@ -899,53 +899,55 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     }
                 </Card>
             }
-            <Card
-                sx={{
-                    mt: 3,
-                    p: 3,
-                    maxWidth: "100%",
-                    borderRadius: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}
-            >
-                <AlertDialog
-                    ref={generateNewsletterDialogRef}
-                    title="Generate newsletter?"
-                    message="Are you sure you want to generate newsletter for this month, this is an irreversible action and you cannot generate any more newsletters for this month."
-                    acceptLabel='Generate Newsletter'
-                    onAccept={() => {
+            {
+                groupData.acceptQuestionResponse && <Card
+                    sx={{
+                        mt: 3,
+                        p: 3,
+                        maxWidth: "100%",
+                        borderRadius: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
                     }}
-                />
-                <Typography component="h1" variant="h6" sx={{
-                    fontWeight: 'bold',
-                }}>
-                    Generate Newsletter
-                </Typography>
-                <Typography variant="body2">
-                    If you're ready to publish your newsletter, proceed by clicking on the publish button. This is a one
-                    time process, questions cannot be processed and new newsletters cannot be issued once generated.
-                    Proceed with caution.
-                </Typography>
-                <Box sx={{
-                    display: "flex",
-                    alignSelf: "end",
-                    flexDirection: "row",
-                    gap: 2,
-                }}>
-                    <Button
-                        type="submit"
-                        variant="outlined"
-                        disabled={isDeleting || isLoading}
-                        sx={{mt: 3, mb: 1}}
-                        onClick={() => {
-                            generateNewsletterDialogRef.current?.open()
+                >
+                    <AlertDialog
+                        ref={generateNewsletterDialogRef}
+                        title="Generate newsletter?"
+                        message="Are you sure you want to generate newsletter for this month, this is an irreversible action and you cannot generate any more newsletters for this month."
+                        acceptLabel='Generate Newsletter'
+                        onAccept={() => {
                         }}
-                    >
-                        Publish Newsletter
-                    </Button>
-                </Box>
-            </Card>
+                    />
+                    <Typography component="h1" variant="h6" sx={{
+                        fontWeight: 'bold',
+                    }}>
+                        Generate Newsletter
+                    </Typography>
+                    <Typography variant="body2">
+                        If you're ready to publish your newsletter, proceed by clicking on the publish button. This is a one
+                        time process, questions cannot be processed and new newsletters cannot be issued once generated.
+                        Proceed with caution.
+                    </Typography>
+                    <Box sx={{
+                        display: "flex",
+                        alignSelf: "end",
+                        flexDirection: "row",
+                        gap: 2,
+                    }}>
+                        <Button
+                            type="submit"
+                            variant="outlined"
+                            disabled={isDeleting || isLoading}
+                            sx={{mt: 3, mb: 1}}
+                            onClick={() => {
+                                generateNewsletterDialogRef.current?.open()
+                            }}
+                        >
+                            Publish Newsletter
+                        </Button>
+                    </Box>
+                </Card>
+            }
             <Card
                 sx={{
                     mt: 3,
