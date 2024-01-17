@@ -12,11 +12,14 @@ const groupsSlice = createSlice({
         setGroupData: (state, action: PayloadAction<GroupListData>) => {
             state.groups = action.payload;
         },
+        addNewGroup: (state, action: PayloadAction<GroupData>) => {
+            state.groups.push(action.payload);
+        },
         updateSingleGroupData: (
             state,
-            action: PayloadAction<{updatedData: Partial<GroupData> }>
+            action: PayloadAction<{ updatedData: Partial<GroupData> }>
         ) => {
-            const { updatedData } = action.payload;
+            const {updatedData} = action.payload;
             const groupId = updatedData.id
             const groupToUpdate = state.groups.find((group) => group.id === groupId);
             if (groupToUpdate) {
@@ -68,6 +71,7 @@ const groupsSlice = createSlice({
 
 export const {
     setGroupData,
+    addNewGroup,
     updateSingleGroupData,
     updateGroupName,
     updateGroupDescription,

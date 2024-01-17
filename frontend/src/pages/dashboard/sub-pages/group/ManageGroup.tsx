@@ -19,8 +19,8 @@ import {
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
-import {authorizedPaths} from "../../../../router/paths";
-import {NavigateNext} from "@mui/icons-material";
+import {authorizedPaths, paths} from "../../../../router/paths";
+import {Mail, NavigateNext} from "@mui/icons-material";
 import {
     selectGroupByIdMemoized,
     updateGroupDescription,
@@ -73,8 +73,8 @@ export default function ManageGroup(): React.ReactElement {
         )
     }
 
-    const isGroupOwner = groupData.groupOwner.emailAddress === userEmailAddress
-    const groupUser: GroupMember | undefined = groupData.groupMembers.find(member => member.user.emailAddress === userEmailAddress)
+    const isGroupOwner = groupData?.groupOwner?.emailAddress === userEmailAddress
+    const groupUser: GroupMember | undefined = groupData?.groupMembers?.find(member => member.user.emailAddress === userEmailAddress)
 
     if (!groupUser) {
         return <Typography variant="body1">
@@ -325,6 +325,8 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const [listInvitations] = useListAllInvitationsByGroupMutation()
     const [deleteInvitation] = useRemoveInvitationFromGroupMutation()
     const [releaseQuestions] = useReleaseQuestionsMutation()
+
+    const userEmailAddress = useSelector(memoizedSelectUserData).emailAddress
 
     const [groupNameError, setGroupNameError] = useState<string>('')
     const [groupDescError, setGroupDescError] = useState<string>('')
@@ -884,13 +886,26 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                                                     width: "100%",
                                                     display: "flex",
                                                     alignItems: "center",
-                                                    justifyContent: "space-between",
                                                     padding: 1
                                                 }}
                                             >
-                                                <Typography sx={{width: '100%'}}>
+                                                <Typography sx={{width: '100%', flex: 1, pl: 2}}>
                                                     {response.user.emailAddress}
                                                 </Typography>
+                                                <Button
+                                                    sx={{
+                                                        visibility: response.user.emailAddress !== userEmailAddress ? 'visible' : 'hidden'
+                                                    }}
+                                                    startIcon={
+                                                        <Mail/>
+                                                    }
+                                                    onClick={() => {
+                                                        //TODO: Push email with link to user to fill form
+                                                    }}
+                                                >
+                                                    Remind user
+                                                </Button>
+
                                             </Box>
                                         </Card>
                                     )

@@ -9,9 +9,13 @@ import {useNavigate} from "react-router-dom";
 import {authorizedPaths} from "../../../../router/paths";
 import {GroupDataRequest, useNewGroupMutation} from "../../../../redux/rootslices/api/groups.slice";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
+import {useDispatch} from "react-redux";
+import {addNewGroup} from "../../../../redux/rootslices/data/groups.slice";
 
 export default function NewGroup(): React.ReactElement {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
     const [newGroup, {isLoading: isCreatingGroup}] = useNewGroupMutation()
 
     const [groupNameError, setGroupNameError] = useState<string>('')
@@ -50,10 +54,8 @@ export default function NewGroup(): React.ReactElement {
                 .then((response) => {
                     if (response.success) {
                         showSuccessToast("Group has been created successfully")
-                        navigate(authorizedPaths.groups)
-
-                        //TODO: Redirect to users management in future
-
+                        dispatch(addNewGroup(response.data))
+                        navigate(authorizedPaths.manageGroup, {state: response.data.id})
                     } else {
                         showFailureToast(response.message ?? 'Group creation failed, try again later')
                     }
