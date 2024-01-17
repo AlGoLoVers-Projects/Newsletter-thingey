@@ -4,7 +4,7 @@ import {
     GroupRequest as GroupIdRequest
 } from "../../../../redux/rootslices/api/groups.slice";
 import {
-    FormDataResponse,
+    FormDataResponse, GroupQuestionsResponse,
     Questions, QuestionType,
     useGetQuestionsMutation, useSubmitResponsesMutation
 } from "../../../../redux/rootslices/api/questions.slice";
@@ -90,9 +90,7 @@ export default function QuestionForm(): React.ReactElement {
     const [getQuestions, {isLoading: loadingQuestions}] = useGetQuestionsMutation()
     const [submit, {isLoading: submitting}] = useSubmitResponsesMutation()
 
-    const [groupData, setGroupData] = useState<GroupData>()
-    const [questions, setQuestions] = useState<Questions>()
-    const [questionsAlreadyTaken, setQuestionsAlreadyTaken] = useState<boolean>()
+    const [questionResponse, setQuestionResponse] = useState<GroupQuestionsResponse>()
     const [formResponses, setFormResponses] = useState<FormQuestionResponse[]>([]);
     const [errors, setErrors] = useState<string[]>([]);
 
@@ -107,7 +105,7 @@ export default function QuestionForm(): React.ReactElement {
     }, []);
 
     useEffect(() => {
-        const initialResponses: FormQuestionResponse[] = (questions ?? []).map((question) => {
+        const initialResponses: FormQuestionResponse[] = (questionResponse?.questions ?? []).map((question) => {
             return {
                 type: question.questionType,
                 response: '',
@@ -116,7 +114,7 @@ export default function QuestionForm(): React.ReactElement {
         });
 
         setFormResponses(initialResponses);
-    }, [questions]);
+    }, [questionResponse?.questions]);
 
 
     const handleGetQuestions = () => {
@@ -128,9 +126,7 @@ export default function QuestionForm(): React.ReactElement {
             .unwrap()
             .then((response) => {
                 if (response.success) {
-                    setGroupData(response.data.group)
-                    setQuestions(response.data.questions)
-                    setQuestionsAlreadyTaken(response.data.questionsAlreadyTaken)
+                    setQuestionResponse(response.data)
                 } else {
                     showFailureToast(response.message ?? 'Failed to load questions, try again later')
                 }
@@ -218,6 +214,7 @@ export default function QuestionForm(): React.ReactElement {
                         variant="h6"
                         noWrap
                         component="div"
+                        onClick={()=> {navigate(authorizedPaths.groups)}}
                         sx={{flexGrow: 1, display: {xs: 'none', sm: 'block'}}}
                     >
                         Newsletter
@@ -241,7 +238,7 @@ export default function QuestionForm(): React.ReactElement {
                         textAlign: 'center',
                     }}
                 >
-                    {groupData?.groupName ?? 'Questions'}
+                    {questionResponse?.group?.groupName ?? 'Questions'}
                 </Typography>
                 <Typography
                     component="h1"
@@ -269,10 +266,10 @@ export default function QuestionForm(): React.ReactElement {
                     </Alert>
                 )}
                 {
-                    groupData?.acceptQuestionResponse ?
+                    questionResponse?.group?.acceptQuestionResponse && !questionResponse?.questionsAlreadyTaken ?
                         <React.Fragment>
                             {
-                                questions?.map((question, index) => (
+                                questionResponse?.questions?.map((question, index) => (
                                     <FormQuestionCard
                                         onAnswerChange={(response) => {
                                             handleAnswerChange(response, index)
@@ -313,7 +310,7 @@ export default function QuestionForm(): React.ReactElement {
                                 }}
                             >
                                 {
-                                    questionsAlreadyTaken ?
+                                    questionResponse?.questionsAlreadyTaken ?
                                         'You have already submitted this form, check back later.' :
                                         'Sorry, this form is closed now. Please check back later or reach out to your group owner/editor for a form.'
                                 }
@@ -329,7 +326,7 @@ export default function QuestionForm(): React.ReactElement {
                                 }}
                             >
                                 Contact <a
-                                href={`mailto:${groupData?.groupOwner.emailAddress}`}>{groupData?.groupOwner.emailAddress}</a> for
+                                href={`mailto:${questionResponse?.group?.groupOwner.emailAddress}`}>{questionResponse?.group?.groupOwner.emailAddress}</a> for
                                 more information
                             </Typography>
                         </React.Fragment>
