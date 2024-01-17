@@ -248,8 +248,7 @@ public class QuestionsService {
                     questionResponse.setQuestion(findQuestionById(questions, formResponse.getId()));
                     if (formResponse.getType() != QuestionType.IMAGE) {
                         questionResponse.setAnswer(String.valueOf(formResponse.getResponse()));
-                    }
-                    else {
+                    } else {
                         //TODO: Save image in GDRIVE and save URL here
                     }
                     questionResponse.setQuestionType(formResponse.getType());

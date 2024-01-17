@@ -12,4 +12,6 @@ public interface GroupRepository extends JpaRepository<Group, String> {
 
     List<Group> findByGroupMembersUser(User user);
 
+    List<Group> findByGroupMembersUserAndAcceptQuestionResponse(User groupMembers_user, boolean acceptQuestionResponse);
+
 }

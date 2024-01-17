@@ -9,6 +9,7 @@ import com.algolovers.newsletterconsole.data.entity.reponse.ResponseData;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.group.*;
+import com.algolovers.newsletterconsole.data.model.api.response.group.GroupForm;
 import com.algolovers.newsletterconsole.repository.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -461,5 +462,22 @@ public class GroupService {
             log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
         }
+    }
+
+    public Result<List<GroupForm>> getFormsForUser(User authenticatedUser) {
+        try {
+            List<Group> groups = groupRepository.findByGroupMembersUserAndAcceptQuestionResponse(authenticatedUser, true);
+
+            List<GroupForm> groupForms = groups
+                    .stream()
+                    .map(group -> new GroupForm(group.getId(), group.getGroupName(), group.getGroupDescription()))
+                    .toList();
+
+            return new Result<>(true, groupForms, "Fetched list of invites for user");
+        } catch (Exception e) {
+            log.error("Failed to list forms for user: {}", authenticatedUser.getEmailAddress(), e);
+        }
+
+        return new Result<>(false, null, "Failed to fetch forms");
     }
 }

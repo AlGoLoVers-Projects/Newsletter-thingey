@@ -5,6 +5,7 @@ import com.algolovers.newsletterconsole.data.entity.groups.Invitation;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.group.*;
+import com.algolovers.newsletterconsole.data.model.api.response.group.GroupForm;
 import com.algolovers.newsletterconsole.service.GroupService;
 import com.algolovers.newsletterconsole.utils.ControllerUtils;
 import jakarta.validation.Valid;
@@ -116,6 +117,13 @@ public class GroupController {
     public ResponseEntity<Result<Group>> releaseQuestions(@Valid @RequestBody GroupRequest groupRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Result<Group> result = groupService.releaseQuestions(groupRequest, user);
+        return ControllerUtils.processResultForResponseWithData(result);
+    }
+
+    @GetMapping("/getFormsForUser")
+    public ResponseEntity<Result<List<GroupForm>>> getFormsForUser() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Result<List<GroupForm>> result = groupService.getFormsForUser(user);
         return ControllerUtils.processResultForResponseWithData(result);
     }
 
