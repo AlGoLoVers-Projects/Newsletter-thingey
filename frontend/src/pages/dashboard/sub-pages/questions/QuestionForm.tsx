@@ -200,8 +200,7 @@ export default function QuestionForm(): React.ReactElement {
                     }
                 })
                 .catch((result) => {
-                    console.log(result)
-                    showFailureToast(result.message ?? "Failed to save your response")
+                    showFailureToast(result.data.message ?? "Failed to save your response")
                 })
         } else {
             showFailureToast('There are error(s), please handle them')

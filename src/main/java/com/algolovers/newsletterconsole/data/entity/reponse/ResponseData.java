@@ -1,9 +1,8 @@
 package com.algolovers.newsletterconsole.data.entity.reponse;
 
 import com.algolovers.newsletterconsole.data.entity.converter.QuestionResponseSetConverter;
-import com.algolovers.newsletterconsole.data.entity.groups.Group;
-import com.algolovers.newsletterconsole.data.entity.user.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Data;
 import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,19 +20,15 @@ public class ResponseData {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne
-    @JsonIgnore
-    Group group;
-
-    @ManyToOne
-    User user;
+    @Email
+    private String userEmailAddress;
 
     @CreationTimestamp
     private LocalDateTime responseDate;
 
-    @JsonIgnore
     @Convert(converter = QuestionResponseSetConverter.class)
-    @Column(length = 2500)
+    @Column(length = 65000)
+    @JsonIgnore
     Set<QuestionResponse> questionResponses;
 
 }

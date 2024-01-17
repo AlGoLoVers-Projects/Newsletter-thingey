@@ -141,7 +141,7 @@ public class QuestionsService {
 
             boolean userExists = group.getQuestionResponses()
                     .stream()
-                    .anyMatch(responseData -> responseData.getUser().getEmailAddress().equals(authenticatedUser.getEmailAddress()));
+                    .anyMatch(responseData -> responseData.getUserEmailAddress().equals(authenticatedUser.getEmailAddress()));
 
             QuestionsResponse questionsResponse = QuestionsResponse
                     .builder()
@@ -169,7 +169,7 @@ public class QuestionsService {
         List<ResponseData> questionResponse = group.getQuestionResponses();
         boolean userExists = questionResponse
                 .stream()
-                .anyMatch(responseData -> responseData.getUser().getEmailAddress().equals(authenticatedUser.getEmailAddress()));
+                .anyMatch(responseData -> responseData.getUserEmailAddress().equals(authenticatedUser.getEmailAddress()));
 
         if (userExists) {
             return new Result<>(false, null, "You have already taken this form");
@@ -211,8 +211,7 @@ public class QuestionsService {
         }
 
         ResponseData responseData = new ResponseData();
-        responseData.setGroup(group);
-        responseData.setUser(authenticatedUser);
+        responseData.setUserEmailAddress(authenticatedUser.getEmailAddress());
         responseData.setResponseDate(LocalDateTime.now());
         responseData.setQuestionResponses(convertToQuestionResponses(formQuestionResponses, questions));
 
@@ -247,8 +246,12 @@ public class QuestionsService {
                 .map(formResponse -> {
                     QuestionResponse questionResponse = new QuestionResponse();
                     questionResponse.setQuestion(findQuestionById(questions, formResponse.getId()));
-                    //TODO: Save image in GDRIVE and save URL here
-                    //questionResponse.setAnswer(String.valueOf(formResponse.getResponse()));
+                    if (formResponse.getType() != QuestionType.IMAGE) {
+                        questionResponse.setAnswer(String.valueOf(formResponse.getResponse()));
+                    }
+                    else {
+                        //TODO: Save image in GDRIVE and save URL here
+                    }
                     questionResponse.setQuestionType(formResponse.getType());
                     return questionResponse;
                 })
