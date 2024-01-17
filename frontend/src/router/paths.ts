@@ -15,7 +15,7 @@ export const paths = {
 
 export const dashboardPaths = {
     groups: 'groups',
-    manageGlobalQuestions: 'manageGlobalQuestions',
+    openForms: 'openForms',
     invitations: 'invitations',
     profile: 'profile',
     aboutUs: 'aboutUs',
@@ -29,7 +29,7 @@ export const authorizedPaths = {
     dashboardRoot: '/dashboard/',
     dashboard: '/dashboard/*',
     groups: `/dashboard/${dashboardPaths.groups}`,
-    manageGlobalQuestions: `/dashboard/${dashboardPaths.manageGlobalQuestions}`,
+    openForms: `/dashboard/${dashboardPaths.openForms}`,
     invitations: `/dashboard/${dashboardPaths.invitations}`,
     profile: `/dashboard/${dashboardPaths.profile}`,
     aboutUs: `/dashboard/${dashboardPaths.aboutUs}`,

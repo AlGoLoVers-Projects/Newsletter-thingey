@@ -35,6 +35,7 @@ import ManageGroup from "./sub-pages/group/ManageGroup";
 import AlertDialog, {AlertDialogRef} from "../../components/elements/AlertDialog";
 import Invitations from './sub-pages/invitations/Invitations';
 import ManageQuestions from "./sub-pages/questions/ManageQuestions";
+import OpenForm from "./sub-pages/open-form/OpenForm";
 
 const drawerWidth = 240;
 
@@ -186,9 +187,9 @@ export default function Dashboard(): React.ReactElement {
             path: authorizedPaths.groups
         },
         {
-            title: 'Questions',
+            title: 'Open Forms',
             icon: <QuestionAnswer/>,
-            path: authorizedPaths.manageGlobalQuestions
+            path: authorizedPaths.openForms
         },
         {
             title: 'Invites',
@@ -331,6 +332,7 @@ export default function Dashboard(): React.ReactElement {
                     <Route path={dashboardPaths.newGroup} element={<NewGroup/>}/>
                     <Route path={dashboardPaths.manageGroup} element={<ManageGroup/>}/>
                     <Route path={dashboardPaths.invitations} element={<Invitations/>}/>
+                    <Route path={dashboardPaths.openForms} element={<OpenForm/>}/>
                     <Route path={dashboardPaths.manageQuestions} element={<ManageQuestions/>}/>
                 </Routes>
             </Box>
