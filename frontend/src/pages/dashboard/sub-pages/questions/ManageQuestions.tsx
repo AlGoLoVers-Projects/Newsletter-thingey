@@ -4,8 +4,8 @@ import {Card, Container} from "@mui/material";
 import Box from "@mui/material/Box";
 import {useLocation} from "react-router-dom";
 import {GroupData, GroupRequest as GroupIdRequest} from "../../../../redux/rootslices/api/groups.slice";
-import {useSelector} from "react-redux";
-import {selectGroupByIdMemoized} from "../../../../redux/rootslices/data/groups.slice";
+import {useDispatch, useSelector} from "react-redux";
+import {selectGroupByIdMemoized, updateSingleGroupData} from "../../../../redux/rootslices/data/groups.slice";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import {
@@ -37,6 +37,8 @@ function ManageQuestionsComponent(): React.ReactElement {
     const groupData: GroupData = useSelector(
         (state) => selectGroupByIdMemoized(state, groupId)
     ) ?? {} as GroupData;
+
+    const dispatch = useDispatch();
 
     const {state: questionsState, dispatch: questionsDispatch} = useQuestions();
     const [getQuestions, {isLoading: loadingQuestions}] = useGetQuestionsMutation()
@@ -123,6 +125,7 @@ function ManageQuestionsComponent(): React.ReactElement {
                         type: QuestionsActionType.SET_QUESTIONS,
                         payload: response.data.questions
                     });
+                    dispatch(updateSingleGroupData({updatedData: response.data.group}))
                 } else {
                     showFailureToast(response.message ?? 'Failed to update questions, try again later')
                 }

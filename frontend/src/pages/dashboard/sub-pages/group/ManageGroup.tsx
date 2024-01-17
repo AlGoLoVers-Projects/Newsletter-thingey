@@ -123,7 +123,9 @@ export default function ManageGroup(): React.ReactElement {
                             color="info"
                             disabled={formTaken}
                             sx={{mt: 3, mb: 1}}
-                            onClick={() => {navigator(`/form/${groupData.id}`)}}
+                            onClick={() => {
+                                navigator(`/form/${groupData.id}`)
+                            }}
                             endIcon={<NavigateNext/>}
                         >
                             Fill questions
@@ -804,6 +806,99 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     </Button>
                 </Box>
             </Card>
+            {
+                groupData.acceptQuestionResponse && <Card
+                    sx={{
+                        mt: 3,
+                        p: 3,
+                        maxWidth: "100%",
+                        borderRadius: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Typography component="h1" variant="h6" sx={{
+                        fontWeight: 'bold',
+                    }}>
+                        Responses
+                    </Typography>
+                    <Typography variant="body2">
+                        View users who have filled out responses
+                    </Typography>
+                    <Box sx={{
+                        display: "flex",
+                        alignSelf: "end",
+                        flexDirection: "row",
+                        gap: 2,
+                    }}>
+                        <Typography variant="body2" color="textSecondary">
+                            {`${groupData.questionResponses.length}/${groupData.groupMembers.length} Users have filled responses`}
+                        </Typography>
+                    </Box>
+                    {
+                        groupData.questionResponses.length !== 0
+                        && <List>
+                            <Typography variant="body1">
+                                Users who have filled responses:
+                            </Typography>
+                            {
+                                groupData.questionResponses.map((response) =>
+                                    <Card sx={{
+                                        backgroundColor: '#2a2a2a',
+                                        mt: 1
+                                    }}>
+                                        <Box
+                                            sx={{
+                                                width: "100%",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "space-between",
+                                                padding: 1
+                                            }}
+                                        >
+                                            <Typography sx={{width: '100%'}}>
+                                                {response.userEmailAddress}
+                                            </Typography>
+                                        </Box>
+                                    </Card>
+                                )
+                            }
+                        </List>
+                    }
+                    {
+                        groupData.groupMembers.length - groupData.questionResponses.length !== 0
+                        && <List>
+                            <Typography variant="body1">
+                                Users who haven't filled responses:
+                            </Typography>
+                            {
+                                groupData.groupMembers
+                                    .filter(data => groupData.questionResponses.map(data => data.userEmailAddress).indexOf(data.user.emailAddress) === -1)
+                                    .map((response) =>
+                                        <Card sx={{
+                                            backgroundColor: '#2a2a2a',
+                                            mt: 1
+                                        }}>
+                                            <Box
+                                                sx={{
+                                                    width: "100%",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "space-between",
+                                                    padding: 1
+                                                }}
+                                            >
+                                                <Typography sx={{width: '100%'}}>
+                                                    {response.user.emailAddress}
+                                                </Typography>
+                                            </Box>
+                                        </Card>
+                                    )
+                            }
+                        </List>
+                    }
+                </Card>
+            }
             <Card
                 sx={{
                     mt: 3,
