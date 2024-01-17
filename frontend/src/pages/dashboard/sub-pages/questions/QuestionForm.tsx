@@ -19,6 +19,8 @@ import Typography from "@mui/material/Typography";
 import FormQuestionCard, {FormQuestionResponse} from "../../../../components/elements/FormQuestionCard";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
+import {updateSingleGroupData} from "../../../../redux/rootslices/data/groups.slice";
+import {useDispatch} from "react-redux";
 
 
 const DrawerHeader = styled('div')(({theme}) => ({
@@ -86,6 +88,7 @@ const validateData = (responses: FormQuestionResponse[]): string[] => {
 export default function QuestionForm(): React.ReactElement {
     const {groupId} = useParams();
     const theme = useTheme()
+    const dispatch = useDispatch()
 
     const [getQuestions, {isLoading: loadingQuestions}] = useGetQuestionsMutation()
     const [submit, {isLoading: submitting}] = useSubmitResponsesMutation()
@@ -178,8 +181,6 @@ export default function QuestionForm(): React.ReactElement {
                 })
             );
 
-            console.log(updatedResponses)
-
             const request: FormDataResponse = {
                 groupId: groupId ?? '',
                 responses: updatedResponses
@@ -190,6 +191,7 @@ export default function QuestionForm(): React.ReactElement {
                 .then((response) => {
                     if (response.success) {
                         showSuccessToast('Response saved successfully, newsletter will be generated as soon as responses are collected from everyone')
+                        dispatch(updateSingleGroupData({updatedData: response.data}))
                         navigate(authorizedPaths.groups)
                     } else {
                         showFailureToast(response.message ?? 'Failed to save your response, please try later')
