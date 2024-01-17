@@ -244,24 +244,27 @@ public class QuestionsService {
     private Set<QuestionResponse> convertToQuestionResponses(List<FormQuestionResponse> formQuestionResponses, List<Question> questions) {
         return formQuestionResponses.stream()
                 .map(formResponse -> {
+
+                    Question question = findQuestionById(questions, formResponse.getId());
                     QuestionResponse questionResponse = new QuestionResponse();
-                    questionResponse.setQuestion(findQuestionById(questions, formResponse.getId()));
+                    questionResponse.setQuestionId(question.getId());
+                    questionResponse.setQuestion(question.getQuestion());
+                    questionResponse.setQuestionType(question.getQuestionType());
+
                     if (formResponse.getType() != QuestionType.IMAGE) {
                         questionResponse.setAnswer(String.valueOf(formResponse.getResponse()));
                     } else {
                         //TODO: Save image in GDRIVE and save URL here
                     }
-                    questionResponse.setQuestionType(formResponse.getType());
                     return questionResponse;
                 })
                 .collect(Collectors.toSet());
     }
 
-    private String findQuestionById(List<Question> questions, String questionId) {
+    private Question findQuestionById(List<Question> questions, String questionId) {
         return questions.stream()
                 .filter(question -> question.getId().equals(questionId))
                 .findFirst()
-                .map(Question::getQuestion)
                 .orElse(null);
     }
 

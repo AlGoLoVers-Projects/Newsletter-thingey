@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class QuestionResponse {
+    String questionId;
     String question;
     String answer;
     Integer questionIndex;
