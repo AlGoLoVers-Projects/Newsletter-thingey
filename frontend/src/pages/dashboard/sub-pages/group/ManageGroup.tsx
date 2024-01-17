@@ -58,6 +58,12 @@ export default function ManageGroup(): React.ReactElement {
     ) ?? {} as GroupData;
 
     const userEmailAddress = useSelector(memoizedSelectUserData).emailAddress
+    const [formTaken, setFormTaken] = useState<boolean>(false)
+
+    useEffect(() => {
+        const currentUserResponse = groupData.questionResponses?.filter(response => response.userEmailAddress.includes(userEmailAddress)) ?? []
+        setFormTaken(currentUserResponse.length !== 0)
+    }, [groupData]);
 
     if (isEmpty(groupId)) {
         return (
@@ -110,8 +116,7 @@ export default function ManageGroup(): React.ReactElement {
                     Group ID: {groupData.id}
                 </Typography>
                 {
-                    //TODO: Either fill questions in form, or close form after user fills it.
-                    groupData.acceptQuestionResponse ?
+                    groupData.acceptQuestionResponse && !formTaken ?
                         <Button
                             type="button"
                             variant="contained"

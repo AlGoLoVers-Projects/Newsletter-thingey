@@ -11,7 +11,7 @@ export type GroupOwner = UserData;
 
 export type ResponseData = {
     id: string;
-    user: UserData;
+    userEmailAddress: string;
     responseDate: string;
 }
 
@@ -23,7 +23,7 @@ export type GroupData = {
     groupMembers: GroupMember[];
     updatedAt: string | null;
     acceptQuestionResponse: boolean;
-    responseData: ResponseData[]
+    questionResponses: ResponseData[]
 };
 
 export type GroupDataRequest = {

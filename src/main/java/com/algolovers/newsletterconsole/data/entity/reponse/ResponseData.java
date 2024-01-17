@@ -1,10 +1,11 @@
 package com.algolovers.newsletterconsole.data.entity.reponse;
 
 import com.algolovers.newsletterconsole.data.entity.converter.QuestionResponseSetConverter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
-import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Immutable;
 
@@ -28,7 +29,7 @@ public class ResponseData {
 
     @Convert(converter = QuestionResponseSetConverter.class)
     @Column(length = 65000)
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     Set<QuestionResponse> questionResponses;
 
 }

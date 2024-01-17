@@ -3,6 +3,7 @@ package com.algolovers.newsletterconsole.data.entity.groups;
 import com.algolovers.newsletterconsole.data.entity.questions.Question;
 import com.algolovers.newsletterconsole.data.entity.reponse.ResponseData;
 import com.algolovers.newsletterconsole.data.entity.user.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -10,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -50,13 +50,12 @@ public class Group {
     private LocalDateTime updatedAt;
 
     @OneToMany
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Question> questions;
 
     private boolean acceptQuestionResponse = false; //FALSE -> set to true when questions are released. Form collects data then and saves response. response is cleared during any shift of this value. clicking on publish will set this value back to false.
 
     @OneToMany
-    @JsonIgnore
     private List<ResponseData> questionResponses;
 
     @Override
