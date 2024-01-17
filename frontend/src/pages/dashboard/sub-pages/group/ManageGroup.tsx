@@ -116,11 +116,12 @@ export default function ManageGroup(): React.ReactElement {
                     Group ID: {groupData.id}
                 </Typography>
                 {
-                    groupData.acceptQuestionResponse && !formTaken ?
+                    groupData.acceptQuestionResponse ?
                         <Button
                             type="button"
                             variant="contained"
                             color="info"
+                            disabled={formTaken}
                             sx={{mt: 3, mb: 1}}
                             onClick={() => {navigator(`/form/${groupData.id}`)}}
                             endIcon={<NavigateNext/>}
