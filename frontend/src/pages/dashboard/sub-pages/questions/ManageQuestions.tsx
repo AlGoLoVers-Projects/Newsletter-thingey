@@ -2,7 +2,7 @@ import Typography from "@mui/material/Typography";
 import React, {useEffect, useState} from "react";
 import {Card, Container} from "@mui/material";
 import Box from "@mui/material/Box";
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {GroupData, GroupRequest as GroupIdRequest} from "../../../../redux/rootslices/api/groups.slice";
 import {useDispatch, useSelector} from "react-redux";
 import {selectGroupByIdMemoized, updateSingleGroupData} from "../../../../redux/rootslices/data/groups.slice";
@@ -24,6 +24,7 @@ import {
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
 import QuestionCard from "../../../../components/elements/QuestionCard";
 import Alert from "@mui/material/Alert";
+import {ArrowBackIosNew} from "@mui/icons-material";
 
 type QuestionError = {
     question?: string;
@@ -39,6 +40,7 @@ function ManageQuestionsComponent(): React.ReactElement {
     ) ?? {} as GroupData;
 
     const dispatch = useDispatch();
+    const navigate = useNavigate()
 
     const {state: questionsState, dispatch: questionsDispatch} = useQuestions();
     const [getQuestions, {isLoading: loadingQuestions}] = useGetQuestionsMutation()
@@ -174,21 +176,42 @@ function ManageQuestionsComponent(): React.ReactElement {
                 flex: 1
             }}
         >
-            <Typography
-                component="h1"
-                variant="h2"
-                sx={{
-                    fontWeight: 'bold',
-                    alignSelf: "flex-start",
-                    fontSize: {
-                        xs: '1rem',
-                        sm: '2rem',
-                        xl: '3rem',
-                    },
-                }}
-            >
-                {groupData.groupName}
-            </Typography>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%'
+            }}>
+                <Typography
+                    component="h1"
+                    variant="h2"
+                    sx={{
+                        fontWeight: 'bold',
+                        alignSelf: "flex-start",
+                        fontSize: {
+                            xs: '1rem',
+                            sm: '2rem',
+                            xl: '3rem',
+                        },
+                    }}
+                >
+                    {groupData.groupName}
+                </Typography>
+                <Button
+                    onClick={() => {
+                        navigate(-1)
+                    }}
+                    sx={{
+                        width: 'max-content'
+                    }}
+                    startIcon={
+                        <ArrowBackIosNew/>
+                    }
+                >
+                    Go back
+                </Button>
+            </Box>
             <Box
                 maxWidth="xl"
             >
