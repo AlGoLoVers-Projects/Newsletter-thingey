@@ -48,6 +48,12 @@ export type GroupEditRequest = GroupDataRequest & GroupRequest;
 
 export type GroupListData = GroupData[];
 
+export type GroupForm = {
+    groupId: string;
+    groupName: string;
+    groupDescription: string;
+}
+
 export const groupsSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({
         newGroup: builder.mutation<Result<GroupData>, GroupDataRequest>({
@@ -104,8 +110,14 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
                 method: 'POST',
                 body: data
             })
+        }),
+        getFormsForUser: builder.mutation<Result<GroupForm[]>, null>({
+            query: () => ({
+                url: '/api/group/getFormsForUser',
+                method: 'GET'
+            })
         })
     }),
 });
 
-export const {useGetGroupsMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation, useLeaveGroupMutation, useUpdateEditAccessToUserMutation, useRemoveUserMutation, useReleaseQuestionsMutation} = groupsSlice;
+export const {useGetGroupsMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation, useLeaveGroupMutation, useUpdateEditAccessToUserMutation, useRemoveUserMutation, useReleaseQuestionsMutation, useGetFormsForUserMutation} = groupsSlice;

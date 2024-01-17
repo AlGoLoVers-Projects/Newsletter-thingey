@@ -445,7 +445,7 @@ public class GroupService {
 
             List<Question> questions = group.getQuestions();
 
-            if(questions.isEmpty()) {
+            if (questions.isEmpty()) {
                 return new Result<>(false, null, "Please add questions before releasing question form");
             }
 
@@ -470,6 +470,12 @@ public class GroupService {
 
             List<GroupForm> groupForms = groups
                     .stream()
+                    .filter(group -> group
+                            .getQuestionResponses()
+                            .stream()
+                            .noneMatch(responseData -> responseData
+                                    .getUserEmailAddress()
+                                    .equals(authenticatedUser.getEmailAddress())))
                     .map(group -> new GroupForm(group.getId(), group.getGroupName(), group.getGroupDescription()))
                     .toList();
 
