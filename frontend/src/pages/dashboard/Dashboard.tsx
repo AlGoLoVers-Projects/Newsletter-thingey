@@ -36,6 +36,7 @@ import AlertDialog, {AlertDialogRef} from "../../components/elements/AlertDialog
 import Invitations from './sub-pages/invitations/Invitations';
 import ManageQuestions from "./sub-pages/questions/ManageQuestions";
 import OpenForm from "./sub-pages/open-form/OpenForm";
+import ProfilePage from "./sub-pages/profile/ProfilePage";
 
 const drawerWidth = 240;
 
@@ -334,6 +335,7 @@ export default function Dashboard(): React.ReactElement {
                     <Route path={dashboardPaths.invitations} element={<Invitations/>}/>
                     <Route path={dashboardPaths.openForms} element={<OpenForm/>}/>
                     <Route path={dashboardPaths.manageQuestions} element={<ManageQuestions/>}/>
+                    <Route path={dashboardPaths.profile} element={<ProfilePage/>}/>
                 </Routes>
             </Box>
         </Box>

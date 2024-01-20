@@ -9,9 +9,10 @@ import {useGetGroupsMutation} from "../../../../redux/rootslices/api/groups.slic
 import {showFailureToast} from "../../../../util/toasts";
 import {useNavigate} from "react-router-dom";
 import {authorizedPaths} from "../../../../router/paths";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {setGroupData} from "../../../../redux/rootslices/data/groups.slice";
 import {CircularProgress} from "@mui/material";
+import {memoizedSelectUserData} from "../../../../redux/rootslices/data/auth-data.slice";
 
 const Groups = (): React.ReactElement => {
 
@@ -19,6 +20,8 @@ const Groups = (): React.ReactElement => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    const user = useSelector(memoizedSelectUserData);
 
     useEffect(() => {
         groupList(null)
@@ -58,6 +61,18 @@ const Groups = (): React.ReactElement => {
                 position: 'relative',
             }}
         >
+
+            <Typography
+                component="h1"
+                variant="h6"
+                color="textSecondary"
+                sx={{
+                    fontWeight: 'bold',
+                    alignSelf: "flex-start",
+                }}
+            >
+                Welcome {user.displayName}
+            </Typography>
             <Typography
                 component="h1"
                 variant="h2"
