@@ -3,11 +3,14 @@ import React, {useState} from "react";
 import Typography from "@mui/material/Typography";
 import {useSelector} from "react-redux";
 import {memoizedSelectUserData} from "../../../../redux/rootslices/data/auth-data.slice";
-import {Card} from "@mui/material";
+import {alpha, Card, Tooltip} from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import {isEmpty, isValidName} from "../../../../util/validation";
 import Button from "@mui/material/Button";
+import UserProfileAvatar from "../../../../components/elements/UserProfileAvatar";
+import IconButton from "@mui/material/IconButton";
+import {Edit} from "@mui/icons-material";
 
 export default function ProfilePage(): React.ReactElement {
     const user = useSelector(memoizedSelectUserData);
@@ -63,6 +66,60 @@ export default function ProfilePage(): React.ReactElement {
             >
                 Manage User Profile
             </Typography>
+            <Card
+                sx={{
+                    mt: 3,
+                    p: 3,
+                    maxWidth: "100%",
+                    borderRadius: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row'
+                    }}>
+                    <Box>
+                        <Tooltip title="Edit">
+                            <div style={{display: 'inline-block', position: 'relative'}}>
+                                <UserProfileAvatar user={user} big/>
+                                <IconButton
+                                    sx={{
+                                        position: 'absolute',
+                                        bottom: '4px',
+                                        right: '4px',
+                                        backgroundColor: '#ffffff',
+                                        color: '#ff6e23',
+                                        '&:hover': {
+                                            backgroundColor: '#ffbf93',
+                                        },
+                                    }}
+                                >
+                                    <Edit/>
+                                </IconButton>
+                            </div>
+                        </Tooltip>
+                    </Box>
+                    <Box
+                        sx={{
+                            pl: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center'
+                        }}>
+                        <Typography component="h1" variant="h6" sx={{
+                            fontWeight: 'bold',
+                        }}>
+                            {user.displayName}
+                        </Typography>
+                        <Typography variant="body1" sx={{}}>
+                            {user.emailAddress}
+                        </Typography>
+                    </Box>
+                </Box>
+            </Card>
             <Card
                 sx={{
                     mt: 3,
@@ -138,7 +195,22 @@ export default function ProfilePage(): React.ReactElement {
                     </Box>
                 </Box>
             </Card>
-
+            <Box sx={{
+                display: "flex",
+                alignSelf: "end",
+                flexDirection: "row",
+                gap: 2,
+            }}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="error"
+                    disabled={false}
+                    sx={{mt: 3, mb: 1}}
+                >
+                    Delete User
+                </Button>
+            </Box>
         </Container>
     )
 }

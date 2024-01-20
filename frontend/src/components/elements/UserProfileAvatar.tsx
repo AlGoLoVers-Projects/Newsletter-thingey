@@ -1,14 +1,15 @@
 import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import { deepOrange } from '@mui/material/colors';
-import {UserData} from "../../redux/rootslices/data/auth-data.slice";
+import { UserData } from "../../redux/rootslices/data/auth-data.slice";
 
 interface UserProfileAvatarProps {
     user: UserData;
+    big?: boolean;
 }
 
-const UserProfileAvatar: React.FC<UserProfileAvatarProps> = ({ user }) => {
-    if(!user) {
+const UserProfileAvatar: React.FC<UserProfileAvatarProps> = ({ user, big }) => {
+    if (!user) {
         return <div>Cannot render card</div>
     }
 
@@ -26,10 +27,12 @@ const UserProfileAvatar: React.FC<UserProfileAvatarProps> = ({ user }) => {
     const avatarStyle: React.CSSProperties = {
         backgroundColor: user.profilePicture ? 'transparent' : getRandomColor(),
         color: user.profilePicture ? 'inherit' : 'white',
+        width: big ? 100 : undefined, // Set a larger width if big prop is true
+        height: big ? 100 : undefined, // Set a larger height if big prop is true
     };
 
     return (
-        <Avatar style={avatarStyle}>
+        <Avatar style={avatarStyle} sx={{}}>
             {user.profilePicture ? (
                 <img src={user.profilePicture} alt="Profile" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
             ) : (
