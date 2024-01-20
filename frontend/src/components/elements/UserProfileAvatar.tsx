@@ -34,7 +34,16 @@ const UserProfileAvatar: React.FC<UserProfileAvatarProps> = ({ user, big }) => {
     return (
         <Avatar style={avatarStyle} sx={{}}>
             {user.profilePicture ? (
-                <img src={user.profilePicture} alt="Profile" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                <img
+                    src={user.profilePicture}
+                    alt="Profile"
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: '50%',
+                        objectFit: 'cover', // Ensure the image does not stretch
+                    }}
+                />
             ) : (
                 getInitials(user?.displayName)
             )}
