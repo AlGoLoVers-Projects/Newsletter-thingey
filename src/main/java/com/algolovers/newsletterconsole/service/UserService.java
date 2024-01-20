@@ -6,10 +6,7 @@ import com.algolovers.newsletterconsole.data.enums.AuthProvider;
 import com.algolovers.newsletterconsole.data.model.AuthenticatedUserToken;
 import com.algolovers.newsletterconsole.data.model.GoogleOAuthUserInfo;
 import com.algolovers.newsletterconsole.data.model.api.Result;
-import com.algolovers.newsletterconsole.data.model.api.request.auth.ForgotPasswordRequest;
-import com.algolovers.newsletterconsole.data.model.api.request.auth.ResetPasswordRequest;
-import com.algolovers.newsletterconsole.data.model.api.request.auth.UserCreationRequest;
-import com.algolovers.newsletterconsole.data.model.api.request.auth.VerificationRequest;
+import com.algolovers.newsletterconsole.data.model.api.request.auth.*;
 import com.algolovers.newsletterconsole.exceptions.PasswordResetException;
 import com.algolovers.newsletterconsole.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -168,6 +165,11 @@ public class UserService implements UserDetailsService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    public Result<User> updateUserDisplayName(@Valid ChangeUserName changeUserName, User authentiatedUser) {
+        authentiatedUser.setDisplayName(changeUserName.getUserName());
+        return saveOrUpdateUser(authentiatedUser);
     }
 
     public AuthenticatedUserToken generateTokenForAuthenticatedUser(Authentication authentication, Optional<User> optionalUser) {

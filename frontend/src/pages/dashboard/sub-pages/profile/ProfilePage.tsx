@@ -1,9 +1,9 @@
 import Container from "@mui/material/Container";
 import React, {useState} from "react";
 import Typography from "@mui/material/Typography";
-import {useSelector} from "react-redux";
-import {memoizedSelectUserData} from "../../../../redux/rootslices/data/auth-data.slice";
-import {alpha, Card, Tooltip} from "@mui/material";
+import {useDispatch, useSelector} from "react-redux";
+import {memoizedSelectUserData, setUserData} from "../../../../redux/rootslices/data/auth-data.slice";
+import {Card, Tooltip} from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import {isEmpty, isValidName} from "../../../../util/validation";
@@ -11,9 +11,14 @@ import Button from "@mui/material/Button";
 import UserProfileAvatar from "../../../../components/elements/UserProfileAvatar";
 import IconButton from "@mui/material/IconButton";
 import {Edit} from "@mui/icons-material";
+import {ChangeUserName, useUpdateUserDisplayNameMutation} from "../../../../redux/rootslices/api/authentication.slice";
+import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
 
 export default function ProfilePage(): React.ReactElement {
     const user = useSelector(memoizedSelectUserData);
+    const dispatch = useDispatch();
+
+    const [changeUserName, {isLoading: updatingUserName}] = useUpdateUserDisplayNameMutation()
 
     const [displayName, setDisplayName] = useState<string>(user.displayName);
     const [displayNameError, setDisplayNameError] = useState<string>('');
@@ -22,18 +27,38 @@ export default function ProfilePage(): React.ReactElement {
         event.preventDefault();
         if (!displayName) {
             setDisplayNameError('Please enter a display name');
-            return
+            return;
         } else if (displayName.trim().length < 3) {
             setDisplayNameError('Display name must have a minimum of 3 characters');
-            return
+            return;
         } else if (!isValidName(displayName)) {
             setDisplayNameError('Display name can only contain letters, numbers, spaces, and underscores');
-            return
+            return;
+        } else if (displayName === user.displayName) {
+            setDisplayNameError('Cannot update same value');
+            return;
         } else {
             setDisplayNameError('');
         }
 
-        //TODO: Update name
+        const request: ChangeUserName = {
+            userName: displayName
+        }
+
+        changeUserName(request)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    showSuccessToast('Display name updated successfully')
+                    dispatch(setUserData(response.data))
+                } else {
+                    showFailureToast(response.message ?? 'Failed to update username, try again later')
+                }
+            })
+            .catch((result) => {
+                console.log(result)
+                showFailureToast(result.message ?? "Failed to update username")
+            })
 
     }
 
@@ -175,7 +200,7 @@ export default function ProfilePage(): React.ReactElement {
                         <Button
                             type="button"
                             variant="outlined"
-                            disabled={false}
+                            disabled={updatingUserName}
                             onClick={() => {
                                 setDisplayName(user.displayName)
 
@@ -187,7 +212,7 @@ export default function ProfilePage(): React.ReactElement {
                         <Button
                             type="submit"
                             variant="contained"
-                            disabled={false}
+                            disabled={updatingUserName}
                             sx={{mt: 3, mb: 1}}
                         >
                             Update Display Name
@@ -205,7 +230,7 @@ export default function ProfilePage(): React.ReactElement {
                     type="submit"
                     variant="contained"
                     color="error"
-                    disabled={false}
+                    disabled={updatingUserName}
                     sx={{mt: 3, mb: 1}}
                 >
                     Delete User
