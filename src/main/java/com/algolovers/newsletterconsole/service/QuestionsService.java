@@ -215,10 +215,18 @@ public class QuestionsService {
             return new Result<>(false, null, "Validation errors: " + errorMessage);
         }
 
+        Set<String> imageKeys = group.getImageIds();
+
+        if(Objects.isNull(imageKeys)) {
+            imageKeys = new HashSet<>();
+        }
+
+        group.setImageIds(imageKeys);
+
         ResponseData responseData = new ResponseData();
         responseData.setUserEmailAddress(authenticatedUser.getEmailAddress());
         responseData.setResponseDate(LocalDateTime.now());
-        responseData.setQuestionResponses(convertToQuestionResponses(formQuestionResponses, questions));
+        responseData.setQuestionResponses(convertToQuestionResponses(formQuestionResponses, questions, imageKeys));
 
         responseRepository.save(responseData);
 
@@ -246,7 +254,7 @@ public class QuestionsService {
         return null;
     }
 
-    private Set<QuestionResponse> convertToQuestionResponses(List<FormQuestionResponse> formQuestionResponses, List<Question> questions) {
+    private Set<QuestionResponse> convertToQuestionResponses(List<FormQuestionResponse> formQuestionResponses, List<Question> questions, Set<String> imageKeys) {
         return formQuestionResponses.stream()
                 .map(formResponse -> {
 
@@ -283,8 +291,12 @@ public class QuestionsService {
                             }
 
                             // Upload image to Cloudinary
-                            String imageUrl = cloudinaryService.uploadImage(tempFile, UUID.randomUUID().toString());
+                            String imageKey = UUID.randomUUID().toString();
+                            String imageUrl = cloudinaryService.uploadImage(tempFile, imageKey);
                             questionResponse.setAnswer(imageUrl);
+
+                            //TODO: Write method to purge old images
+                            imageKeys.add(imageKey);
 
                             // Delete temporary file
                             tempFile.delete();

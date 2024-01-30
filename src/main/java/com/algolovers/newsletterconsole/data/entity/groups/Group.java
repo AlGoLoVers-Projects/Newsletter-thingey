@@ -1,5 +1,6 @@
 package com.algolovers.newsletterconsole.data.entity.groups;
 
+import com.algolovers.newsletterconsole.data.entity.converter.StringSetConverter;
 import com.algolovers.newsletterconsole.data.entity.questions.Question;
 import com.algolovers.newsletterconsole.data.entity.reponse.ResponseData;
 import com.algolovers.newsletterconsole.data.entity.user.User;
@@ -57,6 +58,9 @@ public class Group {
 
     @OneToMany
     private List<ResponseData> questionResponses;
+
+    @Convert(converter = StringSetConverter.class)
+    private Set<String> imageIds;
 
     @Override
     public String toString() {
