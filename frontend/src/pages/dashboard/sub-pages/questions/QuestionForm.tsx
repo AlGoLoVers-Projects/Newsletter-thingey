@@ -21,7 +21,7 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import {updateSingleGroupData} from "../../../../redux/rootslices/data/groups.slice";
 import {useDispatch} from "react-redux";
-
+import Resizer from "react-image-file-resizer";
 
 const DrawerHeader = styled('div')(({theme}) => ({
     display: 'flex',
@@ -83,6 +83,39 @@ const validateData = (responses: FormQuestionResponse[]): string[] => {
 
     return errors;
 };
+
+const compressImage = (file: File): Promise<string | null> => {
+    return new Promise((resolve, reject) => {
+        const maxSizeInBytes = 2 * 1024 * 1024;
+        const initialQuality = 90;
+
+        const resizeAndCompress = (image: File, quality: number) => {
+            Resizer.imageFileResizer(
+                image,
+                800,
+                600,
+                'JPEG',
+                quality, // quality
+                0, // rotation
+                (uri) => {
+                    const compressedDataUrl = uri as string;
+                    const compressedFileSize = compressedDataUrl.length * 0.75; // Base64 encoded string size in bytes
+
+                    if (compressedFileSize < maxSizeInBytes || quality <= 0) {
+                        resolve(compressedDataUrl);
+                    } else {
+                        const newQuality = Math.max(quality - 10, 5); // Decrease quality by 10
+                        resizeAndCompress(image, newQuality);
+                    }
+                },
+                'base64'
+            );
+        };
+
+        resizeAndCompress(file, initialQuality);
+    });
+};
+
 
 
 export default function QuestionForm(): React.ReactElement {
@@ -152,10 +185,9 @@ export default function QuestionForm(): React.ReactElement {
         return new Promise((resolve) => {
             if (file instanceof File) {
                 const reader = new FileReader();
-                reader.onloadend = () => {
-                    const result = reader.result as string;
-                    const base64String = result.split(',')[1];
-                    resolve(base64String || null);
+                reader.onloadend = async () => {
+                    const compressedBase64 = await compressImage(file); // Compress the image
+                    resolve(compressedBase64);
                 };
                 reader.readAsDataURL(file);
             } else {

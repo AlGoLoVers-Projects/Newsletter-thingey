@@ -16,12 +16,16 @@ import com.algolovers.newsletterconsole.data.model.api.response.questions.Questi
 import com.algolovers.newsletterconsole.repository.GroupRepository;
 import com.algolovers.newsletterconsole.repository.QuestionsRepository;
 import com.algolovers.newsletterconsole.repository.ResponseRepository;
+import com.algolovers.newsletterconsole.utils.CloudinaryService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,6 +38,7 @@ public class QuestionsService {
     private final QuestionsRepository questionsRepository;
     private final GroupRepository groupRepository;
     private final ResponseRepository responseRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Transactional(rollbackFor = {Exception.class})
     public Result<QuestionsResponse> createOrUpdateQuestions(@Valid GroupQuestionsRequest groupQuestionsRequest, User authenticatedUser) {
@@ -197,7 +202,7 @@ public class QuestionsService {
         List<FormQuestionResponse> formQuestionResponses = formDataResponse.getResponses();
 
         if (formQuestionResponses.size() != questions.size()) {
-            return new Result<>(false, null, "Responses do not match the legth of questions");
+            return new Result<>(false, null, "Responses do not match the length of questions");
         }
 
         List<String> validationErrors = formQuestionResponses.stream()
@@ -254,7 +259,40 @@ public class QuestionsService {
                     if (formResponse.getType() != QuestionType.IMAGE) {
                         questionResponse.setAnswer(String.valueOf(formResponse.getResponse()));
                     } else {
-                        //TODO: Save image in GDRIVE and save URL here
+                        try {
+                            String base64String = String.valueOf(formResponse.getResponse());
+
+                            // Split the base64 string to extract only the data part
+                            String[] parts = base64String.split(",");
+                            if (parts.length != 2) {
+                                throw new RuntimeException("Invalid base64 string format");
+                            }
+                            String base64Data = parts[1];
+
+                            // Get image format
+                            String imageFormat = getImageFormat(parts[0]);
+                            if (!isValidImageFormat(imageFormat)) {
+                                throw new RuntimeException("Invalid image format");
+                            }
+
+                            // Decode base64 string and save as image file
+                            byte[] fileBytes = Base64.getDecoder().decode(base64Data);
+                            File tempFile = File.createTempFile("temp", "." + imageFormat); // Using extracted image format
+                            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                                fos.write(fileBytes);
+                            }
+
+                            // Upload image to Cloudinary
+                            String imageUrl = cloudinaryService.uploadImage(tempFile, UUID.randomUUID().toString());
+                            questionResponse.setAnswer(imageUrl);
+
+                            // Delete temporary file
+                            tempFile.delete();
+                        } catch (IOException e) {
+                            log.error("Error handling image upload", e);
+                            throw new RuntimeException("Error handling image upload", e);
+                        }
+
                     }
                     return questionResponse;
                 })
@@ -267,5 +305,16 @@ public class QuestionsService {
                 .findFirst()
                 .orElse(null);
     }
+
+    private String getImageFormat(String extensionString) {
+        String[] headerParts = extensionString.split(";");
+        String[] typeParts = headerParts[0].split("/");
+        return (typeParts.length >= 2) ? typeParts[1] : null;
+    }
+
+    private boolean isValidImageFormat(String imageFormat) {
+        return imageFormat != null && (imageFormat.equalsIgnoreCase("jpeg") || imageFormat.equalsIgnoreCase("png"));
+    }
+
 
 }
