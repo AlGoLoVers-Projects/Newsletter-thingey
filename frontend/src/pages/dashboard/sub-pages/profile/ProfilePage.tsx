@@ -11,8 +11,8 @@ import Button from "@mui/material/Button";
 import UserProfileAvatar from "../../../../components/elements/UserProfileAvatar";
 import IconButton from "@mui/material/IconButton";
 import {Edit} from "@mui/icons-material";
-import {ChangeUserName, useUpdateUserDisplayNameMutation} from "../../../../redux/rootslices/api/authentication.slice";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
+import {ChangeUserName, useUpdateUserDisplayNameMutation} from "../../../../redux/rootslices/api/user.slice";
 
 export default function ProfilePage(): React.ReactElement {
     const user = useSelector(memoizedSelectUserData);

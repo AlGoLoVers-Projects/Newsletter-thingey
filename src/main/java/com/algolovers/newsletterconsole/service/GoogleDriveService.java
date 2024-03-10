@@ -34,7 +34,7 @@ public class GoogleDriveService {
         }
     }
 
-    public void replaceImageInFolder(String folderName, String existingImageName, byte[] newImageFileContent) throws IOException {
+    public File replaceImageInFolder(String folderName, String existingImageName, byte[] newImageFileContent) throws IOException {
         // Find the existing image file in the folder
         String folderId = getOrCreateFolderByName(folderName);
         String query = "mimeType='image/jpeg' and '" + folderId + "' in parents and name='" + existingImageName + "'";
@@ -45,7 +45,7 @@ public class GoogleDriveService {
             driveService.files().delete(files.get(0).getId()).execute();
         }
         // Upload the new image file to the same folder
-        uploadFileToGoogleDrive(newImageFileContent, existingImageName, "image/jpeg", folderId);
+        return uploadFileToGoogleDrive(newImageFileContent, existingImageName, "image/jpeg", folderId);
     }
 
     public String deleteFolderByName(String folderName) {

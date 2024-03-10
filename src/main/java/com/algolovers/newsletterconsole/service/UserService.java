@@ -9,6 +9,7 @@ import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.auth.*;
 import com.algolovers.newsletterconsole.exceptions.PasswordResetException;
 import com.algolovers.newsletterconsole.repository.UserRepository;
+import com.google.api.services.drive.model.File;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,6 +22,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -36,6 +38,7 @@ public class UserService implements UserDetailsService {
     final PasswordEncoder passwordEncoder;
     final EmailService emailService;
     final JwtService jwtService;
+    final GoogleDriveService googleDriveService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -169,6 +172,12 @@ public class UserService implements UserDetailsService {
 
     public Result<User> updateUserDisplayName(@Valid ChangeUserName changeUserName, User authentiatedUser) {
         authentiatedUser.setDisplayName(changeUserName.getUserName());
+        return saveOrUpdateUser(authentiatedUser);
+    }
+
+    public Result<User> uploadUserDisplayPicture(byte[] imageData, User authentiatedUser) throws IOException {
+        File file = googleDriveService.replaceImageInFolder("profile-picture", authentiatedUser.getId(),  imageData);
+        authentiatedUser.setProfilePicture(googleDriveService.getPublicUrl(file));
         return saveOrUpdateUser(authentiatedUser);
     }
 

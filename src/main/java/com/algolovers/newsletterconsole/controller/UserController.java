@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/user")
@@ -28,6 +28,18 @@ public class UserController {
     public Result<User> updateUserDisplayName(@RequestBody ChangeUserName changeUserName) {
         User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userService.updateUserDisplayName(changeUserName, userDetails);
+    }
+
+    @PostMapping("/updateDisplayPicture")
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile imageFile) {
+        User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            byte[] imageData = imageFile.getBytes();
+            userService.uploadUserDisplayPicture(imageData, userDetails);
+            return ResponseEntity.ok("Image uploaded successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
+        }
     }
 
     @GetMapping("/{subPath}")

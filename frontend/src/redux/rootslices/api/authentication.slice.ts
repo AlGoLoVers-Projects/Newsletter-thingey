@@ -36,10 +36,6 @@ export type ResetPasswordRequest = {
     verificationCode: number
 }
 
-export type ChangeUserName = {
-    userName: string
-}
-
 export const authenticationSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({
         signIn: builder.mutation<Result<AuthData>, SignInRequest>({
@@ -84,13 +80,6 @@ export const authenticationSlice = baseApiSlice.injectEndpoints({
                 body: credentials,
             }),
         }),
-        updateUserDisplayName: builder.mutation<Result<UserData>, ChangeUserName>({
-            query: (userName) => ({
-                url: '/api/user/updateUserDisplayName',
-                method: 'POST',
-                body: userName,
-            }),
-        }),
     }),
 });
 
@@ -100,6 +89,5 @@ export const {
     useVerifyMutation,
     useValidateTokenMutation,
     useForgotPasswordMutation,
-    useResetPasswordMutation,
-    useUpdateUserDisplayNameMutation
+    useResetPasswordMutation
 } = authenticationSlice;
