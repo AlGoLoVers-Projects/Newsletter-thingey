@@ -19,15 +19,14 @@ export const invitationsSlice = baseApiSlice.injectEndpoints({
                 body: userName,
             }),
         }),
-        uploadUserDisplayPicture: builder.mutation<Result<string>, UploadDisplayPicture>({
-            query: (imageFile) => ({
+        uploadUserDisplayPicture: builder.mutation<Result<UserData>, FormData>({
+            query: (formData) => ({
                 url: '/api/user/updateDisplayPicture',
                 method: 'POST',
-                body: imageFile,
-                responseType: 'text',
+                body: formData,
             }),
         }),
     }),
 });
 
-export const {useUpdateUserDisplayNameMutation} = invitationsSlice;
+export const {useUpdateUserDisplayNameMutation, useUploadUserDisplayPictureMutation} = invitationsSlice;

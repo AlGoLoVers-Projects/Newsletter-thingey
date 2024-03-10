@@ -31,14 +31,13 @@ public class UserController {
     }
 
     @PostMapping("/updateDisplayPicture")
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile imageFile) {
+    public Result<User> uploadImage(@RequestParam("image") MultipartFile imageFile) {
         User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
             byte[] imageData = imageFile.getBytes();
-            userService.uploadUserDisplayPicture(imageData, userDetails);
-            return ResponseEntity.ok("Image uploaded successfully");
+            return userService.uploadUserDisplayPicture(imageData, userDetails);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image");
+            return new Result<>(false, null, "Image could not be uploaded");
         }
     }
 

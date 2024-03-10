@@ -1,5 +1,5 @@
 import Container from "@mui/material/Container";
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import Typography from "@mui/material/Typography";
 import {useDispatch, useSelector} from "react-redux";
 import {memoizedSelectUserData, setUserData} from "../../../../redux/rootslices/data/auth-data.slice";
@@ -12,12 +12,18 @@ import UserProfileAvatar from "../../../../components/elements/UserProfileAvatar
 import IconButton from "@mui/material/IconButton";
 import {Edit} from "@mui/icons-material";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
-import {ChangeUserName, useUpdateUserDisplayNameMutation} from "../../../../redux/rootslices/api/user.slice";
+import {
+    ChangeUserName, UploadDisplayPicture,
+    useUpdateUserDisplayNameMutation,
+    useUploadUserDisplayPictureMutation
+} from "../../../../redux/rootslices/api/user.slice";
+import ImageDialog, {ImageDialogProps, ImageDialogRef} from "../../../../components/elements/ImageDialog";
 
 export default function ProfilePage(): React.ReactElement {
     const user = useSelector(memoizedSelectUserData);
     const dispatch = useDispatch();
 
+    const [uploadUserDisplayPicture, {isLoading}] = useUploadUserDisplayPictureMutation();
     const [changeUserName, {isLoading: updatingUserName}] = useUpdateUserDisplayNameMutation()
 
     const [displayName, setDisplayName] = useState<string>(user.displayName);
@@ -62,6 +68,40 @@ export default function ProfilePage(): React.ReactElement {
 
     }
 
+    const imageDialogRef = useRef<ImageDialogRef>(null);
+
+    const imageDialogProps: ImageDialogProps = {
+        title: 'Select Image',
+        message: 'Please select an image to upload',
+        acceptLabel: 'Upload',
+        rejectLabel: 'Cancel',
+        onAccept: async (file) => {
+            try {
+                // Create a FormData object and append the file to it
+                const formData = new FormData();
+                formData.append('image', file);
+
+                // Send the multipart request using the RTKQ mutation
+                const response = await uploadUserDisplayPicture(formData).unwrap();
+
+                // Check the response and handle accordingly
+                if (response.success) {
+                    showSuccessToast('Display picture updated successfully');
+                    dispatch(setUserData(response.data));
+                } else {
+                    showFailureToast(response.message ?? 'Failed to update display picture, try again later');
+                }
+            } catch (error) {
+                console.error('Error updating display picture:', error);
+                showFailureToast('Failed to update display picture');
+            }
+        },
+        onReject: () => {
+            console.log('Image selection cancelled');
+        },
+    };
+
+
     return (
         <Container
             component="main"
@@ -76,6 +116,7 @@ export default function ProfilePage(): React.ReactElement {
                 flex: 1
             }}
         >
+            <ImageDialog ref={imageDialogRef} {...imageDialogProps} />
             <Typography
                 component="h1"
                 variant="h2"
@@ -120,6 +161,11 @@ export default function ProfilePage(): React.ReactElement {
                                         '&:hover': {
                                             backgroundColor: '#ffbf93',
                                         },
+                                    }}
+                                    onClick={() => {
+                                        if (imageDialogRef.current) {
+                                            imageDialogRef.current.open();
+                                        }
                                     }}
                                 >
                                     <Edit/>
