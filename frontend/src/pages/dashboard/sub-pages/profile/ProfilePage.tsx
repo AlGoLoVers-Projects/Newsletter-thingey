@@ -76,15 +76,13 @@ export default function ProfilePage(): React.ReactElement {
         acceptLabel: 'Upload',
         rejectLabel: 'Cancel',
         onAccept: async (file) => {
+            imageDialogRef.current?.setButtonsEnabled(false);
             try {
-                // Create a FormData object and append the file to it
                 const formData = new FormData();
                 formData.append('image', file);
 
-                // Send the multipart request using the RTKQ mutation
                 const response = await uploadUserDisplayPicture(formData).unwrap();
 
-                // Check the response and handle accordingly
                 if (response.success) {
                     showSuccessToast('Display picture updated successfully');
                     dispatch(setUserData(response.data));
@@ -94,6 +92,8 @@ export default function ProfilePage(): React.ReactElement {
             } catch (error) {
                 console.error('Error updating display picture:', error);
                 showFailureToast('Failed to update display picture');
+            } finally {
+                imageDialogRef.current?.setButtonsEnabled(true);
             }
         },
         onReject: () => {

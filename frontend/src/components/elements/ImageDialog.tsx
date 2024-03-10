@@ -18,6 +18,7 @@ const Transition = forwardRef(function Transition(
 export type ImageDialogRef = {
     open: () => void;
     close: () => void;
+    setButtonsEnabled: (enabled: boolean) => void;
 } | null;
 
 export interface ImageDialogProps {
@@ -41,6 +42,7 @@ const ImageDialog = forwardRef<ImageDialogRef, ImageDialogProps>((props, ref) =>
 
     const [open, setOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [buttonsEnabled, setButtonsEnabled] = useState(true);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -65,6 +67,7 @@ const ImageDialog = forwardRef<ImageDialogRef, ImageDialogProps>((props, ref) =>
     useImperativeHandle(ref, () => ({
         open: handleClickOpen,
         close: handleClose,
+        setButtonsEnabled: (enabled: boolean) => setButtonsEnabled(enabled),
     }));
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,11 +90,17 @@ const ImageDialog = forwardRef<ImageDialogRef, ImageDialogProps>((props, ref) =>
                 <DialogContentText id="alert-dialog-slide-description">
                     {message}
                 </DialogContentText>
-                <input type="file" accept="image/*" onChange={handleImageChange} />
+                <input
+                    accept="image/*"
+                    id="contained-button-file"
+                    type="file"
+                    onChange={handleImageChange}
+                    disabled={!buttonsEnabled}
+                />
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleReject}>{rejectLabel}</Button>
-                <Button onClick={handleAccept}>{acceptLabel}</Button>
+                <Button onClick={handleReject} disabled={!buttonsEnabled}>{rejectLabel}</Button>
+                <Button onClick={handleAccept} disabled={!buttonsEnabled}>{acceptLabel}</Button>
             </DialogActions>
         </Dialog>
     );
