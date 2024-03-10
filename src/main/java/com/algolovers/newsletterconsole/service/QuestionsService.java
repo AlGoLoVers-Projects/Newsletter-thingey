@@ -16,16 +16,13 @@ import com.algolovers.newsletterconsole.data.model.api.response.questions.Questi
 import com.algolovers.newsletterconsole.repository.GroupRepository;
 import com.algolovers.newsletterconsole.repository.QuestionsRepository;
 import com.algolovers.newsletterconsole.repository.ResponseRepository;
-import com.algolovers.newsletterconsole.utils.CloudinaryService;
+import com.google.api.services.drive.model.File;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,7 +35,7 @@ public class QuestionsService {
     private final QuestionsRepository questionsRepository;
     private final GroupRepository groupRepository;
     private final ResponseRepository responseRepository;
-    private final CloudinaryService cloudinaryService;
+    private final GoogleDriveService googleDriveService;
 
     @Transactional(rollbackFor = {Exception.class})
     public Result<QuestionsResponse> createOrUpdateQuestions(@Valid GroupQuestionsRequest groupQuestionsRequest, User authenticatedUser) {
@@ -215,18 +212,10 @@ public class QuestionsService {
             return new Result<>(false, null, "Validation errors: " + errorMessage);
         }
 
-        Set<String> imageKeys = group.getImageIds();
-
-        if(Objects.isNull(imageKeys)) {
-            imageKeys = new HashSet<>();
-        }
-
-        group.setImageIds(imageKeys);
-
         ResponseData responseData = new ResponseData();
         responseData.setUserEmailAddress(authenticatedUser.getEmailAddress());
         responseData.setResponseDate(LocalDateTime.now());
-        responseData.setQuestionResponses(convertToQuestionResponses(formQuestionResponses, questions, imageKeys));
+        responseData.setQuestionResponses(convertToQuestionResponses(formQuestionResponses, questions, group.getId()));
 
         responseRepository.save(responseData);
 
@@ -254,7 +243,7 @@ public class QuestionsService {
         return null;
     }
 
-    private Set<QuestionResponse> convertToQuestionResponses(List<FormQuestionResponse> formQuestionResponses, List<Question> questions, Set<String> imageKeys) {
+    private Set<QuestionResponse> convertToQuestionResponses(List<FormQuestionResponse> formQuestionResponses, List<Question> questions, String groupId) {
         return formQuestionResponses.stream()
                 .map(formResponse -> {
 
@@ -285,22 +274,14 @@ public class QuestionsService {
 
                             // Decode base64 string and save as image file
                             byte[] fileBytes = Base64.getDecoder().decode(base64Data);
-                            File tempFile = File.createTempFile("temp", "." + imageFormat); // Using extracted image format
-                            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-                                fos.write(fileBytes);
-                            }
 
-                            // Upload image to Cloudinary
+                            // Upload image to Google drive
                             String imageKey = UUID.randomUUID().toString();
-                            String imageUrl = cloudinaryService.uploadImage(tempFile, imageKey);
-                            questionResponse.setAnswer(imageUrl);
+                            File file = googleDriveService.uploadFile(groupId, imageKey, "image/jpeg", fileBytes);
+                            questionResponse.setAnswer(googleDriveService.getPublicUrl(file));
 
                             //TODO: Write method to purge old images
-                            imageKeys.add(imageKey);
-
-                            // Delete temporary file
-                            tempFile.delete();
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             log.error("Error handling image upload", e);
                             throw new RuntimeException("Error handling image upload", e);
                         }

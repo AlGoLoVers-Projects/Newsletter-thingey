@@ -59,9 +59,6 @@ public class Group {
     @OneToMany
     private List<ResponseData> questionResponses;
 
-    @Convert(converter = StringSetConverter.class)
-    private Set<String> imageIds;
-
     @Override
     public String toString() {
         return "Group{" +
