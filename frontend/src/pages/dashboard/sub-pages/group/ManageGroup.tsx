@@ -14,7 +14,10 @@ import {
     useDeleteGroupMutation,
     useEditGroupMutation,
     useLeaveGroupMutation,
-    useRemoveUserMutation, useUpdateEditAccessToUserMutation, useReleaseQuestionsMutation,
+    useRemoveUserMutation,
+    useUpdateEditAccessToUserMutation,
+    useReleaseQuestionsMutation,
+    useGenerateNewsletterMutation,
 } from "../../../../redux/rootslices/api/groups.slice";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -325,6 +328,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const [listInvitations] = useListAllInvitationsByGroupMutation()
     const [deleteInvitation] = useRemoveInvitationFromGroupMutation()
     const [releaseQuestions] = useReleaseQuestionsMutation()
+    const [generateNewsletter]=  useGenerateNewsletterMutation()
 
     const userEmailAddress = useSelector(memoizedSelectUserData).emailAddress
 
@@ -382,6 +386,27 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
             })
             .catch((result) => {
                 showFailureToast(result.data.message ?? "Could not release questions")
+            })
+    }
+
+    const handleGenerateNewsletter = () => {
+        const request: GroupRequest = {
+            groupId: groupData.id,
+        }
+
+        generateNewsletter(request)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    dispatch(updateSingleGroupData({updatedData: response.data}))
+                    showSuccessToast(response.message ?? 'Newsletter generated successfully')
+
+                } else {
+                    showFailureToast(response.message ?? 'Failed to generate newsletter')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.data.message ?? "Could not generate newsletter")
             })
     }
 
@@ -930,8 +955,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                         title="Generate newsletter?"
                         message="Are you sure you want to generate newsletter for this month, this is an irreversible action and you cannot generate any more newsletters for this month."
                         acceptLabel='Generate Newsletter'
-                        onAccept={() => {
-                        }}
+                        onAccept={handleGenerateNewsletter}
                     />
                     <Typography component="h1" variant="h6" sx={{
                         fontWeight: 'bold',
