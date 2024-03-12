@@ -1,8 +1,13 @@
 package com.algolovers.newsletterconsole.newsletter.engine;
 
+import com.algolovers.newsletterconsole.data.entity.reponse.QuestionResponse;
+import com.algolovers.newsletterconsole.data.entity.reponse.ResponseData;
 import com.algolovers.newsletterconsole.newsletter.engine.data.PDFData;
 import com.algolovers.newsletterconsole.newsletter.engine.data.PDFElement;
 import com.algolovers.newsletterconsole.newsletter.engine.data.Type;
+import com.algolovers.newsletterconsole.service.GoogleDriveService;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -10,16 +15,31 @@ import org.jsoup.parser.Tag;
 import org.springframework.stereotype.Service;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Objects;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class NewsletterEngine {
 
-    private static String htmlToXhtml(File template, PDFData pdfData) throws IOException {
+    GoogleDriveService googleDriveService;
+
+    private static final Function<String, String> pdfFolder = (groupId) -> String.format("%s-issues", groupId);
+    private static final Function<String, String> sanitizeGroupName = (groupName) -> {
+        return groupName.replaceAll("[^a-zA-Z0-9-_]", "_");
+    };
+    private static final Function<String, String> fileName = (groupName) -> {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
+        String currentMonthYear = dateFormat.format(new Date());
+        String sanitizedGroupName = sanitizeGroupName.apply(groupName);
+        return String.format("%s-issue-%s", sanitizedGroupName, currentMonthYear);
+    };
+
+    private String htmlToXhtml(File template, PDFData pdfData) throws IOException {
         Document document = Jsoup.parse(template);
 
         Objects.requireNonNull(document.getElementById("date")).text(pdfData.getDateOfGeneration());
@@ -35,17 +55,20 @@ public class NewsletterEngine {
         return document.html();
     }
 
-    private static void xhtmlToPdf(String xhtml, String outFileName) throws IOException {
-        File output = new File(outFileName);
+    private String xhtmlToPdfAndUpload(String xhtml, String groupId, String groupName) throws IOException {
+        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         ITextRenderer iTextRenderer = new ITextRenderer();
         iTextRenderer.setDocumentFromString(xhtml);
         iTextRenderer.layout();
-        OutputStream os = new FileOutputStream(output);
-        iTextRenderer.createPDF(os);
-        os.close();
+        iTextRenderer.createPDF(byteArray);
+        byteArray.close();
+
+        byte[] pdfBytes = byteArray.toByteArray();
+
+        return googleDriveService.getPublicUrl(googleDriveService.uploadFile(pdfFolder.apply(groupId), fileName.apply(groupName), "application/pdf", pdfBytes));
     }
 
-    private static Element buildElementForContent(PDFElement pdfElement) {
+    private Element buildElementForContent(PDFElement pdfElement) {
 
         Element item = new Element(Tag.valueOf("div"), "").addClass("item");
         Element question = new Element(Tag.valueOf("div"), "").addClass("question").text(pdfElement.getQuestion());
@@ -68,9 +91,78 @@ public class NewsletterEngine {
         return item;
     }
 
-    private PDFData buildDataFromJSON(String json) {
-        //TODO: implement JSON parser
+    private PDFData buildDataFromJSON(List<ResponseData> questionResponses) {
+        Collections.shuffle(questionResponses);
 
-        return new PDFData();
+        PDFData pdfData = new PDFData();
+
+        List<PDFElement> pdfElementList = questionResponses.stream()
+                .map(questionResponse -> questionResponse
+                        .getQuestionResponses()
+                        .stream()
+                        .map(questionResponseData -> PDFElement.builder()
+                                .question(questionResponseData.getQuestion())
+                                .userName(questionResponse.getUserName())
+                                .profilePicture(questionResponse.getUserProfilePicture())
+                                .response(getAnswerStringForResponse(questionResponseData, questionResponse.getUserName()))
+                                .type(questionResponseData.getQuestionType().getType())
+                                .build()).collect(Collectors.toSet()))
+                .flatMap(Collection::stream)
+                .toList();
+
+        pdfData.setPdfElementList(pdfElementList);
+        return pdfData;
+    }
+
+    private String getAnswerStringForResponse(QuestionResponse questionResponse, String userName) {
+        return switch (questionResponse.getQuestionType()) {
+            case TEXT -> String.format("%s says: %s", userName, questionResponse.getAnswer());
+            case IMAGE -> questionResponse.getAnswer();
+            case DATE -> String.format("%s chose the following date: %s", userName, questionResponse.getAnswer());
+            case TIME -> String.format("%s chose the following time: %s", userName, questionResponse.getAnswer());
+            case CHECKBOX ->
+                    String.format("%s chose the following options: %s", userName, flattenArrayToString(questionResponse.getAnswer()));
+            case DROPDOWN -> String.format("%s's response: %s", userName, questionResponse.getAnswer());
+        };
+    }
+
+    private String flattenArrayToString(String jsonArray) {
+        try {
+            JSONArray array = new JSONArray(jsonArray);
+            int length = array.length();
+
+            if (length == 0) {
+                return "";
+            } else if (length == 1) {
+                return array.getString(0);
+            } else {
+                StringBuilder stringBuilder = new StringBuilder();
+                for (int i = 0; i < length - 1; i++) {
+                    stringBuilder.append(array.getString(i)).append(", ");
+                }
+                stringBuilder.append(array.getString(length - 1));
+                return stringBuilder.toString();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    //TODO: Add question options, profile picture to response
+    public String generateNewsletter(String groupId, String groupName, String groupDescription, List<ResponseData> questionResponses) throws IOException {
+        PDFData pdfData = buildDataFromJSON(questionResponses);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
+        pdfData.setDateOfGeneration(dateFormat.format(new Date()));
+        pdfData.setGroupTitle(groupName);
+        pdfData.setGroupDescription(groupDescription);
+
+        String xhtml = htmlToXhtml(new File("src/main/resources/index.html"), pdfData);
+
+        googleDriveService.deleteFolderByName(groupId);
+
+        return xhtmlToPdfAndUpload(xhtml, groupId, groupName);
+
     }
 }

@@ -10,6 +10,7 @@ import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.group.*;
 import com.algolovers.newsletterconsole.data.model.api.response.group.GroupForm;
+import com.algolovers.newsletterconsole.newsletter.engine.NewsletterEngine;
 import com.algolovers.newsletterconsole.repository.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class GroupService {
     private final UserRepository userRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final ResponseRepository responseRepository;
+    private final NewsletterEngine newsletterEngine;
 
     @Transactional(rollbackFor = {Exception.class})
     public Result<Group> provisionNewGroup(@Valid GroupCreationRequest groupCreationRequest, @Valid User groupOwner) {
@@ -486,4 +488,60 @@ public class GroupService {
 
         return new Result<>(false, null, "Failed to fetch forms");
     }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public Result<Group> generateNewsletter(@Valid GroupRequest groupRequest, User authenticatedUser) {
+        try {
+            Optional<Group> optionalGroup = groupRepository.findById(groupRequest.getGroupId());
+
+            if (optionalGroup.isEmpty()) {
+                return new Result<>(false, null, "The provided group was not found");
+            }
+
+            Group group = optionalGroup.get();
+
+            Optional<GroupMember> groupMember = group
+                    .getGroupMembers()
+                    .stream()
+                    .filter(member ->
+                            authenticatedUser
+                                    .getEmailAddress()
+                                    .equals(member.getUser().getEmailAddress()))
+                    .findFirst();
+
+            if (groupMember.isEmpty()) {
+                return new Result<>(false, null, "You are not part of this group");
+            }
+
+            if (!groupMember.get().isHasEditAccess()) {
+                return new Result<>(false, null, "You do not have edit access to generate newsletter");
+            }
+
+            List<Question> questions = group.getQuestions();
+
+            if (questions.isEmpty()) {
+                return new Result<>(false, null, "Please add questions before generating newsletter");
+            }
+
+
+            List<ResponseData> questionResponses = group.getQuestionResponses();
+
+            //TODO: pdfLink, forward
+            String pdfLink = newsletterEngine.generateNewsletter(group.getId(), group.getGroupName(), group.getGroupDescription(), questionResponses);
+            System.out.println(pdfLink);
+
+            responseRepository.deleteAll(questionResponses);
+            questionResponses.clear();
+
+            group.setAcceptQuestionResponse(false);
+
+            //TODO: Push email to everyone.
+            group = groupRepository.save(group);
+            return new Result<>(true, group, "Newsletter has been generated, URL: " + pdfLink);
+        } catch (Exception e) {
+            log.error("Exception occurred: {}", e.getMessage(), e);
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
 }

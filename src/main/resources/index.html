@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        div {
+            text-align: justify;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        #content {
+            overflow: hidden;
+        }
+
+        #date {
+            padding: 10px;
+            border-bottom: 1px solid black;
+        }
+
+        #title {
+            padding: 8px;
+            text-align: center;
+            font-size: 100px;
+            font-family: Monospaced, serif;
+        }
+
+        #issue-name {
+            background-color: orange;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 20px;
+        }
+
+        img {
+            object-fit: contain;
+            max-width: 400px;
+            width: 400px;
+        }
+
+        .item {
+            margin-top: 20px;
+        }
+
+        .question {
+            font-size: 25px;
+            font-family: Monospaced, serif;
+        }
+
+        .response {}
+
+        .response-image {
+            text-align: center;
+        }
+
+        .response-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+
+    </style>
+</head>
+
+<!--structure             
+<div class="item">
+<div class="question">
+Which was your fav pic from this month?
+</div>
+<div class="response-title">
+Soorya's response:
+</div>
+<div class="response">
+<img src="https://images.unsplash.com/photo-1481349518771-20055b2a7b24?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmFuZG9tfGVufDB8fDB8fHww">
+</div>
+</div>-->
+
+<body>
+<div id="content">
+    <div id="date"></div>
+    <div id="title-section">
+        <div id="title"></div>
+        <div id="issue-name"></div>
+        <div class="container">
+            <div class="item" id="group-description">
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
