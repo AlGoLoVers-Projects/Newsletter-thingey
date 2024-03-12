@@ -44,7 +44,7 @@ public class NewsletterEngine {
     private String htmlToXhtml(File template, PDFData pdfData) throws IOException {
         Document document = Jsoup.parse(template);
 
-        Objects.requireNonNull(document.getElementById("date")).text(pdfData.getDateOfGeneration());
+        Objects.requireNonNull(document.getElementById("date")).text("Issue: " + pdfData.getDateOfGeneration());
         Objects.requireNonNull(document.getElementById("title")).text("Newsletter");
         Objects.requireNonNull(document.getElementById("issue-name")).text(pdfData.getGroupTitle());
         Objects.requireNonNull(document.getElementById("group-description")).text(pdfData.getGroupDescription());
