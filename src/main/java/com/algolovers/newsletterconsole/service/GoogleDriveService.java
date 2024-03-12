@@ -21,7 +21,7 @@ public class GoogleDriveService {
     private final Drive driveService;
 
     public String getPublicUrl(File file) {
-        return "https://drive.google.com/thumbnail?id=" + file.getId();
+        return "https://drive.google.com/thumbnail?id=" + file.getId() + "&sz=s2000";
     }
 
     public File uploadFile(String folderName, String fileName, String mimeType, byte[] fileBytes) {

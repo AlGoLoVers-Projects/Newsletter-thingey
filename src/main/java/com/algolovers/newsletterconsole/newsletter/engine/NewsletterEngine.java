@@ -6,6 +6,7 @@ import com.algolovers.newsletterconsole.newsletter.engine.data.PDFData;
 import com.algolovers.newsletterconsole.newsletter.engine.data.PDFElement;
 import com.algolovers.newsletterconsole.newsletter.engine.data.Type;
 import com.algolovers.newsletterconsole.service.GoogleDriveService;
+import lombok.AllArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
@@ -24,9 +25,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class NewsletterEngine {
 
-    GoogleDriveService googleDriveService;
+    private final GoogleDriveService googleDriveService;
 
     private static final Function<String, String> pdfFolder = (groupId) -> String.format("%s-issues", groupId);
     private static final Function<String, String> sanitizeGroupName = (groupName) -> {
@@ -63,9 +65,8 @@ public class NewsletterEngine {
         iTextRenderer.createPDF(byteArray);
         byteArray.close();
 
-        byte[] pdfBytes = byteArray.toByteArray();
-
-        return googleDriveService.getPublicUrl(googleDriveService.uploadFile(pdfFolder.apply(groupId), fileName.apply(groupName), "application/pdf", pdfBytes));
+        googleDriveService.deleteFolderByName(groupId);
+        return googleDriveService.uploadFile(pdfFolder.apply(groupId), fileName.apply(groupName), "application/pdf", byteArray.toByteArray()).getWebViewLink();
     }
 
     private Element buildElementForContent(PDFElement pdfElement) {
@@ -116,13 +117,12 @@ public class NewsletterEngine {
 
     private String getAnswerStringForResponse(QuestionResponse questionResponse, String userName) {
         return switch (questionResponse.getQuestionType()) {
-            case TEXT -> String.format("%s says: %s", userName, questionResponse.getAnswer());
+            case TEXT, DROPDOWN -> String.format("%s says: %s", userName, questionResponse.getAnswer());
             case IMAGE -> questionResponse.getAnswer();
             case DATE -> String.format("%s chose the following date: %s", userName, questionResponse.getAnswer());
             case TIME -> String.format("%s chose the following time: %s", userName, questionResponse.getAnswer());
             case CHECKBOX ->
                     String.format("%s chose the following options: %s", userName, flattenArrayToString(questionResponse.getAnswer()));
-            case DROPDOWN -> String.format("%s's response: %s", userName, questionResponse.getAnswer());
         };
     }
 
@@ -135,12 +135,14 @@ public class NewsletterEngine {
                 return "";
             } else if (length == 1) {
                 return array.getString(0);
+            } else if (length == 2) {
+                return array.getString(0) + " & " + array.getString(1);
             } else {
                 StringBuilder stringBuilder = new StringBuilder();
-                for (int i = 0; i < length - 1; i++) {
+                for (int i = 0; i < length - 2; i++) {
                     stringBuilder.append(array.getString(i)).append(", ");
                 }
-                stringBuilder.append(array.getString(length - 1));
+                stringBuilder.append(array.getString(length - 2)).append(" & ").append(array.getString(length - 1));
                 return stringBuilder.toString();
             }
         } catch (JSONException e) {
@@ -159,9 +161,6 @@ public class NewsletterEngine {
         pdfData.setGroupDescription(groupDescription);
 
         String xhtml = htmlToXhtml(new File("src/main/resources/index.html"), pdfData);
-
-        googleDriveService.deleteFolderByName(groupId);
-
         return xhtmlToPdfAndUpload(xhtml, groupId, groupName);
 
     }
