@@ -22,6 +22,7 @@ export type AlertDialogRef = {
     open: () => void;
     close: () => void;
 } | null;
+
 export interface ExternalControlledDialogProps {
     title: string;
     message: string;
@@ -87,6 +88,7 @@ const AlertDialog = forwardRef<
                 keepMounted
                 onClose={handleClose}
                 aria-describedby="alert-dialog-slide-description"
+                disableEscapeKeyDown
             >
                 <DialogTitle>{title}</DialogTitle>
                 <DialogContent>

@@ -13,7 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import {Edit} from "@mui/icons-material";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
 import {
-    ChangeUserName, UploadDisplayPicture,
+    ChangeUserName,
     useUpdateUserDisplayNameMutation,
     useUploadUserDisplayPictureMutation
 } from "../../../../redux/rootslices/api/user.slice";

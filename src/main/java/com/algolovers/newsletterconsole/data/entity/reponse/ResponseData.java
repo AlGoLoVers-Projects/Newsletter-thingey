@@ -24,6 +24,10 @@ public class ResponseData {
     @Email
     private String userEmailAddress;
 
+    private String userName;
+
+    private String userProfilePicture;
+
     @CreationTimestamp
     private LocalDateTime responseDate;
 

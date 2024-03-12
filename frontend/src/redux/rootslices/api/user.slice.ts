@@ -6,10 +6,6 @@ export type ChangeUserName = {
     userName: string
 }
 
-export type UploadDisplayPicture = {
-    file: File
-}
-
 export const invitationsSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({
         updateUserDisplayName: builder.mutation<Result<UserData>, ChangeUserName>({

@@ -214,6 +214,8 @@ public class QuestionsService {
 
         ResponseData responseData = new ResponseData();
         responseData.setUserEmailAddress(authenticatedUser.getEmailAddress());
+        responseData.setUserName(authenticatedUser.getDisplayName());
+        responseData.setUserProfilePicture(authenticatedUser.getProfilePicture());
         responseData.setResponseDate(LocalDateTime.now());
         responseData.setQuestionResponses(convertToQuestionResponses(formQuestionResponses, questions, group.getId()));
 
