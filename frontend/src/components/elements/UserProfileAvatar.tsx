@@ -36,6 +36,7 @@ const UserProfileAvatar: React.FC<UserProfileAvatarProps> = ({ user, big }) => {
             {user.profilePicture ? (
                 <img
                     src={user.profilePicture}
+                    referrerPolicy="no-referrer"
                     alt="Profile"
                     style={{
                         width: '100%',
