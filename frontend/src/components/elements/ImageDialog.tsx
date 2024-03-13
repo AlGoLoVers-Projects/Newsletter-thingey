@@ -7,6 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
+import {Input} from "@mui/material";
 
 const Transition = forwardRef(function Transition(
     props: TransitionProps & { children: React.ReactElement<any, any> },
@@ -90,12 +91,11 @@ const ImageDialog = forwardRef<ImageDialogRef, ImageDialogProps>((props, ref) =>
                 <DialogContentText id="alert-dialog-slide-description">
                     {message}
                 </DialogContentText>
-                <input
-                    accept="image/*"
-                    id="contained-button-file"
+                <Input
                     type="file"
+                    color="secondary"
+                    inputProps={{ accept: 'image/*' }}
                     onChange={handleImageChange}
-                    disabled={!buttonsEnabled}
                 />
             </DialogContent>
             <DialogActions>

@@ -88,6 +88,7 @@ const FormQuestionCard: React.FC<QuestionCardProps> = ({ question, index, onAnsw
                         <Input
                             type="file"
                             color="secondary"
+                            inputProps={{ accept: 'image/*' }}
                             onChange={(event) => handleAnswerChange((event.target as HTMLInputElement).files?.[0] || null, QuestionType.IMAGE)}
                         />
                     </FormControl>

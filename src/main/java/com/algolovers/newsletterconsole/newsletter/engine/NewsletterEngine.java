@@ -79,10 +79,8 @@ public class NewsletterEngine {
         if (pdfElement.getProfilePicture() != null && !pdfElement.getProfilePicture().isEmpty()) {
             profilePicture.attr("style", "background-image: url('" + pdfElement.getProfilePicture() + "')");
         } else {
-            // If profile picture URL is null or empty, use first letter of username as a fallback
-            String initials = pdfElement.getUserName().substring(0, 1).toUpperCase();
-            profilePicture.text(initials);
-            profilePicture.addClass("fallback-profile");
+            String baseUrl = String.format("https://ui-avatars.com/api/?name=%s&background=random&size=128", pdfElement.getUserName());
+            profilePicture.attr("style", "background-image: url('" + baseUrl  + "')");
         }
 
         // Append the profile picture to its container
