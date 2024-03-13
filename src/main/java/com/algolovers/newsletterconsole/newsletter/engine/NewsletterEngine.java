@@ -78,7 +78,7 @@ public class NewsletterEngine {
 
         if (pdfElement.getType().equals(Type.IMAGE)) {
             response = new Element(Tag.valueOf("div"), "").addClass("response-image");
-            Element img = new Element("img").attr("src", pdfElement.getResponse());
+            Element img = new Element("img").addClass("img").attr("src", pdfElement.getResponse());
             response.appendChild(img);
         } else {
             response = new Element(Tag.valueOf("div"), "").addClass("response");
