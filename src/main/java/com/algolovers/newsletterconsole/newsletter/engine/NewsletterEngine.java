@@ -178,7 +178,6 @@ public class NewsletterEngine {
         }
     }
 
-    //TODO: Add question options, profile picture to response
     public String generateNewsletter(String groupId, String groupName, String groupDescription, List<ResponseData> questionResponses) throws IOException {
         PDFData pdfData = buildDataFromJSON(questionResponses);
 
