@@ -31,9 +31,7 @@ public class NewsletterEngine {
     private final GoogleDriveService googleDriveService;
 
     private static final Function<String, String> pdfFolder = (groupId) -> String.format("%s-issues", groupId);
-    private static final Function<String, String> sanitizeGroupName = (groupName) -> {
-        return groupName.replaceAll("[^a-zA-Z0-9-_]", "_");
-    };
+    private static final Function<String, String> sanitizeGroupName = (groupName) -> groupName.replaceAll("[^a-zA-Z0-9-_]", "_");
     private static final Function<String, String> fileName = (groupName) -> {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
         String currentMonthYear = dateFormat.format(new Date());
@@ -53,6 +51,8 @@ public class NewsletterEngine {
 
         pdfData.getPdfElementList().forEach(pdfElement -> Objects.requireNonNull(container).appendChild(buildElementForContent(pdfElement)));
 
+        System.out.println(document.html());
+
         document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
         return document.html();
     }
@@ -70,10 +70,39 @@ public class NewsletterEngine {
     }
 
     private Element buildElementForContent(PDFElement pdfElement) {
-
         Element item = new Element(Tag.valueOf("div"), "").addClass("item");
+
+        // Create a div for the profile picture or fallback background
+        Element profilePictureContainer = new Element(Tag.valueOf("div"), "").addClass("profile-picture-container");
+        Element profilePicture = new Element("div").addClass("profile-picture");
+
+        if (pdfElement.getProfilePicture() != null && !pdfElement.getProfilePicture().isEmpty()) {
+            profilePicture.attr("style", "background-image: url('" + pdfElement.getProfilePicture() + "')");
+        } else {
+            // If profile picture URL is null or empty, use first letter of username as a fallback
+            String initials = pdfElement.getUserName().substring(0, 1).toUpperCase();
+            profilePicture.text(initials);
+            profilePicture.addClass("fallback-profile");
+        }
+
+        // Append the profile picture to its container
+        profilePictureContainer.appendChild(profilePicture);
+
+        // Append the profile picture container to the item
+        item.appendChild(profilePictureContainer);
+
+        // Create a div to contain both question and response-title
+        Element questionAndTitleContainer = new Element(Tag.valueOf("div"), "").addClass("question-and-title-container");
+
         Element question = new Element(Tag.valueOf("div"), "").addClass("question").text(pdfElement.getQuestion());
         Element responseTitle = new Element(Tag.valueOf("div"), "").addClass("response-title").text(String.format("%s's response:", pdfElement.getUserName()));
+
+        // Append question and response-title to the container
+        questionAndTitleContainer.appendChild(question);
+        questionAndTitleContainer.appendChild(responseTitle);
+
+        // Append the container to the item
+
         Element response;
 
         if (pdfElement.getType().equals(Type.IMAGE)) {
@@ -85,16 +114,16 @@ public class NewsletterEngine {
             response.text(pdfElement.getResponse());
         }
 
-        item.appendChild(question);
-        item.appendChild(responseTitle);
-        item.appendChild(response);
+        // Append the response to the item
+        questionAndTitleContainer.appendChild(response);
+        item.appendChild(questionAndTitleContainer);
 
         return item;
     }
 
-    private PDFData buildDataFromJSON(List<ResponseData> questionResponses) {
-        Collections.shuffle(questionResponses);
 
+
+    private PDFData buildDataFromJSON(List<ResponseData> questionResponses) {
         PDFData pdfData = new PDFData();
 
         List<PDFElement> pdfElementList = questionResponses.stream()
@@ -109,7 +138,9 @@ public class NewsletterEngine {
                                 .type(questionResponseData.getQuestionType().getType())
                                 .build()).collect(Collectors.toSet()))
                 .flatMap(Collection::stream)
-                .toList();
+                .collect(Collectors.toList());
+
+        Collections.shuffle(pdfElementList, new Random(System.currentTimeMillis()));
 
         pdfData.setPdfElementList(pdfElementList);
         return pdfData;
