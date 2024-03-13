@@ -51,8 +51,6 @@ public class NewsletterEngine {
 
         pdfData.getPdfElementList().forEach(pdfElement -> Objects.requireNonNull(container).appendChild(buildElementForContent(pdfElement)));
 
-        System.out.println(document.html());
-
         document.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
         return document.html();
     }

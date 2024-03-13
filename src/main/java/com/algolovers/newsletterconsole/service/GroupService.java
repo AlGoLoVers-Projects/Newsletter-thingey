@@ -528,7 +528,6 @@ public class GroupService {
 
             //TODO: pdfLink, forward
             String pdfLink = newsletterEngine.generateNewsletter(group.getId(), group.getGroupName(), group.getGroupDescription(), questionResponses);
-            System.out.println(pdfLink);
 
             responseRepository.deleteAll(questionResponses);
             questionResponses.clear();
