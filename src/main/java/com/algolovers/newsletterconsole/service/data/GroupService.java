@@ -27,7 +27,6 @@ import java.util.*;
 @Slf4j
 public class GroupService {
 
-
     private final GroupCacheService groupCacheService;
     private final GroupRepository groupRepository;
     private final InvitationRepository invitationRepository;

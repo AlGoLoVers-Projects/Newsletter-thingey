@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //TODO: Make sure al orphan data is removed
 //TODO: Completely deprecate cloudinary
 
+//TODO: Cache -> for GroupMembers, Invalidate groupListByGroupMemberUser when group member add/remove.
+//TODO: Add cache for load user by id or just deprecate and use email everywhere
+
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableCaching

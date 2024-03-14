@@ -60,8 +60,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User loadUserById(String id) {
-        if (Objects.isNull(id)) return null;
-        return userRepository.findById(id).orElse(null);
+        return userCacheService.loadUserById(id);
     }
 
     public Result<User> provisionNewUser(UserCreationRequest userCreationRequest) {
