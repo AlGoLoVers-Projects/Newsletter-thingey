@@ -13,9 +13,9 @@ import com.algolovers.newsletterconsole.data.model.api.request.question.GroupQue
 import com.algolovers.newsletterconsole.data.model.api.response.questions.FormDataResponse;
 import com.algolovers.newsletterconsole.data.model.api.response.questions.FormQuestionResponse;
 import com.algolovers.newsletterconsole.data.model.api.response.questions.QuestionsResponse;
-import com.algolovers.newsletterconsole.repository.GroupRepository;
 import com.algolovers.newsletterconsole.repository.QuestionsRepository;
 import com.algolovers.newsletterconsole.repository.ResponseRepository;
+import com.algolovers.newsletterconsole.service.cache.GroupCacheService;
 import com.algolovers.newsletterconsole.service.utiity.GoogleDriveService;
 import com.google.api.services.drive.model.File;
 import jakarta.validation.Valid;
@@ -33,15 +33,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class QuestionsService {
 
+    private final GroupCacheService groupCacheService;
     private final QuestionsRepository questionsRepository;
-    private final GroupRepository groupRepository;
     private final ResponseRepository responseRepository;
     private final GoogleDriveService googleDriveService;
 
     @Transactional(rollbackFor = {Exception.class})
     public Result<QuestionsResponse> createOrUpdateQuestions(@Valid GroupQuestionsRequest groupQuestionsRequest, User authenticatedUser) {
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupQuestionsRequest.getGroupId());
+            Optional<Group> optionalGroup = groupCacheService.findById(groupQuestionsRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found");
@@ -98,7 +98,7 @@ public class QuestionsService {
             });
 
             group.setQuestions(questions);
-            groupRepository.save(group);
+            groupCacheService.save(group);
 
             QuestionsResponse questionsResponse = QuestionsResponse
                     .builder()
@@ -115,7 +115,7 @@ public class QuestionsService {
 
     public Result<QuestionsResponse> getQuestions(@Valid GroupRequest groupRequest, User authenticatedUser) {
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupRequest.getGroupId());
+            Optional<Group> optionalGroup = groupCacheService.findById(groupRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found");
@@ -161,7 +161,7 @@ public class QuestionsService {
     }
 
     public Result<Group> submitResponses(@Valid FormDataResponse formDataResponse, User authenticatedUser) {
-        Optional<Group> groupOptional = groupRepository.findById(formDataResponse.getGroupId());
+        Optional<Group> groupOptional = groupCacheService.findById(formDataResponse.getGroupId());
 
         if (groupOptional.isEmpty()) {
             return new Result<>(false, null, "The provided group was not found");
@@ -224,7 +224,7 @@ public class QuestionsService {
 
         questionResponse.add(responseData);
         group.setQuestionResponses(questionResponse);
-        groupRepository.save(group);
+        groupCacheService.save(group);
 
         return new Result<>(true, group, "Saved response successfully");
     }
