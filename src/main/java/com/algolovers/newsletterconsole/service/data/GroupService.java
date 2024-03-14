@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -25,6 +26,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.NESTED)
 public class GroupService {
 
     private final GroupCacheService groupCacheService;
@@ -36,7 +38,6 @@ public class GroupService {
     private final NewsletterEngine newsletterEngine;
     private final QuestionsRepository questionsRepository;
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> provisionNewGroup(@Valid GroupCreationRequest groupCreationRequest, @Valid User groupOwner) {
 
         Group group = Group
@@ -66,7 +67,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> getGroup(@Valid GroupRequest groupRequest, @Valid User groupUser) {
         try {
             Optional<Group> optionalGroup = groupCacheService.findById(groupRequest.getGroupId());
@@ -98,7 +98,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> editGroupInformation(@Valid GroupDetailsEditRequest groupDetailsEditRequest, User authenticatedUser) {
 
         try {
@@ -125,7 +124,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<List<Group>> listAllGroups(User authenticatedUser) {
         try {
             return new Result<>(true, groupRepository.findByGroupMembersUser(authenticatedUser), "Fetched all groups successfully");
@@ -135,7 +133,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<Invitation> inviteUserToGroup(@Valid GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
         try {
 
@@ -205,7 +202,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<Invitation> removeInvitationFromGroup(GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupCacheService.findById(groupUserInvitationRequest.getGroupId());
@@ -237,7 +233,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<String> acceptInvitation(GroupRequest groupRequest, User authenticatedUser) {
 
         try {
@@ -286,7 +281,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<String> rejectInvitation(GroupRequest groupRequest, User authenticatedUser) {
         try {
             Optional<Invitation> optionalInvitation = invitationRepository.findInvitationById_EmailAddressAndId_Group_Id(
@@ -307,7 +301,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> updateEditAccessToUser(GroupUserEditAccessRequest groupUserEditAccessRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupCacheService.findById(groupUserEditAccessRequest.getGroupId());
@@ -344,7 +337,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> removeUser(GroupUserRemovalRequest groupUserRemovalRequest, User authenticatedUser) {
 
         try {
@@ -382,7 +374,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<String> leaveGroup(GroupRequest groupRequest, User authenticatedUser) {
 
         try {
@@ -422,7 +413,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<String> deleteGroup(GroupRequest groupRequest, User authenticatedUser) {
 
         try {
@@ -460,7 +450,6 @@ public class GroupService {
         }
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> releaseQuestions(@Valid GroupRequest groupRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupCacheService.findById(groupRequest.getGroupId());
@@ -532,7 +521,6 @@ public class GroupService {
         return new Result<>(false, null, "Failed to fetch forms");
     }
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> generateNewsletter(@Valid GroupRequest groupRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupCacheService.findById(groupRequest.getGroupId());

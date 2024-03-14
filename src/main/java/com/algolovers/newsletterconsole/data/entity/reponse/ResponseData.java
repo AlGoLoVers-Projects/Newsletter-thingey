@@ -1,7 +1,6 @@
 package com.algolovers.newsletterconsole.data.entity.reponse;
 
 import com.algolovers.newsletterconsole.data.entity.converter.QuestionResponseSetConverter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -10,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Immutable;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,6 +17,10 @@ import java.util.Set;
 @Data
 @Immutable
 public class ResponseData {
+    public ResponseData() {
+        questionResponses = new HashSet<>();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;

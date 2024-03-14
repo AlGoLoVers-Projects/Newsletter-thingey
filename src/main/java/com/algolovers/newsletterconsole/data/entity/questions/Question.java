@@ -8,15 +8,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "question")
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @Data
 public class Question {
+
+    public Question() {
+        options = new HashSet<>();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,5 +39,6 @@ public class Question {
     private QuestionType questionType;
 
     @Convert(converter = StringSetConverter.class)
-    private Set<String> options;
+    @Builder.Default
+    private Set<String> options = new HashSet<>();
 }

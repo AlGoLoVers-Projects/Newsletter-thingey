@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -34,7 +35,7 @@ import java.util.Set;
 import static com.algolovers.newsletterconsole.data.enums.AuthProvider.local;
 
 @Service
-@Transactional(rollbackFor = {Exception.class})
+@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.NESTED)
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
 

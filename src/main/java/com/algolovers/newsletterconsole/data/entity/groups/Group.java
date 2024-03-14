@@ -11,10 +11,11 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,9 +23,14 @@ import java.util.Set;
 @Entity
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class Group {
+
+    public Group() {
+        groupMembers = new HashSet<>();
+        questions = new ArrayList<>();
+        questionResponses = new ArrayList<>();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -44,7 +50,8 @@ public class Group {
     private User groupOwner;
 
     @OneToMany
-    private Set<GroupMember> groupMembers;
+    @Builder.Default
+    private Set<GroupMember> groupMembers = new HashSet<>();
 
     @UpdateTimestamp
     @Column(name = "updated_at")
@@ -52,12 +59,14 @@ public class Group {
 
     @OneToMany
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Question> questions;
+    @Builder.Default
+    private List<Question> questions = new ArrayList<>();
 
     private boolean acceptQuestionResponse = false; //FALSE -> set to true when questions are released. Form collects data then and saves response. response is cleared during any shift of this value. clicking on publish will set this value back to false.
 
     @OneToMany
-    private List<ResponseData> questionResponses;
+    @Builder.Default
+    private List<ResponseData> questionResponses = new ArrayList<>();
 
     @Override
     public String toString() {

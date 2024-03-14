@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.NESTED)
 public class QuestionsService {
 
     private final GroupCacheService groupCacheService;
@@ -38,7 +40,6 @@ public class QuestionsService {
     private final ResponseRepository responseRepository;
     private final GoogleDriveService googleDriveService;
 
-    @Transactional(rollbackFor = {Exception.class})
     public Result<QuestionsResponse> createOrUpdateQuestions(@Valid GroupQuestionsRequest groupQuestionsRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupCacheService.findById(groupQuestionsRequest.getGroupId());
@@ -72,8 +73,10 @@ public class QuestionsService {
 
             List<Question> questions = group.getQuestions();
 
-            questionsRepository.deleteAll(questions);
-            questions.clear();
+            if (!questions.isEmpty()) {
+                questionsRepository.deleteAll(questions);
+                questions.clear();
+            }
 
             groupQuestionsRequest.getQuestions().forEach((question) -> {
                 Question newQuestion = Question

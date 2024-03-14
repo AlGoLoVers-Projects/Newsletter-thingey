@@ -11,24 +11,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static com.algolovers.newsletterconsole.config.CacheManagerConfig.GROUP_CACHE;
+
 @Service
 @RequiredArgsConstructor
 public class GroupCacheService {
 
     private final GroupRepository groupRepository;
 
-    @Cacheable(value = "groupCache", key = "#id")
+    @Cacheable(value = GROUP_CACHE, key = "#id")
     public Optional<Group> findById(String id) {
         return groupRepository.findById(id);
     }
 
-    @Caching(put = @CachePut(value = "groupCache", key = "#group.id"))
-    @CachePut(value = "groupCache", key = "#group.id")
+    @Caching(put = @CachePut(value = GROUP_CACHE, key = "#group.id"))
     public Group save(Group group) {
         return groupRepository.save(group);
     }
 
-    @Caching(evict = @CacheEvict(value = "groupCache", key = "#group.id"))
+    @Caching(evict = @CacheEvict(value = GROUP_CACHE, key = "#group.id"))
     public void delete(Group group) {
         groupRepository.delete(group);
     }
