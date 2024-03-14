@@ -30,6 +30,13 @@ public class GroupController {
         return ControllerUtils.processResultForResponseWithData(result);
     }
 
+    @PostMapping("/getGroup")
+    public ResponseEntity<Result<Group>> getGroup(@Valid @RequestBody GroupRequest groupRequest) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Result<Group> result = groupService.getGroup(groupRequest, user);
+        return ControllerUtils.processResultForResponseWithData(result);
+    }
+
     @PutMapping("/editGroupInformation")
     public ResponseEntity<Result<Group>> editGroupInformation(@Valid @RequestBody GroupDetailsEditRequest groupDetailsEditRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

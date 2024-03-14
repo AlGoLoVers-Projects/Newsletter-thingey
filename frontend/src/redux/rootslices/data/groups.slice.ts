@@ -82,9 +82,10 @@ export const {
 } = groupsSlice.actions;
 
 export const selectGroupData = (state: { groupData: { groups: GroupListData } }) => state.groupData.groups;
-export const selectGroupByIdMemoized = createSelector(
-    [selectGroupData, (_, groupId) => groupId],
-    (groups, groupId) => groups.find((group) => group.id === groupId)
-);
+export const selectGroupById = (state: { groupData: { groups: GroupListData } }, groupId: string) => {
+    const groups = selectGroupData(state);
+    return groups.find(group => group.id === groupId);
+};
+
 
 export default groupsSlice.reducer;

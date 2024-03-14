@@ -66,6 +66,38 @@ public class GroupService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
+    public Result<Group> getGroup(@Valid GroupRequest groupRequest, @Valid User groupUser) {
+        try {
+            Optional<Group> optionalGroup = groupCacheService.findById(groupRequest.getGroupId());
+
+            if (optionalGroup.isEmpty()) {
+                return new Result<>(false, null, "The provided group was not found");
+            }
+
+            Group group = optionalGroup.get();
+
+            Optional<GroupMember> groupMember = group
+                    .getGroupMembers()
+                    .stream()
+                    .filter(member ->
+                            groupUser
+                                    .getEmailAddress()
+                                    .equals(member.getUser().getEmailAddress()))
+                    .findFirst();
+
+            if (groupMember.isEmpty()) {
+                return new Result<>(false, null, "You do not belong to this group");
+            }
+
+            return new Result<>(true, group, "Group found");
+
+        } catch (Exception e) {
+            log.error("Exception occurred while getting group: {} for user: {}", groupRequest.getGroupId(), groupUser.getEmailAddress(), e);
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> editGroupInformation(@Valid GroupDetailsEditRequest groupDetailsEditRequest, User authenticatedUser) {
 
         try {

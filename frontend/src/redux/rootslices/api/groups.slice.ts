@@ -63,6 +63,13 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
                 body: data
             }),
         }),
+        getGroup: builder.mutation<Result<GroupData>, GroupRequest>({
+            query: (data) => ({
+                url: '/api/group/getGroup',
+                method: 'POST',
+                body: data
+            }),
+        }),
         editGroup: builder.mutation<Result<GroupData>, GroupEditRequest>({
             query: (data) => ({
                 url: '/api/group/editGroupInformation',
@@ -127,4 +134,4 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
     }),
 });
 
-export const {useGetGroupsMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation, useLeaveGroupMutation, useUpdateEditAccessToUserMutation, useRemoveUserMutation, useReleaseQuestionsMutation, useGetFormsForUserMutation, useGenerateNewsletterMutation} = groupsSlice;
+export const {useGetGroupsMutation, useGetGroupMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation, useLeaveGroupMutation, useUpdateEditAccessToUserMutation, useRemoveUserMutation, useReleaseQuestionsMutation, useGetFormsForUserMutation, useGenerateNewsletterMutation} = groupsSlice;

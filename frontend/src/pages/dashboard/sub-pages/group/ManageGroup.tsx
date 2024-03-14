@@ -17,15 +17,15 @@ import {
     useRemoveUserMutation,
     useUpdateEditAccessToUserMutation,
     useReleaseQuestionsMutation,
-    useGenerateNewsletterMutation,
+    useGenerateNewsletterMutation, useGetGroupMutation,
 } from "../../../../redux/rootslices/api/groups.slice";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
 import {authorizedPaths, paths} from "../../../../router/paths";
-import {Mail, NavigateNext} from "@mui/icons-material";
+import {Mail, NavigateNext, Refresh} from "@mui/icons-material";
 import {
-    selectGroupByIdMemoized,
+    selectGroupById,
     updateGroupDescription,
     updateGroupName,
     updateSingleGroupData
@@ -49,16 +49,42 @@ import {
     useInvitations
 } from "../../../../components/elements/InvitationsProvider";
 import UserInvitationListCard from "../../../../components/elements/UserInvitationListCard";
+import IconButton from "@mui/material/IconButton";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
+    const dispatch = useDispatch();
     const groupId = state as string;
 
     const navigator = useNavigate()
 
+    const [getGroup] = useGetGroupMutation();
+
     const groupData: GroupData = useSelector(
-        (state) => selectGroupByIdMemoized(state, groupId)
+        (state: any) => selectGroupById(state, groupId)
     ) ?? {} as GroupData;
+
+    const handleReload = () => {
+        const request: GroupRequest = {
+            groupId: groupData.id,
+        }
+
+        getGroup(request)
+            .unwrap()
+            .then((response) => {
+                if (response.success) {
+                    dispatch(updateSingleGroupData({updatedData: response.data}))
+                    window.location.reload()
+                    showSuccessToast(response.message ?? 'Group fetched successfully')
+
+                } else {
+                    showFailureToast(response.message ?? 'Failed to fetch group')
+                }
+            })
+            .catch((result) => {
+                showFailureToast(result.data.message ?? "Could not fetch group")
+            })
+    }
 
     const userEmailAddress = useSelector(memoizedSelectUserData).emailAddress
     const [formTaken, setFormTaken] = useState<boolean>(false)
@@ -100,24 +126,35 @@ export default function ManageGroup(): React.ReactElement {
                     flex: 1
                 }}
             >
-                <Typography
-                    component="h1"
-                    variant="h2"
-                    sx={{
-                        fontWeight: 'bold',
-                        alignSelf: "flex-start",
-                        fontSize: {
-                            xs: '1rem',
-                            sm: '2rem',
-                            xl: '3rem',
-                        },
-                    }}
-                >
-                    {isGroupOwner ? `Manage` : ''} {groupData.groupName}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    Group ID: {groupData.id}
-                </Typography>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <div>
+                        <Typography
+                            component="h1"
+                            variant="h2"
+                            sx={{
+                                fontWeight: 'bold',
+                                alignSelf: "flex-start",
+                                fontSize: {
+                                    xs: '1rem',
+                                    sm: '2rem',
+                                    xl: '3rem',
+                                },
+                            }}
+                        >
+                            {isGroupOwner ? `Manage` : ''} {groupData.groupName}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Group ID: {groupData.id}
+                        </Typography>
+                    </div>
+                    <IconButton
+                        color="primary"
+                        onClick={handleReload}
+                        sx={{ width: '40px', height: '40px', borderRadius: '10px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}
+                    >
+                        <Refresh />
+                    </IconButton>
+                </div>
                 {
                     groupData.acceptQuestionResponse ?
                         <Button
@@ -125,17 +162,17 @@ export default function ManageGroup(): React.ReactElement {
                             variant="contained"
                             color="info"
                             disabled={formTaken}
-                            sx={{mt: 3, mb: 1}}
+                            sx={{ mt: 3, mb: 1 }}
                             onClick={() => {
                                 navigator(`/form/${groupData.id}`)
                             }}
-                            endIcon={<NavigateNext/>}
+                            endIcon={<NavigateNext />}
                         >
                             Fill questions
-                        </Button> : <React.Fragment/>
+                        </Button> : <React.Fragment />
                 }
-                {isGroupOwner ? <RenderOwnerGroup groupData={groupData} groupUser={groupUser}/> :
-                    <RenderMemberGroup groupData={groupData} canEdit={groupUser?.hasEditAccess ?? false}/>}
+                {isGroupOwner ? <RenderOwnerGroup groupData={groupData} groupUser={groupUser} /> :
+                    <RenderMemberGroup groupData={groupData} canEdit={groupUser?.hasEditAccess ?? false} />}
             </Container>
         </InvitationsProvider>
     )

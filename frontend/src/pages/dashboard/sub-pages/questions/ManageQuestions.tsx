@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import {useLocation, useNavigate} from "react-router-dom";
 import {GroupData, GroupRequest as GroupIdRequest} from "../../../../redux/rootslices/api/groups.slice";
 import {useDispatch, useSelector} from "react-redux";
-import {selectGroupByIdMemoized, updateSingleGroupData} from "../../../../redux/rootslices/data/groups.slice";
+import {selectGroupById, updateSingleGroupData} from "../../../../redux/rootslices/data/groups.slice";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import {
@@ -36,7 +36,7 @@ function ManageQuestionsComponent(): React.ReactElement {
     const groupId = state as string;
 
     const groupData: GroupData = useSelector(
-        (state) => selectGroupByIdMemoized(state, groupId)
+        (state: any) => selectGroupById(state, groupId)
     ) ?? {} as GroupData;
 
     const dispatch = useDispatch();
