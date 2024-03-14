@@ -13,16 +13,14 @@ import com.algolovers.newsletterconsole.data.model.api.response.group.GroupForm;
 import com.algolovers.newsletterconsole.newsletter.engine.NewsletterEngine;
 import com.algolovers.newsletterconsole.repository.*;
 import com.algolovers.newsletterconsole.service.cache.GroupCacheService;
+import com.algolovers.newsletterconsole.service.cache.UserCacheService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +31,7 @@ public class GroupService {
     private final GroupCacheService groupCacheService;
     private final GroupRepository groupRepository;
     private final InvitationRepository invitationRepository;
-    private final UserRepository userRepository; //TODO: Replace to improve cache
+    private final UserCacheService userCacheService; //TODO: Replace to improve cache
     private final GroupMemberRepository groupMemberRepository; //TODO: Add cache
     private final ResponseRepository responseRepository;
     private final NewsletterEngine newsletterEngine;
@@ -140,13 +138,12 @@ public class GroupService {
 
             invitationRepository.save(invitation);
 
-            Optional<User> invitedUser = userRepository.findByEmailAddress(groupUserInvitationRequest.getUserEmail());
+            User invitedUser = userCacheService.loadUserByEmail(groupUserInvitationRequest.getUserEmail());
 
-            if (invitedUser.isEmpty()) {
+            if (Objects.isNull(invitedUser)) {
                 //TODO: Prepare email for invitation instead
                 return new Result<>(true, invitation, "Invitation created, user does not exist. An invitation to the app has been sent");
             } else {
-                User user = invitedUser.get();
                 //TODO: Prepare email for invitation with invitation code embedded in URL
                 return new Result<>(true, invitation, "Invitation has been sent to user");
             }
