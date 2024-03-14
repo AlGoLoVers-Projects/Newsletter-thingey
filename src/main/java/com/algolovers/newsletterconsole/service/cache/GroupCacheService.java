@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,24 +22,15 @@ public class GroupCacheService {
         return groupRepository.findById(id);
     }
 
-    @Caching(put = {
-            @CachePut("groups"),
-            @CachePut(value = "groupCache", key = "#group.id")})
+    @Caching(put = @CachePut(value = "groupCache", key = "#group.id"))
     @CachePut(value = "groupCache", key = "#group.id")
     public Group save(Group group) {
         return groupRepository.save(group);
     }
 
-    @Caching(evict = {
-            @CacheEvict("groups"),
-            @CacheEvict(value = "groupCache", key = "#group.id")})
+    @Caching(evict = @CacheEvict(value = "groupCache", key = "#group.id"))
     public void delete(Group group) {
         groupRepository.delete(group);
-    }
-
-    @Cacheable("groups")
-    public List<Group> listGroups() {
-        return groupRepository.findAll();
     }
 
 }
