@@ -96,7 +96,14 @@ public class GroupService {
     @Transactional(rollbackFor = {Exception.class})
     public Result<List<Group>> listAllGroups(User authenticatedUser) {
         try {
-            return new Result<>(true, groupRepository.findByGroupMembersUser(authenticatedUser), "Fetched all groups successfully");
+            List<Group> groupList = groupCacheService.listGroups().stream()
+                    .filter(group -> group
+                            .getGroupMembers()
+                            .stream()
+                            .anyMatch(member -> member.getUser().getId().equals(authenticatedUser.getId())))
+                    .toList();
+
+            return new Result<>(true, groupList, "Fetched all groups successfully");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
