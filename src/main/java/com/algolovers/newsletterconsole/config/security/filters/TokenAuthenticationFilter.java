@@ -2,8 +2,8 @@ package com.algolovers.newsletterconsole.config.security.filters;
 
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
-import com.algolovers.newsletterconsole.service.JwtService;
-import com.algolovers.newsletterconsole.service.UserService;
+import com.algolovers.newsletterconsole.service.utiity.JwtService;
+import com.algolovers.newsletterconsole.service.data.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

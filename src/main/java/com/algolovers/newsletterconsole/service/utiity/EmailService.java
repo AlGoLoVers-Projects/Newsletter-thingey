@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole.service;
+package com.algolovers.newsletterconsole.service.utiity;
 
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.PasswordResetToken;

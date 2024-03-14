@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole.service;
+package com.algolovers.newsletterconsole.service.utiity;
 
 import com.algolovers.newsletterconsole.data.entity.user.Authority;
 import com.algolovers.newsletterconsole.data.entity.user.User;

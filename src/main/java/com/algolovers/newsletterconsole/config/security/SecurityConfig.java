@@ -4,8 +4,8 @@ import com.algolovers.newsletterconsole.config.security.filters.TokenAuthenticat
 import com.algolovers.newsletterconsole.config.security.oauth.OAuth2FailureHandler;
 import com.algolovers.newsletterconsole.config.security.oauth.OAuth2StatelessAuthorizationRepository;
 import com.algolovers.newsletterconsole.config.security.oauth.OAuth2SuccessHandler;
-import com.algolovers.newsletterconsole.service.CustomOAuth2UserService;
-import com.algolovers.newsletterconsole.service.UserService;
+import com.algolovers.newsletterconsole.service.utiity.CustomOAuth2UserService;
+import com.algolovers.newsletterconsole.service.data.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

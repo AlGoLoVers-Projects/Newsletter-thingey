@@ -5,7 +5,7 @@ import com.algolovers.newsletterconsole.data.entity.reponse.ResponseData;
 import com.algolovers.newsletterconsole.newsletter.engine.data.PDFData;
 import com.algolovers.newsletterconsole.newsletter.engine.data.PDFElement;
 import com.algolovers.newsletterconsole.newsletter.engine.data.Type;
-import com.algolovers.newsletterconsole.service.GoogleDriveService;
+import com.algolovers.newsletterconsole.service.utiity.GoogleDriveService;
 import lombok.AllArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole.service;
+package com.algolovers.newsletterconsole.service.data;
 
 import com.algolovers.newsletterconsole.data.entity.user.Authority;
 import com.algolovers.newsletterconsole.data.entity.user.User;
@@ -9,6 +9,9 @@ import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.auth.*;
 import com.algolovers.newsletterconsole.exceptions.PasswordResetException;
 import com.algolovers.newsletterconsole.repository.UserRepository;
+import com.algolovers.newsletterconsole.service.utiity.EmailService;
+import com.algolovers.newsletterconsole.service.utiity.GoogleDriveService;
+import com.algolovers.newsletterconsole.service.utiity.JwtService;
 import com.google.api.services.drive.model.File;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

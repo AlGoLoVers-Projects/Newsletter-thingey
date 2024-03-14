@@ -3,7 +3,7 @@ package com.algolovers.newsletterconsole.controller;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.auth.ChangeUserName;
-import com.algolovers.newsletterconsole.service.UserService;
+import com.algolovers.newsletterconsole.service.data.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

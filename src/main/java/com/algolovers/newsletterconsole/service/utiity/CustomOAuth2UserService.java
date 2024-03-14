@@ -1,9 +1,10 @@
-package com.algolovers.newsletterconsole.service;
+package com.algolovers.newsletterconsole.service.utiity;
 
 import com.algolovers.newsletterconsole.exceptions.OAuth2AuthenticationProcessingException;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.enums.AuthProvider;
 import com.algolovers.newsletterconsole.data.model.GoogleOAuthUserInfo;
+import com.algolovers.newsletterconsole.service.data.UserService;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;

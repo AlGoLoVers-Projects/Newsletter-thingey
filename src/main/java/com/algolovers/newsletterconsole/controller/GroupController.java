@@ -6,7 +6,7 @@ import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.group.*;
 import com.algolovers.newsletterconsole.data.model.api.response.group.GroupForm;
-import com.algolovers.newsletterconsole.service.GroupService;
+import com.algolovers.newsletterconsole.service.data.GroupService;
 import com.algolovers.newsletterconsole.utils.ControllerUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

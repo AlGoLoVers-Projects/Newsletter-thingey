@@ -7,7 +7,7 @@ import com.algolovers.newsletterconsole.data.model.api.request.group.GroupReques
 import com.algolovers.newsletterconsole.data.model.api.request.question.GroupQuestionsRequest;
 import com.algolovers.newsletterconsole.data.model.api.response.questions.FormDataResponse;
 import com.algolovers.newsletterconsole.data.model.api.response.questions.QuestionsResponse;
-import com.algolovers.newsletterconsole.service.QuestionsService;
+import com.algolovers.newsletterconsole.service.data.QuestionsService;
 import com.algolovers.newsletterconsole.utils.ControllerUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

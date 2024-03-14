@@ -1,4 +1,4 @@
-package com.algolovers.newsletterconsole.service;
+package com.algolovers.newsletterconsole.service.data;
 
 import com.algolovers.newsletterconsole.data.entity.groups.Group;
 import com.algolovers.newsletterconsole.data.entity.groups.GroupMember;
@@ -18,7 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +30,8 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final InvitationRepository invitationRepository;
-    private final UserRepository userRepository;
-    private final GroupMemberRepository groupMemberRepository;
+    private final UserRepository userRepository; //TODO: Replace to improve cache
+    private final GroupMemberRepository groupMemberRepository; //TODO: Add cache
     private final ResponseRepository responseRepository;
     private final NewsletterEngine newsletterEngine;
 
