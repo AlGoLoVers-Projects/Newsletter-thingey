@@ -136,6 +136,10 @@ public class QuestionsService {
                 return new Result<>(false, null, "You are not part of this group");
             }
 
+            if (Objects.isNull(group.getQuestions())) {
+                return new Result<>(false, null, "You have no questions setup so far");
+            }
+
             List<Question> questions =
                     group.getQuestions()
                             .stream()

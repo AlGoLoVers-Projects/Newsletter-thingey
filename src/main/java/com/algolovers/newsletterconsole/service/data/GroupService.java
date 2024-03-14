@@ -34,6 +34,7 @@ public class GroupService {
     private final GroupMemberRepository groupMemberRepository; //TODO: Add cache
     private final ResponseRepository responseRepository;
     private final NewsletterEngine newsletterEngine;
+    private final QuestionsRepository questionsRepository;
 
     @Transactional(rollbackFor = {Exception.class})
     public Result<Group> provisionNewGroup(@Valid GroupCreationRequest groupCreationRequest, @Valid User groupOwner) {
@@ -440,6 +441,14 @@ public class GroupService {
             Set<GroupMember> groupMembers = group.getGroupMembers();
             groupMemberRepository.deleteAll(groupMembers);
             groupMembers.clear();
+
+            List<Question> questions = group.getQuestions();
+            questionsRepository.deleteAll(questions);
+            questions.clear();
+
+            List<ResponseData> questionResponses = group.getQuestionResponses();
+            responseRepository.deleteAll(questionResponses);
+            questionResponses.clear();
 
             invitationRepository.deleteById_Group(group);
             groupCacheService.delete(group);
