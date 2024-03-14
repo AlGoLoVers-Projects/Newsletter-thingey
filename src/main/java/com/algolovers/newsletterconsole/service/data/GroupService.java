@@ -12,6 +12,7 @@ import com.algolovers.newsletterconsole.data.model.api.request.group.*;
 import com.algolovers.newsletterconsole.data.model.api.response.group.GroupForm;
 import com.algolovers.newsletterconsole.newsletter.engine.NewsletterEngine;
 import com.algolovers.newsletterconsole.repository.*;
+import com.algolovers.newsletterconsole.service.cache.GroupCacheService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,8 @@ import java.util.Set;
 @Slf4j
 public class GroupService {
 
+
+    private final GroupCacheService groupCacheService;
     private final GroupRepository groupRepository;
     private final InvitationRepository invitationRepository;
     private final UserRepository userRepository; //TODO: Replace to improve cache
@@ -56,7 +59,7 @@ public class GroupService {
         group.getGroupMembers().add(groupOwnerMember);
 
         try {
-            Group savedGroup = groupRepository.save(group);
+            Group savedGroup = groupCacheService.save(group);
 
             return new Result<>(true, savedGroup, "New group provisioned successfully");
         } catch (Exception e) {
@@ -69,7 +72,7 @@ public class GroupService {
     public Result<Group> editGroupInformation(@Valid GroupDetailsEditRequest groupDetailsEditRequest, User authenticatedUser) {
 
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupDetailsEditRequest.getGroupId());
+            Optional<Group> optionalGroup = groupCacheService.findById(groupDetailsEditRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found, cannot generate invitation");
@@ -84,7 +87,7 @@ public class GroupService {
             group.setGroupName(groupDetailsEditRequest.getGroupName());
             group.setGroupDescription(groupDetailsEditRequest.getGroupDescription());
 
-            group = groupRepository.save(group);
+            group = groupCacheService.save(group);
             return new Result<>(true, group, "Group edited successfully");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
@@ -106,7 +109,7 @@ public class GroupService {
     public Result<Invitation> inviteUserToGroup(@Valid GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
         try {
 
-            Optional<Group> optionalGroup = groupRepository.findById(groupUserInvitationRequest.getGroupId());
+            Optional<Group> optionalGroup = groupCacheService.findById(groupUserInvitationRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found, cannot generate invitation");
@@ -176,7 +179,7 @@ public class GroupService {
     @Transactional(rollbackFor = {Exception.class})
     public Result<Invitation> removeInvitationFromGroup(GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupUserInvitationRequest.getGroupId());
+            Optional<Group> optionalGroup = groupCacheService.findById(groupUserInvitationRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found, cannot delete invitation");
@@ -242,7 +245,7 @@ public class GroupService {
 
             groupMembers.add(groupMember);
 
-            groupRepository.save(group);
+            groupCacheService.save(group);
             invitationRepository.delete(invitation);
 
             return new Result<>(true, null, "User has been added to group successfully");
@@ -278,7 +281,7 @@ public class GroupService {
     @Transactional(rollbackFor = {Exception.class})
     public Result<Group> updateEditAccessToUser(GroupUserEditAccessRequest groupUserEditAccessRequest, User authenticatedUser) {
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupUserEditAccessRequest.getGroupId());
+            Optional<Group> optionalGroup = groupCacheService.findById(groupUserEditAccessRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found, cannot change user edit access");
@@ -300,7 +303,7 @@ public class GroupService {
                 groupMember.setHasEditAccess(groupUserEditAccessRequest.getCanEdit());
 
                 groupMemberRepository.save(groupMember);
-                group = groupRepository.save(group);
+                group = groupCacheService.save(group);
 
                 return new Result<>(true, group, "User edit access updated successfully successfully");
             } else {
@@ -316,7 +319,7 @@ public class GroupService {
     public Result<Group> removeUser(GroupUserRemovalRequest groupUserRemovalRequest, User authenticatedUser) {
 
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupUserRemovalRequest.getGroupId());
+            Optional<Group> optionalGroup = groupCacheService.findById(groupUserRemovalRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found, cannot remove group");
@@ -338,7 +341,7 @@ public class GroupService {
                 groupMembers.remove(groupMemberToRemove);
 
                 groupMemberRepository.delete(groupMemberToRemove);
-                group = groupRepository.save(group);
+                group = groupCacheService.save(group);
 
                 return new Result<>(true, group, "User removed from the group successfully");
             } else {
@@ -354,7 +357,7 @@ public class GroupService {
     public Result<String> leaveGroup(GroupRequest groupRequest, User authenticatedUser) {
 
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupRequest.getGroupId());
+            Optional<Group> optionalGroup = groupCacheService.findById(groupRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found, cannot leave group");
@@ -378,7 +381,7 @@ public class GroupService {
                 groupMembers.remove(groupMemberToRemove);
 
                 groupMemberRepository.delete(groupMemberToRemove);
-                groupRepository.save(group);
+                groupCacheService.save(group);
 
                 return new Result<>(true, null, "Exitted group successfully");
             } else {
@@ -394,7 +397,7 @@ public class GroupService {
     public Result<String> deleteGroup(GroupRequest groupRequest, User authenticatedUser) {
 
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupRequest.getGroupId());
+            Optional<Group> optionalGroup = groupCacheService.findById(groupRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found, cannot delete group");
@@ -411,7 +414,7 @@ public class GroupService {
             groupMembers.clear();
 
             invitationRepository.deleteById_Group(group);
-            groupRepository.delete(group);
+            groupCacheService.delete(group);
 
             return new Result<>(true, null, "Group has been deleted successfully");
         } catch (Exception e) {
@@ -423,7 +426,7 @@ public class GroupService {
     @Transactional(rollbackFor = {Exception.class})
     public Result<Group> releaseQuestions(@Valid GroupRequest groupRequest, User authenticatedUser) {
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupRequest.getGroupId());
+            Optional<Group> optionalGroup = groupCacheService.findById(groupRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found");
@@ -461,7 +464,7 @@ public class GroupService {
             questionResponses.clear();
 
             //TODO: Push email to everyone to fill form.
-            group = groupRepository.save(group);
+            group = groupCacheService.save(group);
             return new Result<>(true, group, "Users have been requested to fill out the form. Check back soon to generate news letter");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
@@ -495,7 +498,7 @@ public class GroupService {
     @Transactional(rollbackFor = {Exception.class})
     public Result<Group> generateNewsletter(@Valid GroupRequest groupRequest, User authenticatedUser) {
         try {
-            Optional<Group> optionalGroup = groupRepository.findById(groupRequest.getGroupId());
+            Optional<Group> optionalGroup = groupCacheService.findById(groupRequest.getGroupId());
 
             if (optionalGroup.isEmpty()) {
                 return new Result<>(false, null, "The provided group was not found");
@@ -538,7 +541,7 @@ public class GroupService {
             group.setAcceptQuestionResponse(false);
 
             //TODO: Push email to everyone.
-            group = groupRepository.save(group);
+            group = groupCacheService.save(group);
             return new Result<>(true, group, "Newsletter has been generated, URL: " + pdfLink);
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
