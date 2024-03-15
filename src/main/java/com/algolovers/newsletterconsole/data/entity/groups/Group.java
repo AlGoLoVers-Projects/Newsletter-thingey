@@ -1,6 +1,5 @@
 package com.algolovers.newsletterconsole.data.entity.groups;
 
-import com.algolovers.newsletterconsole.data.entity.converter.StringSetConverter;
 import com.algolovers.newsletterconsole.data.entity.questions.Question;
 import com.algolovers.newsletterconsole.data.entity.reponse.ResponseData;
 import com.algolovers.newsletterconsole.data.entity.user.User;
@@ -11,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -19,11 +19,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
 @Table(name = "newsletter_group")
 @Entity
 @Data
 @AllArgsConstructor
 @Builder
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Group {
 
     public Group() {
@@ -51,6 +54,7 @@ public class Group {
 
     @OneToMany
     @Builder.Default
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<GroupMember> groupMembers = new HashSet<>();
 
     @UpdateTimestamp
@@ -60,12 +64,14 @@ public class Group {
     @OneToMany
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Builder.Default
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<Question> questions = new ArrayList<>();
 
     private boolean acceptQuestionResponse = false; //FALSE -> set to true when questions are released. Form collects data then and saves response. response is cleared during any shift of this value. clicking on publish will set this value back to false.
 
     @OneToMany
     @Builder.Default
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<ResponseData> questionResponses = new ArrayList<>();
 
     @Override

@@ -2,6 +2,7 @@ package com.algolovers.newsletterconsole;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -10,7 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 //TODO: Pull group whenever reloaded in group page to prevent inconsistency
 //TODO: Make sure al orphan data is removed
 
-@SpringBootApplication
+@SpringBootApplication(exclude = HazelcastAutoConfiguration.class)
 @EnableTransactionManagement
 @EnableCaching
 public class NewsLetterConsoleApplication {

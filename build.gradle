@@ -57,6 +57,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'org.ehcache:ehcache:3.10.6'
+	implementation 'org.hibernate:hibernate-jcache:6.3.1.Final'
 	compileOnly 'org.projectlombok:lombok:1.18.26'
 	annotationProcessor 'org.projectlombok:lombok:1.18.26'
 	runtimeOnly 'com.mysql:mysql-connector-j'
