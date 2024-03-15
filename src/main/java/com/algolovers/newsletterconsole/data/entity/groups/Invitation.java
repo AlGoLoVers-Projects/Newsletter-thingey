@@ -2,7 +2,6 @@ package com.algolovers.newsletterconsole.data.entity.groups;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -10,7 +9,6 @@ import java.time.LocalDateTime;
 @Table(name = "invitation")
 @Entity
 @Data
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Invitation {
 
     @EmbeddedId
