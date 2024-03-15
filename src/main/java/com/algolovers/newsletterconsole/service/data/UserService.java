@@ -9,7 +9,6 @@ import com.algolovers.newsletterconsole.data.model.api.Result;
 import com.algolovers.newsletterconsole.data.model.api.request.auth.*;
 import com.algolovers.newsletterconsole.exceptions.PasswordResetException;
 import com.algolovers.newsletterconsole.repository.UserRepository;
-import com.algolovers.newsletterconsole.service.cache.UserCacheService;
 import com.algolovers.newsletterconsole.service.utiity.EmailService;
 import com.algolovers.newsletterconsole.service.utiity.GoogleDriveService;
 import com.algolovers.newsletterconsole.service.utiity.JwtService;
@@ -40,7 +39,7 @@ import static com.algolovers.newsletterconsole.data.enums.AuthProvider.local;
 public class UserService implements UserDetailsService {
 
     final UserRepository userRepository;
-    final UserCacheService userCacheService;
+    final UserDataService userDataService;
     final PasswordEncoder passwordEncoder;
     final EmailService emailService;
     final JwtService jwtService;
@@ -57,11 +56,11 @@ public class UserService implements UserDetailsService {
     }
 
     public User loadUserByEmail(String email) {
-        return userCacheService.loadUserByEmail(email);
+        return userDataService.loadUserByEmail(email);
     }
 
     public User loadUserById(String id) {
-        return userCacheService.loadUserById(id);
+        return userDataService.loadUserById(id);
     }
 
     public Result<User> provisionNewUser(UserCreationRequest userCreationRequest) {
@@ -113,7 +112,7 @@ public class UserService implements UserDetailsService {
             }
 
             if (!user.validateUserDetails()) {
-                userCacheService.delete(user);
+                userDataService.delete(user);
                 return new Result<>(false, null, "Misconfigured user");
             }
 
@@ -122,7 +121,7 @@ public class UserService implements UserDetailsService {
             }
 
             if (user.hasVerificationExpired()) {
-                userCacheService.delete(user);
+                userDataService.delete(user);
                 return new Result<>(false, null, "Verification token has expired");
             }
 
@@ -137,7 +136,7 @@ public class UserService implements UserDetailsService {
             //TODO: Send creation success email
 
             user.setVerified();
-            userCacheService.save(user);
+            userDataService.save(user);
             return new Result<>(true, user, "User verified successfully");
 
         } catch (Exception e) {
@@ -147,7 +146,7 @@ public class UserService implements UserDetailsService {
 
     public Result<User> saveOrUpdateUser(User user) {
         try {
-            user = userCacheService.save(user);
+            user = userDataService.save(user);
             return new Result<>(true, user, "User saved successfully");
         } catch (DataIntegrityViolationException ex) {
             return new Result<>(false, null, "User could not be saved due to a database constraint violation");
@@ -171,7 +170,7 @@ public class UserService implements UserDetailsService {
                 .authProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))
                 .build();
 
-        return userCacheService.save(user);
+        return userDataService.save(user);
     }
 
     public Result<User> updateUserDisplayName(@Valid ChangeUserName changeUserName, User authentiatedUser) {
