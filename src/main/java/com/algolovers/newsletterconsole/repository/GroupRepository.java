@@ -15,6 +15,6 @@ public interface GroupRepository extends JpaRepository<Group, String> {
     List<Group> findByGroupMembersUser(User user);
 
     @Query("SELECT g FROM Group g JOIN g.groupMembers gm WHERE gm.user = :user AND g.acceptQuestionResponse = :acceptQuestionResponse")
-    List<Group> findByGroupMembersUserAndAcceptQuestionResponse(User groupMembers_user, boolean acceptQuestionResponse);
+    List<Group> findByGroupMembersUserAndAcceptQuestionResponse(User user, boolean acceptQuestionResponse);
 
 }
