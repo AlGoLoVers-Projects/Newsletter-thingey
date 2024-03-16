@@ -50,8 +50,8 @@ public class Group {
     @JoinColumn(name = "group_owner_id", nullable = false)
     private User groupOwner;
 
-    @OneToMany
     @Builder.Default
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<GroupMember> groupMembers = new HashSet<>();
 
@@ -59,16 +59,16 @@ public class Group {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<Question> questions = new ArrayList<>();
 
     private boolean acceptQuestionResponse = false; //FALSE -> set to true when questions are released. Form collects data then and saves response. response is cleared during any shift of this value. clicking on publish will set this value back to false.
 
-    @OneToMany
     @Builder.Default
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<ResponseData> questionResponses = new ArrayList<>();
 
