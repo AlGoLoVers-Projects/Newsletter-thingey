@@ -134,7 +134,6 @@ public class GroupController {
         return ControllerUtils.processResultForResponseWithData(result);
     }
 
-    //TODO: Add constraint, cannot release for next 25 days
     @PostMapping("/generateNewsletter")
     public ResponseEntity<Result<Group>> generateNewsletter(@Valid @RequestBody GroupRequest groupRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

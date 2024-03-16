@@ -361,6 +361,8 @@ public class GroupService {
                 GroupMember groupMemberToRemove = optionalGroupMemberToRemove.get();
                 groupMembers.remove(groupMemberToRemove);
 
+                //TODO: Remove response of user
+
                 groupMemberRepository.delete(groupMemberToRemove);
                 group = groupDataService.save(group);
 
