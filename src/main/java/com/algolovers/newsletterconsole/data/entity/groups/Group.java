@@ -11,13 +11,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Table(name = "newsletter_group")
@@ -73,6 +72,30 @@ public class Group {
     @Builder.Default
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<ResponseData> questionResponses = new ArrayList<>();
+
+    private LocalDateTime releaseDate;
+
+    public boolean canRelease() {
+        if (Objects.isNull(releaseDate)) {
+            return true;
+        }
+
+        LocalDate releaseDateWithoutTime = releaseDate.toLocalDate();
+        LocalDate currentDateWithoutTime = LocalDate.now();
+        return releaseDateWithoutTime.isBefore(currentDateWithoutTime);
+    }
+
+    public boolean release() {
+        boolean release = canRelease();
+
+        if (release) {
+            LocalDate currentDate = LocalDate.now();
+            LocalDate releaseDate25DaysLater = currentDate.plusDays(25);
+            this.releaseDate = releaseDate25DaysLater.atStartOfDay();
+        }
+
+        return release;
+    }
 
     @Override
     public String toString() {

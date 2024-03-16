@@ -552,6 +552,9 @@ public class GroupService {
                 return new Result<>(false, null, "Please add questions before generating newsletter");
             }
 
+            if (!group.release()) {
+                return new Result<>(false, null, "Cannot release, release date not reached yet");
+            }
 
             List<ResponseData> questionResponses = group.getQuestionResponses();
 
