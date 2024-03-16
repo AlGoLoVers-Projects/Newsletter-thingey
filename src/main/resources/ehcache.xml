@@ -3,12 +3,12 @@
          xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd"
          updateCheck="false">
 
-    <diskStore path="java.io.tmpdir" />
+    <diskStore path="java.io.tmpdir"/>
 
     <defaultCache
             maxEntriesLocalHeap="10000"
-            timeToIdleSeconds="120"
-            timeToLiveSeconds="120"
+            timeToIdleSeconds="3600"
+            timeToLiveSeconds="86400"
             diskSpoolBufferSizeMB="30"
             maxEntriesLocalDisk="10000000"
             diskExpiryThreadIntervalSeconds="120"
