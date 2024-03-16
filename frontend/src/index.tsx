@@ -14,16 +14,14 @@ const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 root.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <PersistGate persistor={persist}>
-                <BrowserRouter>
-                    <ThemeProvider theme={buildTheme()}>
-                        <ToastContainer/>
-                        <App/>
-                    </ThemeProvider>
-                </BrowserRouter>
-            </PersistGate>
-        </Provider>
-    </React.StrictMode>
+    <Provider store={store}>
+        <PersistGate persistor={persist}>
+            <BrowserRouter>
+                <ThemeProvider theme={buildTheme()}>
+                    <ToastContainer/>
+                    <App/>
+                </ThemeProvider>
+            </BrowserRouter>
+        </PersistGate>
+    </Provider>
 );
