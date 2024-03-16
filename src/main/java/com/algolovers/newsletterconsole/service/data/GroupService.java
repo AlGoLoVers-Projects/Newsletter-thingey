@@ -39,6 +39,7 @@ public class GroupService {
     private final QuestionsRepository questionsRepository;
     private final GoogleDriveService googleDriveService;
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> provisionNewGroup(@Valid GroupCreationRequest groupCreationRequest, @Valid User groupOwner) {
 
         Group group = Group
@@ -68,6 +69,7 @@ public class GroupService {
         }
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> getGroup(@Valid GroupRequest groupRequest, @Valid User groupUser) {
         try {
             Optional<Group> optionalGroup = groupDataService.findById(groupRequest.getGroupId());
@@ -99,6 +101,7 @@ public class GroupService {
         }
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> editGroupInformation(@Valid GroupDetailsEditRequest groupDetailsEditRequest, User authenticatedUser) {
 
         try {
@@ -133,7 +136,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
-
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Invitation> inviteUserToGroup(@Valid GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
         try {
 
@@ -202,7 +205,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
-
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Invitation> removeInvitationFromGroup(GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupDataService.findById(groupUserInvitationRequest.getGroupId());
@@ -233,7 +236,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
-
+    @Transactional(rollbackFor = {Exception.class})
     public Result<String> acceptInvitation(GroupRequest groupRequest, User authenticatedUser) {
 
         try {
@@ -301,7 +304,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
-
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> updateEditAccessToUser(GroupUserEditAccessRequest groupUserEditAccessRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupDataService.findById(groupUserEditAccessRequest.getGroupId());
@@ -337,7 +340,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
-
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> removeUser(GroupUserRemovalRequest groupUserRemovalRequest, User authenticatedUser) {
 
         try {
@@ -379,7 +382,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
-
+    @Transactional(rollbackFor = {Exception.class})
     public Result<String> leaveGroup(GroupRequest groupRequest, User authenticatedUser) {
 
         try {
@@ -421,7 +424,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
-
+    @Transactional(rollbackFor = {Exception.class})
     public Result<String> deleteGroup(GroupRequest groupRequest, User authenticatedUser) {
 
         try {
@@ -458,7 +461,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
-
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> releaseQuestions(@Valid GroupRequest groupRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupDataService.findById(groupRequest.getGroupId());
@@ -506,7 +509,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
-
+    @Transactional(rollbackFor = {Exception.class})
     public Result<List<GroupForm>> getFormsForUser(User authenticatedUser) {
         try {
             List<Group> groups = groupRepository.findByGroupMembersUserAndAcceptQuestionResponse(authenticatedUser, true);
@@ -529,7 +532,7 @@ public class GroupService {
 
         return new Result<>(false, null, "Failed to fetch forms");
     }
-
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> generateNewsletter(@Valid GroupRequest groupRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupDataService.findById(groupRequest.getGroupId());

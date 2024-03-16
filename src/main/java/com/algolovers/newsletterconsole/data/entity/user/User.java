@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -27,7 +26,6 @@ import static com.algolovers.newsletterconsole.data.enums.AuthProvider.google;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User implements UserDetails, OAuth2User {
 
     @Id

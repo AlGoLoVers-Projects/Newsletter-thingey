@@ -356,7 +356,6 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
 
 function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember }): React.ReactElement {
     const groupData = props.groupData;
-    const groupMembers = groupData.groupMembers.filter(member => member !== props.groupUser)
     const navigate = useNavigate()
     const dispatch = useDispatch();
 
@@ -376,6 +375,9 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
 
     const [groupNameError, setGroupNameError] = useState<string>('')
     const [groupDescError, setGroupDescError] = useState<string>('')
+    const [groupMembers, setGroupMembers] = useState<GroupMember[]>()
+
+    console.log(groupMembers)
 
     const [groupName, setGroupName] = useState<string>(groupData.groupName)
     const [groupDesc, setGroupDesc] = useState<string>(groupData.groupDescription)
@@ -388,7 +390,9 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const deleteInvitationRef = useRef<AlertDialogRef>(null);
     const releaseQuestionRef = useRef<AlertDialogRef>(null);
 
-    console.log(releaseDateCheck[1])
+    useEffect(() => {
+        setGroupMembers(groupData.groupMembers.filter(member => member !== props.groupUser))
+    }, [groupData]);
 
     const getReleaseDate = (releaseDateString: string | null): [number, boolean] => {
         if (!releaseDateString) {
@@ -746,7 +750,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     </Box>
                 </Box>
             </Card>
-            {groupMembers.length !== 0 ?
+            {groupMembers?.length !== 0 ?
                 <Card
                     sx={{
                         mt: 3,
@@ -777,7 +781,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                             onEditToggle={(member, state) => {
                                 handleEditToggle(member.user.emailAddress, state)
                             }}
-                            members={groupMembers}
+                            members={groupMembers ?? []}
                         />
                     </Box>
                 </Card>

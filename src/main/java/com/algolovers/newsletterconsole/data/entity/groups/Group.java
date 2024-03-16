@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
@@ -23,8 +22,6 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 @Builder
-@Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Group {
 
     public Group() {
@@ -52,7 +49,6 @@ public class Group {
 
     @Builder.Default
     @OneToMany
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<GroupMember> groupMembers = new HashSet<>();
 
     @UpdateTimestamp
@@ -62,14 +58,12 @@ public class Group {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany
     @Builder.Default
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<Question> questions = new ArrayList<>();
 
     private boolean acceptQuestionResponse = false; //FALSE -> set to true when questions are released. Form collects data then and saves response. response is cleared during any shift of this value. clicking on publish will set this value back to false.
 
     @Builder.Default
     @OneToMany
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<ResponseData> questionResponses = new ArrayList<>();
 
     private LocalDateTime releaseDate;

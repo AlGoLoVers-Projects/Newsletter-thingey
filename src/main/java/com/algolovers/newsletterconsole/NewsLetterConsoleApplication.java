@@ -3,12 +3,10 @@ package com.algolovers.newsletterconsole;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(exclude = HazelcastAutoConfiguration.class)
 @EnableTransactionManagement
-@EnableCaching
 //TODO: Make cascade type ALL and orphanRemoval = true
 public class NewsLetterConsoleApplication {
 

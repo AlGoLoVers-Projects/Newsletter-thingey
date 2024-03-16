@@ -23,7 +23,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -34,7 +33,6 @@ import java.util.Set;
 import static com.algolovers.newsletterconsole.data.enums.AuthProvider.local;
 
 @Service
-@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.NESTED)
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
 
@@ -63,6 +61,7 @@ public class UserService implements UserDetailsService {
         return userDataService.loadUserById(id);
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<User> provisionNewUser(UserCreationRequest userCreationRequest) {
         try {
             if (userRepository.existsByEmailAddress(userCreationRequest.getEmail())) {
@@ -98,6 +97,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<User> verifyUser(VerificationRequest verificationRequest) {
         try {
             if (Objects.isNull(verificationRequest.getVerificationCode())
@@ -144,6 +144,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<User> saveOrUpdateUser(User user) {
         try {
             user = userDataService.save(user);
@@ -173,11 +174,13 @@ public class UserService implements UserDetailsService {
         return userDataService.save(user);
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<User> updateUserDisplayName(@Valid ChangeUserName changeUserName, User authentiatedUser) {
         authentiatedUser.setDisplayName(changeUserName.getUserName());
         return saveOrUpdateUser(authentiatedUser);
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<User> uploadUserDisplayPicture(byte[] imageData, User authentiatedUser) throws IOException {
         File file = googleDriveService.replaceImageInFolder("profile-picture", authentiatedUser.getId(),  imageData);
         authentiatedUser.setProfilePicture(googleDriveService.getPublicUrl(file));
@@ -196,6 +199,7 @@ public class UserService implements UserDetailsService {
         return new AuthenticatedUserToken(user, token);
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<String> forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
 
         if (Objects.isNull(forgotPasswordRequest)) {
@@ -230,6 +234,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<String> resetPassword(@Valid ResetPasswordRequest resetPasswordRequest) {
         User user = loadUserById(resetPasswordRequest.getId());
 

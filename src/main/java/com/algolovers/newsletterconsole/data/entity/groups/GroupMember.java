@@ -4,12 +4,10 @@ import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Table(name = "group_member")
 @Entity
 @Data
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class GroupMember {
 
     @Id
@@ -19,7 +17,6 @@ public class GroupMember {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private User user;
 
     private boolean hasEditAccess;

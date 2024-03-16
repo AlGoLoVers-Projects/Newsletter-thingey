@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 @Slf4j
-@Transactional(rollbackFor = {Exception.class}, propagation = Propagation.NESTED)
 public class QuestionsService {
 
     private final GroupDataService groupDataService;
@@ -39,6 +38,7 @@ public class QuestionsService {
     private final ResponseRepository responseRepository;
     private final GoogleDriveService googleDriveService;
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<QuestionsResponse> createOrUpdateQuestions(@Valid GroupQuestionsRequest groupQuestionsRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupDataService.findById(groupQuestionsRequest.getGroupId());
@@ -115,6 +115,7 @@ public class QuestionsService {
         }
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<QuestionsResponse> getQuestions(@Valid GroupRequest groupRequest, User authenticatedUser) {
         try {
             Optional<Group> optionalGroup = groupDataService.findById(groupRequest.getGroupId());
@@ -166,6 +167,7 @@ public class QuestionsService {
         }
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public Result<Group> submitResponses(@Valid FormDataResponse formDataResponse, User authenticatedUser) {
         Optional<Group> groupOptional = groupDataService.findById(formDataResponse.getGroupId());
 
@@ -315,6 +317,4 @@ public class QuestionsService {
     private boolean isValidImageFormat(String imageFormat) {
         return imageFormat != null && (imageFormat.equalsIgnoreCase("jpeg") || imageFormat.equalsIgnoreCase("png"));
     }
-
-
 }
