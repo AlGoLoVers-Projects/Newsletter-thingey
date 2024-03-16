@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -361,7 +362,10 @@ public class GroupService {
                 GroupMember groupMemberToRemove = optionalGroupMemberToRemove.get();
                 groupMembers.remove(groupMemberToRemove);
 
-                //TODO: Remove response of user
+                group.setQuestionResponses(group.getQuestionResponses()
+                        .stream()
+                        .filter(responseData -> !responseData.getUserEmailAddress().equals(groupMemberToRemove.getUser().getEmailAddress()))
+                        .collect(Collectors.toList()));
 
                 groupMemberRepository.delete(groupMemberToRemove);
                 group = groupDataService.save(group);
@@ -391,8 +395,6 @@ public class GroupService {
                 return new Result<>(false, null, "Group owner cannot leave group, consider deleting group instead");
             }
 
-            //TODO: Remove all responses in future when leaving group. No orphan data whatsoever
-
             Set<GroupMember> groupMembers = group.getGroupMembers();
             Optional<GroupMember> optionalGroupMemberToRemove = groupMembers.stream()
                     .filter(groupMember -> groupMember.getUser().getEmailAddress().equals(authenticatedUser.getEmailAddress()))
@@ -401,6 +403,11 @@ public class GroupService {
             if (optionalGroupMemberToRemove.isPresent()) {
                 GroupMember groupMemberToRemove = optionalGroupMemberToRemove.get();
                 groupMembers.remove(groupMemberToRemove);
+
+                group.setQuestionResponses(group.getQuestionResponses()
+                        .stream()
+                        .filter(responseData -> !responseData.getUserEmailAddress().equals(groupMemberToRemove.getUser().getEmailAddress()))
+                        .collect(Collectors.toList()));
 
                 groupMemberRepository.delete(groupMemberToRemove);
                 groupDataService.save(group);

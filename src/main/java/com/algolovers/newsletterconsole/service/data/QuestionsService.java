@@ -288,8 +288,6 @@ public class QuestionsService {
                             String imageKey = UUID.randomUUID().toString();
                             File file = googleDriveService.uploadFile(groupId, imageKey, "image/jpeg", fileBytes);
                             questionResponse.setAnswer(googleDriveService.getPublicUrl(file));
-
-                            //TODO: Write method to purge old images
                         } catch (Exception e) {
                             log.error("Error handling image upload", e);
                             throw new RuntimeException("Error handling image upload", e);
