@@ -12,6 +12,7 @@ import com.algolovers.newsletterconsole.data.model.api.request.group.*;
 import com.algolovers.newsletterconsole.data.model.api.response.group.GroupForm;
 import com.algolovers.newsletterconsole.newsletter.engine.NewsletterEngine;
 import com.algolovers.newsletterconsole.repository.*;
+import com.algolovers.newsletterconsole.service.utiity.GoogleDriveService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ public class GroupService {
     private final ResponseRepository responseRepository;
     private final NewsletterEngine newsletterEngine;
     private final QuestionsRepository questionsRepository;
+    private final GoogleDriveService googleDriveService;
 
     public Result<Group> provisionNewGroup(@Valid GroupCreationRequest groupCreationRequest, @Valid User groupOwner) {
 
@@ -558,6 +560,10 @@ public class GroupService {
 
             List<ResponseData> questionResponses = group.getQuestionResponses();
 
+            if (Objects.isNull(questionResponses) || questionResponses.isEmpty()) {
+                return new Result<>(false, null, "No responses found, please fill out the form before generating newsletter");
+            }
+
             //TODO: pdfLink, forward
             String pdfLink = newsletterEngine.generateNewsletter(group.getId(), group.getGroupName(), group.getGroupDescription(), questionResponses);
 
@@ -565,6 +571,9 @@ public class GroupService {
             questionResponses.clear();
 
             group.setAcceptQuestionResponse(false);
+
+            googleDriveService.deleteFolderByName(NewsletterEngine.pdfFolder.apply(group.getId()));
+            googleDriveService.deleteFolderByName(group.getId());
 
             //TODO: Push email to everyone.
             group = groupDataService.save(group);

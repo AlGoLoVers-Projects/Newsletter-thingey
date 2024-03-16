@@ -126,7 +126,7 @@ export default function ManageGroup(): React.ReactElement {
                     flex: 1
                 }}
             >
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                     <div>
                         <Typography
                             component="h1"
@@ -150,9 +150,14 @@ export default function ManageGroup(): React.ReactElement {
                     <IconButton
                         color="primary"
                         onClick={handleReload}
-                        sx={{ width: '40px', height: '40px', borderRadius: '10px', boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)' }}
+                        sx={{
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '10px',
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'
+                        }}
                     >
-                        <Refresh />
+                        <Refresh/>
                     </IconButton>
                 </div>
                 {
@@ -162,17 +167,17 @@ export default function ManageGroup(): React.ReactElement {
                             variant="contained"
                             color="info"
                             disabled={formTaken}
-                            sx={{ mt: 3, mb: 1 }}
+                            sx={{mt: 3, mb: 1}}
                             onClick={() => {
                                 navigator(`/form/${groupData.id}`)
                             }}
-                            endIcon={<NavigateNext />}
+                            endIcon={<NavigateNext/>}
                         >
                             Fill questions
-                        </Button> : <React.Fragment />
+                        </Button> : <React.Fragment/>
                 }
-                {isGroupOwner ? <RenderOwnerGroup groupData={groupData} groupUser={groupUser} /> :
-                    <RenderMemberGroup groupData={groupData} canEdit={groupUser?.hasEditAccess ?? false} />}
+                {isGroupOwner ? <RenderOwnerGroup groupData={groupData} groupUser={groupUser}/> :
+                    <RenderMemberGroup groupData={groupData} canEdit={groupUser?.hasEditAccess ?? false}/>}
             </Container>
         </InvitationsProvider>
     )
@@ -357,7 +362,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
 
     const {state, dispatch: invitationsDispatch} = useInvitations();
 
-    const [editGroup, {isLoading}] = useEditGroupMutation()
+    const [editGroup, {isLoading: isEdit}] = useEditGroupMutation()
     const [deleteGroup, {isLoading: isDeleting}] = useDeleteGroupMutation()
     const [removeUser, {isLoading: isRemovingUser}] = useRemoveUserMutation()
     const [userEditAccess, {isLoading: isEditingGroup}] = useUpdateEditAccessToUserMutation()
@@ -365,7 +370,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const [listInvitations] = useListAllInvitationsByGroupMutation()
     const [deleteInvitation] = useRemoveInvitationFromGroupMutation()
     const [releaseQuestions] = useReleaseQuestionsMutation()
-    const [generateNewsletter]=  useGenerateNewsletterMutation()
+    const [generateNewsletter] = useGenerateNewsletterMutation()
 
     const userEmailAddress = useSelector(memoizedSelectUserData).emailAddress
 
@@ -374,6 +379,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
 
     const [groupName, setGroupName] = useState<string>(groupData.groupName)
     const [groupDesc, setGroupDesc] = useState<string>(groupData.groupDescription)
+    const [generatingNewsLetter, setGeneratingNewsLetter] = useState<boolean>(false)
 
     const deleteGroupDialogRef = useRef<AlertDialogRef>(null);
     const generateNewsletterDialogRef = useRef<AlertDialogRef>(null);
@@ -431,9 +437,12 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
             groupId: groupData.id,
         }
 
+        setGeneratingNewsLetter(true)
+
         generateNewsletter(request)
             .unwrap()
             .then((response) => {
+                setGeneratingNewsLetter(false)
                 if (response.success) {
                     dispatch(updateSingleGroupData({updatedData: response.data}))
                     showSuccessToast(response.message ?? 'Newsletter generated successfully')
@@ -443,6 +452,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                 }
             })
             .catch((result) => {
+                setGeneratingNewsLetter(false)
                 showFailureToast(result.data.message ?? "Could not generate newsletter")
             })
     }
@@ -693,7 +703,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                         <Button
                             type="button"
                             variant="outlined"
-                            disabled={isDeleting || isLoading}
+                            disabled={isDeleting || isEdit || isEditingGroup || isRemovingUser || isInvitingUser || generatingNewsLetter}
                             onClick={() => {
                                 setGroupName(groupData.groupName)
                                 setGroupDesc(groupData.groupDescription)
@@ -705,7 +715,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                         <Button
                             type="submit"
                             variant="contained"
-                            disabled={isDeleting || isLoading}
+                            disabled={isDeleting || isEdit || isEditingGroup || isRemovingUser || isInvitingUser || generatingNewsLetter}
                             sx={{mt: 3, mb: 1}}
                         >
                             Update Group Information
@@ -805,7 +815,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     <Button
                         type="submit"
                         variant="contained"
-                        disabled={false}
+                        disabled={isDeleting || isEdit || isEditingGroup || isRemovingUser || isInvitingUser || generatingNewsLetter}
                         sx={{mt: 3, mb: 1}}
                         onClick={() => invitationDialogRef.current?.openDialog()}
                         endIcon={<NavigateNext/>}
@@ -850,7 +860,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     <Button
                         type="submit"
                         variant="outlined"
-                        disabled={isDeleting || isLoading || groupData.acceptQuestionResponse}
+                        disabled={isDeleting || isEdit || isEditingGroup || isRemovingUser || isInvitingUser || groupData.acceptQuestionResponse || generatingNewsLetter}
                         sx={{mt: 3, mb: 1}}
                         onClick={() => {
                             releaseQuestionRef.current?.open()
@@ -861,7 +871,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     <Button
                         type="submit"
                         variant="contained"
-                        disabled={isDeleting || isLoading || groupData.acceptQuestionResponse}
+                        disabled={isDeleting || isEdit || isEditingGroup || isRemovingUser || isInvitingUser || groupData.acceptQuestionResponse || generatingNewsLetter}
                         sx={{mt: 3, mb: 1}}
                         endIcon={<NavigateNext/>}
                         onClick={() => navigate(authorizedPaths.manageQuestions, {state: groupData.id})}
@@ -1013,7 +1023,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                         <Button
                             type="submit"
                             variant="outlined"
-                            disabled={isDeleting || isLoading}
+                            disabled={isDeleting || isEdit || isEditingGroup || isRemovingUser || isInvitingUser || generatingNewsLetter}
                             sx={{mt: 3, mb: 1}}
                             onClick={() => {
                                 generateNewsletterDialogRef.current?.open()
@@ -1059,7 +1069,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     <Button
                         type="submit"
                         variant="contained"
-                        disabled={isDeleting || isLoading}
+                        disabled={isDeleting || isEdit || isEditingGroup || isRemovingUser || isInvitingUser || generatingNewsLetter}
                         sx={{mt: 3, mb: 1}}
                         onClick={() => {
                             deleteGroupDialogRef.current?.open()

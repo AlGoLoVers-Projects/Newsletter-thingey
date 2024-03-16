@@ -23,7 +23,8 @@ export type GroupData = {
     groupMembers: GroupMember[];
     updatedAt: string | null;
     acceptQuestionResponse: boolean;
-    questionResponses: ResponseData[]
+    questionResponses: ResponseData[];
+    releaseDate: string | null;
 };
 
 export type GroupDataRequest = {
@@ -134,4 +135,16 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
     }),
 });
 
-export const {useGetGroupsMutation, useGetGroupMutation, useNewGroupMutation, useEditGroupMutation, useDeleteGroupMutation, useLeaveGroupMutation, useUpdateEditAccessToUserMutation, useRemoveUserMutation, useReleaseQuestionsMutation, useGetFormsForUserMutation, useGenerateNewsletterMutation} = groupsSlice;
+export const {
+    useGetGroupsMutation,
+    useGetGroupMutation,
+    useNewGroupMutation,
+    useEditGroupMutation,
+    useDeleteGroupMutation,
+    useLeaveGroupMutation,
+    useUpdateEditAccessToUserMutation,
+    useRemoveUserMutation,
+    useReleaseQuestionsMutation,
+    useGetFormsForUserMutation,
+    useGenerateNewsletterMutation
+} = groupsSlice;

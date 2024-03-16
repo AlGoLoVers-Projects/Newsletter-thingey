@@ -30,7 +30,7 @@ public class NewsletterEngine {
 
     private final GoogleDriveService googleDriveService;
 
-    private static final Function<String, String> pdfFolder = (groupId) -> String.format("%s-issues", groupId);
+    public static final Function<String, String> pdfFolder = (groupId) -> String.format("%s-issues", groupId);
     private static final Function<String, String> sanitizeGroupName = (groupName) -> groupName.replaceAll("[^a-zA-Z0-9-_]", "_");
     private static final Function<String, String> fileName = (groupName) -> {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
