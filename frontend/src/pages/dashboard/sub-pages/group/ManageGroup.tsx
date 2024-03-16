@@ -21,7 +21,7 @@ import {
 } from "../../../../redux/rootslices/api/groups.slice";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import {showFailureToast, showSuccessToast} from "../../../../util/toasts";
+import {showFailureToast, showInformationToast, showSuccessToast} from "../../../../util/toasts";
 import {authorizedPaths, paths} from "../../../../router/paths";
 import {Mail, NavigateNext, Refresh} from "@mui/icons-material";
 import {
@@ -380,12 +380,34 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const [groupName, setGroupName] = useState<string>(groupData.groupName)
     const [groupDesc, setGroupDesc] = useState<string>(groupData.groupDescription)
     const [generatingNewsLetter, setGeneratingNewsLetter] = useState<boolean>(false)
+    const [releaseDateCheck, setReleaseDateCheck] = useState<[number, boolean]>([0, true])
 
     const deleteGroupDialogRef = useRef<AlertDialogRef>(null);
     const generateNewsletterDialogRef = useRef<AlertDialogRef>(null);
     const invitationDialogRef = useRef<InvitationDialogRef>(null);
     const deleteInvitationRef = useRef<AlertDialogRef>(null);
     const releaseQuestionRef = useRef<AlertDialogRef>(null);
+
+    console.log(releaseDateCheck[1])
+
+    const getReleaseDate = (releaseDateString: string | null): [number, boolean] => {
+        if (!releaseDateString) {
+            return [0, true]
+        }
+
+        const releaseDate = new Date(releaseDateString);
+
+        const currentDate = new Date();
+        const differenceMs = releaseDate.getTime() - currentDate.getTime();
+        const daysLeft = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
+        const canRelease = currentDate.getTime() >= releaseDate.getTime();
+
+        return [daysLeft, canRelease];
+    }
+
+    useEffect(() => {
+        setReleaseDateCheck(getReleaseDate(groupData.releaseDate))
+    }, [groupData]);
 
     const pullInvitations = () => {
 
@@ -438,6 +460,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
         }
 
         setGeneratingNewsLetter(true)
+        showInformationToast('Generating newsletter...')
 
         generateNewsletter(request)
             .unwrap()
@@ -1014,6 +1037,11 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                         time process, questions cannot be processed and new newsletters cannot be issued once generated.
                         Proceed with caution.
                     </Typography>
+                    {
+                        !releaseDateCheck[1] && <Typography variant="subtitle2" sx={{mt: 2}}>
+                            Next release can happen only after {releaseDateCheck[0]} days
+                        </Typography>
+                    }
                     <Box sx={{
                         display: "flex",
                         alignSelf: "end",
@@ -1023,7 +1051,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                         <Button
                             type="submit"
                             variant="outlined"
-                            disabled={isDeleting || isEdit || isEditingGroup || isRemovingUser || isInvitingUser || generatingNewsLetter}
+                            disabled={isDeleting || isEdit || isEditingGroup || isRemovingUser || isInvitingUser || generatingNewsLetter || !releaseDateCheck[1]}
                             sx={{mt: 3, mb: 1}}
                             onClick={() => {
                                 generateNewsletterDialogRef.current?.open()
