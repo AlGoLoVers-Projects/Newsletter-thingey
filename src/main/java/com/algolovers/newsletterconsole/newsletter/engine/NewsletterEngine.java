@@ -19,6 +19,8 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
@@ -77,7 +79,7 @@ public class NewsletterEngine {
         if (pdfElement.getProfilePicture() != null && !pdfElement.getProfilePicture().isEmpty()) {
             profilePicture.attr("style", "background-image: url('" + pdfElement.getProfilePicture() + "')");
         } else {
-            String baseUrl = String.format("https://ui-avatars.com/api/?name=%s&background=random&size=128", pdfElement.getUserName());
+            String baseUrl = String.format("https://ui-avatars.com/api/?name=%s&background=random&size=128", URLEncoder.encode(pdfElement.getUserName(), StandardCharsets.UTF_8));
             profilePicture.attr("style", "background-image: url('" + baseUrl  + "')");
         }
 

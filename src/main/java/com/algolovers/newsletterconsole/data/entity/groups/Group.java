@@ -79,6 +79,7 @@ public class Group {
 
     @Convert(converter = StringSetConverter.class)
     @Builder.Default
+    @Column(length = 65555)
     private Set<String> newsletterIssueLinks = new HashSet<>();
 
     private String currentIssue;
