@@ -1,5 +1,6 @@
 package com.algolovers.newsletterconsole.data.entity.groups;
 
+import com.algolovers.newsletterconsole.data.entity.converter.StringSetConverter;
 import com.algolovers.newsletterconsole.data.entity.questions.Question;
 import com.algolovers.newsletterconsole.data.entity.reponse.ResponseData;
 import com.algolovers.newsletterconsole.data.entity.user.User;
@@ -75,6 +76,12 @@ public class Group {
     private List<ResponseData> questionResponses = new ArrayList<>();
 
     private LocalDateTime releaseDate;
+
+    @Convert(converter = StringSetConverter.class)
+    @Builder.Default
+    private Set<String> newsletterIssueLinks = new HashSet<>();
+
+    private String currentIssue;
 
     public boolean canRelease() {
         if (Objects.isNull(releaseDate)) {

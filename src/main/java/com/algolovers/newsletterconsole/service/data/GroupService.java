@@ -495,6 +495,10 @@ public class GroupService {
                 return new Result<>(false, null, "Please add questions before releasing question form");
             }
 
+            if (group.isAcceptQuestionResponse()) {
+                return new Result<>(false, null, "Questions have already been released");
+            }
+
             group.setAcceptQuestionResponse(true);
 
             List<ResponseData> questionResponses = group.getQuestionResponses();
@@ -579,12 +583,14 @@ public class GroupService {
             //TODO: pdfLink, forward
             String pdfLink = newsletterEngine.generateNewsletter(group.getId(), group.getGroupName(), group.getGroupDescription(), questionResponses);
 
+            group.getNewsletterIssueLinks().add(pdfLink);
+            group.setCurrentIssue(pdfLink);
+
             responseRepository.deleteAll(questionResponses);
             questionResponses.clear();
 
             group.setAcceptQuestionResponse(false);
 
-            googleDriveService.deleteFolderByName(NewsletterEngine.pdfFolder.apply(group.getId()));
             googleDriveService.deleteFolderByName(group.getId());
 
             //TODO: Push email to everyone.
