@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
@@ -22,6 +23,8 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 @Builder
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Group {
 
     public Group() {
@@ -45,10 +48,12 @@ public class Group {
 
     @ManyToOne
     @JoinColumn(name = "group_owner_id", nullable = false)
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private User groupOwner;
 
     @Builder.Default
     @OneToMany
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<GroupMember> groupMembers = new HashSet<>();
 
     @UpdateTimestamp
@@ -57,6 +62,7 @@ public class Group {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @Builder.Default
     private List<Question> questions = new ArrayList<>();
 
@@ -64,6 +70,7 @@ public class Group {
 
     @Builder.Default
     @OneToMany
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<ResponseData> questionResponses = new ArrayList<>();
 
     private LocalDateTime releaseDate;
