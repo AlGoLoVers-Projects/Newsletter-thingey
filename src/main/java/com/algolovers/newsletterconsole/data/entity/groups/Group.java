@@ -66,6 +66,7 @@ public class Group {
     @Builder.Default
     private List<Question> questions = new ArrayList<>();
 
+    @Builder.Default
     private boolean acceptQuestionResponse = false; //FALSE -> set to true when questions are released. Form collects data then and saves response. response is cleared during any shift of this value. clicking on publish will set this value back to false.
 
     @Builder.Default
