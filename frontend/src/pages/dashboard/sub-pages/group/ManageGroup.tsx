@@ -50,6 +50,7 @@ import {
 } from "../../../../components/elements/InvitationsProvider";
 import UserInvitationListCard from "../../../../components/elements/UserInvitationListCard";
 import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
 
 export default function ManageGroup(): React.ReactElement {
     const {state} = useLocation();
@@ -307,6 +308,49 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
                     )}
                 </List>
             </Card>
+            {
+                groupData.currentIssue && <Card
+                    sx={{
+                        mt: 3,
+                        p: 3,
+                        maxWidth: "100%",
+                        borderRadius: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Typography component="h1" variant="h6" sx={{
+                        fontWeight: 'bold',
+                    }}>
+                        Issues
+                    </Typography>
+                    <Typography variant="body1">
+                        You can view all issue links here
+                    </Typography>
+                    <Typography component="h1" variant="h6" sx={{
+                        fontWeight: 'bold',
+                        mt: 4,
+                        mb: 1
+                    }}>
+                        Current Issue
+                    </Typography>
+                    <Link href={groupData.currentIssue}>{groupData.currentIssue}</Link>
+                    <Typography component="h1" variant="h6" sx={{
+                        fontWeight: 'bold',
+                        mt: 4,
+                        mb: 1
+                    }}>
+                        All Issues
+                    </Typography>
+                    <List>
+                        {groupData?.newsletterIssueLinks?.map(link =>
+                            <ListItem key={link}>
+                                <Link href={link}>{link}</Link>
+                            </ListItem>
+                        )}
+                    </List>
+                </Card>
+            }
             <Box sx={{
                 display: "flex",
                 flexDirection: "row",
@@ -1111,6 +1155,51 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     </Button>
                 </Box>
             </Card>
+            {
+                groupData.currentIssue && <Card
+                    sx={{
+                        mt: 3,
+                        p: 3,
+                        maxWidth: "100%",
+                        borderRadius: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Typography component="h1" variant="h6" sx={{
+                        fontWeight: 'bold',
+                    }}>
+                        Issues
+                    </Typography>
+                    <Typography variant="body1">
+                        You can view all issue links here
+                    </Typography>
+                    <Typography component="h1" variant="h6" sx={{
+                        fontWeight: 'bold',
+                        mt: 4,
+                        mb: 1
+                    }}>
+                        Current Issue
+                    </Typography>
+                    <Link href={groupData.currentIssue}>{groupData.currentIssue}</Link>
+                    {groupData?.newsletterIssueLinks && groupData?.newsletterIssueLinks.length !== 0 && <React.Fragment>
+                        <Typography component="h1" variant="h6" sx={{
+                            fontWeight: 'bold',
+                            mt: 4,
+                            mb: 1
+                        }}>
+                            All Issues
+                        </Typography>
+                        <List>
+                            {groupData?.newsletterIssueLinks?.map(link =>
+                                <ListItem key={link}>
+                                    <Link href={link}>{link}</Link>
+                                </ListItem>
+                            )}
+                        </List>
+                    </React.Fragment>}
+                </Card>
+            }
         </Box>
     )
 }

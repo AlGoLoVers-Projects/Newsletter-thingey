@@ -570,14 +570,14 @@ public class GroupService {
                 return new Result<>(false, null, "Please add questions before generating newsletter");
             }
 
-            if (!group.release()) {
-                return new Result<>(false, null, "Cannot release, release date not reached yet");
-            }
-
             List<ResponseData> questionResponses = group.getQuestionResponses();
 
             if (Objects.isNull(questionResponses) || questionResponses.isEmpty()) {
                 return new Result<>(false, null, "No responses found, please fill out the form before generating newsletter");
+            }
+
+            if (!group.release()) {
+                return new Result<>(false, null, "Cannot release, release date not reached yet");
             }
 
             //TODO: pdfLink, forward

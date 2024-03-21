@@ -24,6 +24,8 @@ export type GroupData = {
     updatedAt: string | null;
     acceptQuestionResponse: boolean;
     questionResponses: ResponseData[];
+    newsletterIssueLinks: string[];
+    currentIssue: string | null;
     releaseDate: string | null;
 };
 
