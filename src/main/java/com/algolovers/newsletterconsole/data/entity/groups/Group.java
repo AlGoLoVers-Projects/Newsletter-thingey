@@ -101,6 +101,7 @@ public class Group {
             LocalDate currentDate = LocalDate.now();
             LocalDate releaseDate25DaysLater = currentDate.plusDays(25);
             this.releaseDate = releaseDate25DaysLater.atStartOfDay();
+            setAcceptQuestionResponse(false);
         }
 
         return release;

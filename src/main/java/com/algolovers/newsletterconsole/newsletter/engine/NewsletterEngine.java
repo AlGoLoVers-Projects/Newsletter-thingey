@@ -65,7 +65,6 @@ public class NewsletterEngine {
         iTextRenderer.createPDF(byteArray);
         byteArray.close();
 
-        googleDriveService.deleteFolderByName(groupId);
         return googleDriveService.uploadFile(pdfFolder.apply(groupId), fileName.apply(groupName), "application/pdf", byteArray.toByteArray()).getWebViewLink();
     }
 

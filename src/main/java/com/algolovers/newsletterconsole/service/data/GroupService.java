@@ -583,16 +583,14 @@ public class GroupService {
             //TODO: pdfLink, forward
             String pdfLink = newsletterEngine.generateNewsletter(group.getId(), group.getGroupName(), group.getGroupDescription(), questionResponses);
 
+            group.getNewsletterIssueLinks().add(pdfLink);
             group.setCurrentIssue(pdfLink);
 
             responseRepository.deleteAll(questionResponses);
             questionResponses.clear();
-
-            group.setAcceptQuestionResponse(false);
-
             googleDriveService.deleteFolderByName(group.getId());
 
-            //TODO: Push email to everyone.
+//            //TODO: Push email to everyone.
             group = groupDataService.save(group);
             return new Result<>(true, group, "Newsletter has been generated, URL: " + pdfLink);
         } catch (Exception e) {
