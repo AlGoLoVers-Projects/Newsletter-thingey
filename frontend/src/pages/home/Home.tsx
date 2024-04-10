@@ -184,7 +184,7 @@ export default function Home(): React.ReactElement {
                             variant="outlined"
                             color="secondary"
                             onClick={() => {
-                                navigate(paths.contactUs)
+                                window.location = "mailto:newsletter.algolovers@gmail.com" as any;
                             }}
                             sx={{
                                 pl: 10,

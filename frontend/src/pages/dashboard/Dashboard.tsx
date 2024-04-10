@@ -205,16 +205,6 @@ export default function Dashboard(): React.ReactElement {
             icon: <Person2Rounded/>,
             path: authorizedPaths.profile
         },
-        {
-            title: 'About Us',
-            icon: <InfoRounded/>,
-            path: authorizedPaths.aboutUs
-        },
-        {
-            title: 'Contact Us',
-            icon: <ContactPage/>,
-            path: authorizedPaths.contactUs
-        },
     ]
 
     const buildNavigation = (nav: NavData[]) => {
