@@ -113,7 +113,7 @@ public class EmailService {
         sendHtmlEmail("[News Letter] Account Created Successfully", html, user.getEmailAddress());
     }
 
-    public void sendInvitationEmail(User user, String message, String subMessage) {
+    public void sendInvitationEmail(User user, String email, String message, String subMessage) {
         Context context = new Context();
         context.setVariable("inviterName", user.getDisplayName());
         context.setVariable("message", message);
@@ -122,9 +122,9 @@ public class EmailService {
 
         String html = templateEngine.process("invitation.html", context);
 
-        log.info("Built HTML template, Sending invitation email to {}", user.getEmailAddress());
+        log.info("Built HTML template, Sending invitation email to {}", email);
 
-        sendHtmlEmail("[News Letter] Newsletter Invitation", html, user.getEmailAddress());
+        sendHtmlEmail("[News Letter] Newsletter Invitation", html, email);
     }
 
     public void invitationAccept(User user, Group group) {

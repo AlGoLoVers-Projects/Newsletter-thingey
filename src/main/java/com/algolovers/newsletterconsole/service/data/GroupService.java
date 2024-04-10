@@ -177,10 +177,10 @@ public class GroupService {
             User invitedUser = userDataService.loadUserByEmail(groupUserInvitationRequest.getUserEmail());
 
             if (Objects.isNull(invitedUser)) {
-                emailService.sendInvitationEmail(authenticatedUser, "register an account in Newsletter", "register an account. Proceed by visiting Console > Invitations and look for <b>%s<b/>".formatted(group.getGroupName()));
+                emailService.sendInvitationEmail(authenticatedUser, groupUserInvitationRequest.getUserEmail(), "register an account in Newsletter", "register an account. Proceed by visiting Console > Invitations and look for <b>%s<b/>".formatted(group.getGroupName()));
                 return new Result<>(true, invitation, "Invitation created, user does not exist. An invitation to the app has been sent");
             } else {
-                emailService.sendInvitationEmail(authenticatedUser, "join %s".formatted(group.getGroupName()), "open newsletter. Proceed by visiting Console > Invitations and look for <b>%s<b/>".formatted(group.getGroupName()));
+                emailService.sendInvitationEmail(authenticatedUser, groupUserInvitationRequest.getUserEmail(), "join %s".formatted(group.getGroupName()), "open newsletter. Proceed by visiting Console > Invitations and look for <b>%s<b/>".formatted(group.getGroupName()));
                 return new Result<>(true, invitation, "Invitation has been sent to user");
             }
         } catch (Exception e) {
