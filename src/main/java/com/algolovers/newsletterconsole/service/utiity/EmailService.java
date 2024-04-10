@@ -100,7 +100,7 @@ public class EmailService {
         return sendHtmlEmail("[News Letter] Verify your email address", html, user.getEmailAddress());
     }
 
-    public boolean sendUserCreationSuccessEmail(User user) {
+    public void sendUserCreationSuccessEmail(User user) {
         Context context = new Context();
         context.setVariable("userFullName", user.getDisplayName());
         context.setVariable("email", user.getEmailAddress());
@@ -109,7 +109,21 @@ public class EmailService {
 
         log.info("Built HTML template, Sending creation success email to {}", user.getEmailAddress());
 
-        return sendHtmlEmail("[News Letter] Account Created Successfully", html, user.getEmailAddress());
+        sendHtmlEmail("[News Letter] Account Created Successfully", html, user.getEmailAddress());
+    }
+
+    public void sendInvitationEmail(User user, String message, String subMessage) {
+        Context context = new Context();
+        context.setVariable("inviterName", user.getDisplayName());
+        context.setVariable("message", message);
+        context.setVariable("subMessage", subMessage);
+        context.setVariable("invitationLink", baseUrl);
+
+        String html = templateEngine.process("invitation.html", context);
+
+        log.info("Built HTML template, Sending invitation email to {}", user.getEmailAddress());
+
+        sendHtmlEmail("[News Letter] Newsletter Invitation", html, user.getEmailAddress());
     }
 
     public boolean sendPasswordResetEmail(User user, Long verificationCode) {

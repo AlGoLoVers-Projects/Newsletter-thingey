@@ -12,6 +12,7 @@ import com.algolovers.newsletterconsole.data.model.api.request.group.*;
 import com.algolovers.newsletterconsole.data.model.api.response.group.GroupForm;
 import com.algolovers.newsletterconsole.newsletter.engine.NewsletterEngine;
 import com.algolovers.newsletterconsole.repository.*;
+import com.algolovers.newsletterconsole.service.utiity.EmailService;
 import com.algolovers.newsletterconsole.service.utiity.GoogleDriveService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class GroupService {
     private final ResponseRepository responseRepository;
     private final NewsletterEngine newsletterEngine;
     private final QuestionsRepository questionsRepository;
+    private final EmailService emailService;
     private final GoogleDriveService googleDriveService;
 
     @Transactional(rollbackFor = {Exception.class})
@@ -174,10 +176,10 @@ public class GroupService {
             User invitedUser = userDataService.loadUserByEmail(groupUserInvitationRequest.getUserEmail());
 
             if (Objects.isNull(invitedUser)) {
-                //TODO: Prepare email for invitation instead
+                emailService.sendInvitationEmail(authenticatedUser, "register an account in Newsletter", "register an account. Proceed by visiting Console > Invitations and look for %s".formatted(group.getGroupName()));
                 return new Result<>(true, invitation, "Invitation created, user does not exist. An invitation to the app has been sent");
             } else {
-                //TODO: Prepare email for invitation with invitation code embedded in URL
+                emailService.sendInvitationEmail(authenticatedUser, "join %s".formatted(group.getGroupName()), "open newsletter. Proceed by visiting Console > Invitations and look for %s".formatted(group.getGroupName()));
                 return new Result<>(true, invitation, "Invitation has been sent to user");
             }
         } catch (Exception e) {

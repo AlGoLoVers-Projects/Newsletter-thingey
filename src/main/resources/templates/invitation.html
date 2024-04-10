@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            border: 0;
+            margin: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            color: #333333;
+            line-height: 1.5em;
+        }
+
+        h1 {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #ffffff;
+            background-color: #f6e4aa;
+            padding: 30px;
+            font-size: 3em;
+            height: max-content;
+        }
+
+        p {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            color: #333333;
+            line-height: 1.5em;
+        }
+
+        #text-cntnr {
+            background-color: #fdfff6;
+            padding: 30px;
+            height: max-content;
+            color: #493d00;
+        }
+
+        h2 {
+            padding-bottom: 20px;
+        }
+
+        p {
+            padding-bottom: 2px;
+        }
+
+        .ver-code {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 15px;
+            font-weight: 500;
+            background-color: #fffef3;
+            border-radius: 5px;
+            box-shadow: 0 0 5px #bbb485;
+        }
+
+        strong {
+            font-size: 1.5em;
+            color: #493d00;
+        }
+
+        .space {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+<h1>Newsletter Invitation</h1>
+<div id="text-cntnr">
+    <h2>
+        Hey there!
+    </h2>
+    <p class="message">You have been invited by <span th:text="${inviterName}"></span> to join Newsletter, click on the following link to <span th:text="${message}"></span>.</p>
+    <div class="ver-code">
+        <div>Please use the following link to <span th:text="${subMessage}"></span></div>
+        <div><a th:href="@{${invitationLink}}" th:text="${invitationLink}">link</a></div>
+    </div>
+    <p class="space">Regards,</p>
+    <p style="font-weight: bold">Newsletter</p>
+    <p>Contact us at <a href="mailto:mailerbot100@gmail.com">mailerbot100@gmail.com</a> for any questions or
+        suggestions.</p>
+</div>
+</body>
+</html>
