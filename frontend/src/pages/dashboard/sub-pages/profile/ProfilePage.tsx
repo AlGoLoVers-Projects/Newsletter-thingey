@@ -272,15 +272,6 @@ export default function ProfilePage(): React.ReactElement {
                 flexDirection: "row",
                 gap: 2,
             }}>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="error"
-                    disabled={updatingUserName}
-                    sx={{mt: 3, mb: 1}}
-                >
-                    Delete User
-                </Button>
             </Box>
         </Container>
     )
