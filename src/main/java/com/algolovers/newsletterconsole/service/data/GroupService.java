@@ -138,6 +138,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
+
     @Transactional(rollbackFor = {Exception.class})
     public Result<Invitation> inviteUserToGroup(@Valid GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
         try {
@@ -207,6 +208,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
+
     @Transactional(rollbackFor = {Exception.class})
     public Result<Invitation> removeInvitationFromGroup(GroupUserInvitationRequest groupUserInvitationRequest, User authenticatedUser) {
         try {
@@ -238,6 +240,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
+
     @Transactional(rollbackFor = {Exception.class})
     public Result<String> acceptInvitation(GroupRequest groupRequest, User authenticatedUser) {
 
@@ -278,9 +281,9 @@ public class GroupService {
             groupDataService.save(group);
             invitationRepository.delete(invitation);
 
-            return new Result<>(true, null, "User has been added to group successfully");
+            emailService.invitationAccept(authenticatedUser, group);
 
-            //TODO: Send email?
+            return new Result<>(true, null, "User has been added to group successfully");
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
             return new Result<>(false, null, e.getMessage());
@@ -306,6 +309,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
+
     @Transactional(rollbackFor = {Exception.class})
     public Result<Group> updateEditAccessToUser(GroupUserEditAccessRequest groupUserEditAccessRequest, User authenticatedUser) {
         try {
@@ -342,6 +346,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
+
     @Transactional(rollbackFor = {Exception.class})
     public Result<Group> removeUser(GroupUserRemovalRequest groupUserRemovalRequest, User authenticatedUser) {
 
@@ -384,6 +389,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
+
     @Transactional(rollbackFor = {Exception.class})
     public Result<String> leaveGroup(GroupRequest groupRequest, User authenticatedUser) {
 
@@ -426,6 +432,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
+
     @Transactional(rollbackFor = {Exception.class})
     public Result<String> deleteGroup(GroupRequest groupRequest, User authenticatedUser) {
 
@@ -463,6 +470,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
+
     @Transactional(rollbackFor = {Exception.class})
     public Result<Group> releaseQuestions(@Valid GroupRequest groupRequest, User authenticatedUser) {
         try {
@@ -515,6 +523,7 @@ public class GroupService {
             return new Result<>(false, null, e.getMessage());
         }
     }
+
     @Transactional(rollbackFor = {Exception.class})
     public Result<List<GroupForm>> getFormsForUser(User authenticatedUser) {
         try {
@@ -538,6 +547,7 @@ public class GroupService {
 
         return new Result<>(false, null, "Failed to fetch forms");
     }
+
     @Transactional(rollbackFor = {Exception.class})
     public Result<Group> generateNewsletter(@Valid GroupRequest groupRequest, User authenticatedUser) {
         try {

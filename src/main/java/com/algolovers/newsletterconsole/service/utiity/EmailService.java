@@ -1,5 +1,6 @@
 package com.algolovers.newsletterconsole.service.utiity;
 
+import com.algolovers.newsletterconsole.data.entity.groups.Group;
 import com.algolovers.newsletterconsole.data.entity.user.User;
 import com.algolovers.newsletterconsole.data.model.api.PasswordResetToken;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -124,6 +125,27 @@ public class EmailService {
         log.info("Built HTML template, Sending invitation email to {}", user.getEmailAddress());
 
         sendHtmlEmail("[News Letter] Newsletter Invitation", html, user.getEmailAddress());
+    }
+
+    public void invitationAccept(User user, Group group) {
+        group.getGroupMembers()
+                .forEach(groupMember -> {
+                    User currentUser = groupMember.getUser();
+                    Context context = new Context();
+                    context.setVariable("userFullName", currentUser.getDisplayName());
+
+                    if (user.getEmailAddress().equals(currentUser.getEmailAddress())) {
+                        context.setVariable("message", "You have successfully joined " + group.getGroupName() + ", we wish you the best and hope you have fun.");
+                    } else {
+                        context.setVariable("message", user.getDisplayName() + "has joined your group, " + group.getGroupName() + " successfully. Have fun!");
+                    }
+
+                    String html = templateEngine.process("invitation-accept.html", context);
+
+                    log.info("Built HTML template, Sending invitation accept email to {}", currentUser.getEmailAddress());
+
+                    sendHtmlEmail("[News Letter] Newsletter Invitation", html, currentUser.getEmailAddress());
+                });
     }
 
     public boolean sendPasswordResetEmail(User user, Long verificationCode) {
