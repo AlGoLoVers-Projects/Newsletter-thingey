@@ -152,17 +152,21 @@ public class EmailService {
         group.getGroupMembers()
                 .forEach(groupMember -> {
                     User currentUser = groupMember.getUser();
-                    Context context = new Context();
-                    context.setVariable("userFullName", currentUser.getDisplayName());
-                    context.setVariable("groupName", group.getGroupName());
-                    context.setVariable("formLink", baseUrl + "/form/" + group.getId());
-
-                    String html = templateEngine.process("form-link.html", context);
-
-                    log.info("Built HTML template, Sending invitation accept email to {}", currentUser.getEmailAddress());
-
-                    sendHtmlEmail("[News Letter] Open Form", html, currentUser.getEmailAddress());
+                    sendFormLinkToUser(currentUser.getEmailAddress(), currentUser.getDisplayName(), group);
                 });
+    }
+
+    public void sendFormLinkToUser(String emailAddress, String displayName, Group group) {
+        Context context = new Context();
+        context.setVariable("userFullName", displayName);
+        context.setVariable("groupName", group.getGroupName());
+        context.setVariable("formLink", baseUrl + "/form/" + group.getId());
+
+        String html = templateEngine.process("form-link.html", context);
+
+        log.info("Built HTML template, Sending invitation accept email to {}", emailAddress);
+
+        sendHtmlEmail("[News Letter] Open Form", html, emailAddress);
     }
 
     public void sendPdfLink(Group group, String url) {

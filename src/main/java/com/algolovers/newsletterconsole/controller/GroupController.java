@@ -141,5 +141,11 @@ public class GroupController {
         return ControllerUtils.processResultForResponseWithData(result);
     }
 
+    @PostMapping("/remindUserToFillForm")
+    public ResponseEntity<Result<Void>> remindUserToFillForm(@Valid @RequestBody GroupFormReminderRequest groupFormReminderRequest) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Result<Void> result = groupService.remindUserToFillForm(groupFormReminderRequest, user);
+        return ControllerUtils.processResultForResponseWithData(result);
+    }
 
 }

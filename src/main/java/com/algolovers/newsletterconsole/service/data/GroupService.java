@@ -610,4 +610,39 @@ public class GroupService {
         }
     }
 
+    public Result<Void> remindUserToFillForm(@Valid GroupFormReminderRequest groupFormReminderRequest, User authenticatedUser) {
+        try {
+            Optional<Group> optionalGroup = groupDataService.findById(groupFormReminderRequest.getGroupId());
+
+            if (optionalGroup.isEmpty()) {
+                return new Result<>(false, null, "group not found");
+            }
+
+            Group group = optionalGroup.get();
+
+            Optional<GroupMember> groupMember = group
+                    .getGroupMembers()
+                    .stream()
+                    .filter(member ->
+                            authenticatedUser
+                                    .getEmailAddress()
+                                    .equals(member.getUser().getEmailAddress()))
+                    .findFirst();
+
+            if (groupMember.isEmpty()) {
+                return new Result<>(false, null, "You are not part of this group");
+            }
+
+            if (!group.getGroupOwner().getEmailAddress().equals(authenticatedUser.getEmailAddress())) {
+                return new Result<>(false, null, "Only the group owner send reminders");
+            }
+
+            emailService.sendFormLinkToUser(groupFormReminderRequest.getUserEmail(), groupFormReminderRequest.getUserName(), group);
+            return new Result<>(true, null, "Form link sent successfully");
+
+        } catch (Exception e) {
+            return new Result<>(false, null, e.getMessage());
+        }
+    }
+
 }
