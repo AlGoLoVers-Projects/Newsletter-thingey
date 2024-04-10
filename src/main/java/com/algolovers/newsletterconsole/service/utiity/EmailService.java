@@ -100,6 +100,18 @@ public class EmailService {
         return sendHtmlEmail("[News Letter] Verify your email address", html, user.getEmailAddress());
     }
 
+    public boolean sendUserCreationSuccessEmail(User user) {
+        Context context = new Context();
+        context.setVariable("userFullName", user.getDisplayName());
+        context.setVariable("email", user.getEmailAddress());
+
+        String html = templateEngine.process("user-creation-success.html", context);
+
+        log.info("Built HTML template, Sending creation success email to {}", user.getEmailAddress());
+
+        return sendHtmlEmail("[News Letter] Account Created Successfully", html, user.getEmailAddress());
+    }
+
     public boolean sendPasswordResetEmail(User user, Long verificationCode) {
         Context context = new Context();
 

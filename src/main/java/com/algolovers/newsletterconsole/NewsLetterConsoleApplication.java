@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication(exclude = HazelcastAutoConfiguration.class)
 @EnableTransactionManagement
 @EnableCaching
-//TODO: Make cascade type ALL and orphanRemoval = true
 public class NewsLetterConsoleApplication {
 
 	//OAuth2: http://localhost:8080/oauth2/authorization/google

@@ -133,7 +133,7 @@ public class UserService implements UserDetailsService {
                 return new Result<>(false, null, "Incorrect verification code");
             }
 
-            //TODO: Send creation success email
+            emailService.sendUserCreationSuccessEmail(user);
 
             user.setVerified();
             userDataService.save(user);
@@ -170,6 +170,8 @@ public class UserService implements UserDetailsService {
                 .profilePicture(oAuth2UserInfo.getImageUrl())
                 .authProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))
                 .build();
+
+        emailService.sendUserCreationSuccessEmail(user);
 
         return userDataService.save(user);
     }
