@@ -190,7 +190,7 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
     const dispatch = useDispatch();
 
     const [leaveGroup, {isLoading}] = useLeaveGroupMutation()
-    const [releaseQuestions] = useReleaseQuestionsMutation()
+    const [releaseQuestions, {isLoading: releasingQuestions}] = useReleaseQuestionsMutation()
 
     const dialogRef = useRef<AlertDialogRef>(null);
     const releaseQuestionRef = useRef<AlertDialogRef>(null);
@@ -363,7 +363,7 @@ function RenderMemberGroup(props: { groupData: GroupData, canEdit: boolean }): R
                             <Button
                                 type="submit"
                                 variant="outlined"
-                                disabled={groupData.acceptQuestionResponse}
+                                disabled={groupData.acceptQuestionResponse || releasingQuestions}
                                 sx={{mt: 3, mb: 1}}
                                 onClick={() => {
                                     releaseQuestionRef.current?.open()
@@ -413,7 +413,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const [inviteUser, {isLoading: isInvitingUser}] = useInviteUserToGroupMutation()
     const [listInvitations] = useListAllInvitationsByGroupMutation()
     const [deleteInvitation] = useRemoveInvitationFromGroupMutation()
-    const [releaseQuestions] = useReleaseQuestionsMutation()
+    const [releaseQuestions, {isLoading: releasingQuestions}] = useReleaseQuestionsMutation()
     const [generateNewsletter] = useGenerateNewsletterMutation()
 
     const userEmailAddress = useSelector(memoizedSelectUserData).emailAddress
@@ -932,7 +932,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                     <Button
                         type="submit"
                         variant="outlined"
-                        disabled={isDeleting || isEdit || isEditingGroup || isRemovingUser || isInvitingUser || groupData.acceptQuestionResponse || generatingNewsLetter}
+                        disabled={isDeleting || isEdit || isEditingGroup || isRemovingUser || isInvitingUser || groupData.acceptQuestionResponse || generatingNewsLetter || releasingQuestions}
                         sx={{mt: 3, mb: 1}}
                         onClick={() => {
                             releaseQuestionRef.current?.open()
