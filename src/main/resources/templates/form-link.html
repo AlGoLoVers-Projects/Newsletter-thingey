@@ -74,7 +74,7 @@
     <h2>
         Hello, <span th:text="${userFullName}"></span>
     </h2>
-    <p class="message">Form for your group, <strong th:text="${groupName}"></strong> is active, use the following link or visit your group to fill the form.</p>
+    <p class="message">Form for your group, <b th:text="${groupName}"></b> is active, use the following link or visit your group to fill the form.</p>
     <div class="ver-code">
         <div>Please use the following link to fill the form:</div>
         <div><a th:href="@{${formLink}}" th:text="${formLink}">form</a></div>
