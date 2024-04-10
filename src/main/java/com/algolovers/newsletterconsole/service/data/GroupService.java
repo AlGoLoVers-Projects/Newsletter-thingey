@@ -592,7 +592,6 @@ public class GroupService {
                 return new Result<>(false, null, "Cannot release, release date not reached yet");
             }
 
-            //TODO: pdfLink, forward
             String pdfLink = newsletterEngine.generateNewsletter(group.getId(), group.getGroupName(), group.getGroupDescription(), questionResponses);
 
             group.getNewsletterIssueLinks().add(pdfLink);
@@ -602,8 +601,8 @@ public class GroupService {
             questionResponses.clear();
             googleDriveService.deleteFolderByName(group.getId());
 
-//            //TODO: Push email to everyone.
             group = groupDataService.save(group);
+            emailService.sendPdfLink(group, pdfLink);
             return new Result<>(true, group, "Newsletter has been generated, URL: " + pdfLink);
         } catch (Exception e) {
             log.error("Exception occurred: {}", e.getMessage(), e);
