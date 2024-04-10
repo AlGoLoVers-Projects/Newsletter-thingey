@@ -135,9 +135,9 @@ public class EmailService {
                     context.setVariable("userFullName", currentUser.getDisplayName());
 
                     if (user.getEmailAddress().equals(currentUser.getEmailAddress())) {
-                        context.setVariable("message", "You have successfully joined " + group.getGroupName() + ", we wish you the best and hope you have fun.");
+                        context.setVariable("message", "You have successfully joined \"" + group.getGroupName() + "\", we wish you the best and hope you have fun.");
                     } else {
-                        context.setVariable("message", user.getDisplayName() + " has joined your group, " + group.getGroupName() + " successfully. Have fun!");
+                        context.setVariable("message", user.getDisplayName() + " has joined your group, \"" + group.getGroupName() + "\" successfully. Have fun!");
                     }
 
                     String html = templateEngine.process("invitation-accept.html", context);
