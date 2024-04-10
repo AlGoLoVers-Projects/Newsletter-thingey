@@ -74,7 +74,7 @@
     <h2>
         Hello, <span th:text="${userFullName}"></span>
     </h2>
-    <p class="message">Newsletter report for your group, <span th:text="${groupName}"></span> has been generated, use the following link or visit your group to get the current issue!</p>
+    <p class="message">Newsletter report for your group, <strong th:text="${groupName}"></strong> has been generated, use the following link or visit your group to get the current issue!</p>
     <div class="ver-code">
         <div>Please use the following link to get the current issue:</div>
         <div><a th:href="@{${pdfLink}}" th:text="${pdfLink}">form</a></div>
