@@ -17,7 +17,7 @@ import {
     useRemoveUserMutation,
     useUpdateEditAccessToUserMutation,
     useReleaseQuestionsMutation,
-    useGenerateNewsletterMutation, useGetGroupMutation,
+    useGenerateNewsletterMutation, useGetGroupMutation, useRemindUserToFillFormMutation, GroupFormReminderRequest,
 } from "../../../../redux/rootslices/api/groups.slice";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -408,6 +408,7 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
     const [editGroup, {isLoading: isEdit}] = useEditGroupMutation()
     const [deleteGroup, {isLoading: isDeleting}] = useDeleteGroupMutation()
     const [removeUser, {isLoading: isRemovingUser}] = useRemoveUserMutation()
+    const [remindUser] = useRemindUserToFillFormMutation()
     const [userEditAccess, {isLoading: isEditingGroup}] = useUpdateEditAccessToUserMutation()
     const [inviteUser, {isLoading: isInvitingUser}] = useInviteUserToGroupMutation()
     const [listInvitations] = useListAllInvitationsByGroupMutation()
@@ -1043,7 +1044,25 @@ function RenderOwnerGroup(props: { groupData: GroupData, groupUser: GroupMember 
                                                         <Mail/>
                                                     }
                                                     onClick={() => {
-                                                        //TODO: Push email with link to user to fill form
+                                                        const request: GroupFormReminderRequest = {
+                                                            groupId: groupData.id,
+                                                            userEmail: response.user.emailAddress,
+                                                            userName: response.user.displayName
+                                                        }
+
+                                                        remindUser(request)
+                                                            .unwrap()
+                                                            .then((response) => {
+                                                                if (response.success) {
+                                                                    showSuccessToast(response.message ?? 'User reminded successfully')
+
+                                                                } else {
+                                                                    showFailureToast(response.message ?? 'Failed to notify ser')
+                                                                }
+                                                            })
+                                                            .catch((result) => {
+                                                                showFailureToast(result.data.message ?? "Could not notify user")
+                                                            })
                                                     }}
                                                 >
                                                     Remind user

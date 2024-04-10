@@ -49,6 +49,11 @@ export type GroupUserRequest = {
 
 export type GroupEditRequest = GroupDataRequest & GroupRequest;
 
+export type GroupFormReminderRequest = {
+    userEmail: string,
+    userName: string
+} & GroupRequest
+
 export type GroupListData = GroupData[];
 
 export type GroupForm = {
@@ -133,6 +138,13 @@ export const groupsSlice = baseApiSlice.injectEndpoints({
                 method: 'POST',
                 body: data
             })
+        }),
+        remindUserToFillForm: builder.mutation<Result<void>, GroupFormReminderRequest>({
+            query: (data) => ({
+                url: '/api/group/remindUserToFillForm',
+                method: 'POST',
+                body: data
+            })
         })
     }),
 });
@@ -148,5 +160,6 @@ export const {
     useRemoveUserMutation,
     useReleaseQuestionsMutation,
     useGetFormsForUserMutation,
-    useGenerateNewsletterMutation
+    useGenerateNewsletterMutation,
+    useRemindUserToFillFormMutation
 } = groupsSlice;
