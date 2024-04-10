@@ -515,7 +515,7 @@ public class GroupService {
             responseRepository.deleteAll(questionResponses);
             questionResponses.clear();
 
-            //TODO: Push email to everyone to fill form.
+            emailService.sendFormLink(group);
             group = groupDataService.save(group);
             return new Result<>(true, group, "Users have been requested to fill out the form. Check back soon to generate news letter");
         } catch (Exception e) {

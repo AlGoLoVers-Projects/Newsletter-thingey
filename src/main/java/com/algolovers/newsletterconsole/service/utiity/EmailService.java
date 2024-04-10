@@ -148,6 +148,22 @@ public class EmailService {
                 });
     }
 
+    public void sendFormLink(Group group) {
+        group.getGroupMembers()
+                .forEach(groupMember -> {
+                    User currentUser = groupMember.getUser();
+                    Context context = new Context();
+                    context.setVariable("userFullName", currentUser.getDisplayName());
+                    context.setVariable("formLink", baseUrl + "/form/" + group.getId());
+
+                    String html = templateEngine.process("form-link.html", context);
+
+                    log.info("Built HTML template, Sending invitation accept email to {}", currentUser.getEmailAddress());
+
+                    sendHtmlEmail("[News Letter] Newsletter Invitation", html, currentUser.getEmailAddress());
+                });
+    }
+
     public boolean sendPasswordResetEmail(User user, Long verificationCode) {
         Context context = new Context();
 
